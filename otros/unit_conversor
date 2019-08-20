@@ -1,0 +1,154 @@
+1 Length
+  ft 1 ft
+  m 3.28084 ft
+2 Pipe Diameter
+  in 1 in
+  mm 0.0393701 in
+  ft 12 in
+  m 39.3701 in
+  dm 3.93701 in
+  cm 0.393701 in
+3 Nozzle Diameter
+  1/32∙in 0.03125 in
+  mm  0.0393701 in
+  in  1 in
+4 Cross Section
+  in² 1 in²
+  mm² 1.5500047E-3 in²
+  ft² 144 in²
+  m² 1550.0047 in²
+  dm² 15.500047 in²
+  cm² 0.15500047 in²
+5 Pipe Capacity
+  bbl/ft 521.61189 L/m
+  m³/m 1000 L/m
+  L/m  1 L/m
+  gal/ft 12.41933 L/m
+  bbl/m 158.9873 L/m
+  ft³/m 28.316843 L/m
+6 Stroke Displacement
+  m³/stk 1000 L/stk
+  gal/stk 3.78541 L/stk
+  L/stk 1 L/stk
+  bbl/stk 158.9873 L/stk
+7 Surface Area
+  m² 10.763911 ft²
+  ft² 1 ft²
+8 Velocity
+  ft/min 60 ft/h
+  m/min 196.8504 ft/h
+  ft/s 3600 ft/h
+  ft/h 1 ft/h
+  ft/day 0.041667 ft/h
+  m/s  11811.024 ft/h
+  m/h  3.28084 ft/h
+  m/day  0.13670 ft/h
+9 Nozzle Velocity
+  m/s  3.28084 ft/s
+  ft/s 1 ft/s
+10 Liquid Flow Rate
+  m³/min 60000 L/h
+  gal/h 3.78541 L/h
+  bpm  9539.238 L/h
+  gpm  227.1246 L/h
+  bbl/h 158.9873 L/h
+  ft³/min 1699.01058 L/h
+  m³/h 1000 L/h
+  L/min 60 L/h
+  L/h  1 L/h
+11 Stroke Rate
+  stk/min 60 stk/h
+  stk/h 1 stk/h
+12 ROP
+  ft/day 1 ft/day
+  m/day 3.28084 ft/day
+13 Line Density
+  lb/ft 1 lb/ft
+  kg/m 0.67196 lb/ft
+  lb/in 0.08333 lb/ft
+  kg/cm 67.19617 lb/ft
+14 Density
+  lb/ft³ 0.0160184 g/cm³
+  kg/m³ 0.001 g/cm³
+  lb/in³ 27.6799 g/cm³
+  g/cm³ 1 g/cm³
+  kg/L 1 g/cm³
+  kg/cm³ 1000 g/cm³
+  S.G. 1 g/cm³
+15 Mud Weight
+  ppg   7.48049 lb/ft³ #pounds per gallon
+  kg/m³  0.062427 lb/ft³
+  psi/100ft 1.44 lb/ft³
+  lb/ft³  1 lb/ft³
+  S.G.  62.42783 lb/ft³
+  kPa/m  6.36589 lb/ft³
+  kg/L  62.42783 lb/ft³
+  g/cm³  62.42783 lb/ft³
+  bar/10m  63.658904 lb/ft³
+16 Viscosity
+  cP   0.001 Pa∙s
+  mPa∙s  0.001 Pa∙s
+  Pa∙s  1 Pa∙s
+  lb∙s/ft² 47.87896 Pa∙s
+  dyne∙s/cm² 0.1 Pa∙s
+  kPa∙s  1000 Pa∙s
+17 Consistency
+  lbf∙sⁿ/100ft² 4787.896 Pa∙sⁿ
+  Pa∙sⁿ   1 Pa∙sⁿ
+  dyne∙sⁿ/cm² 0.1 Pa∙sⁿ
+  eq.cp    0.001 Pa∙sⁿ
+18 Yield Point
+  lbf/100ft² 4787.896 Pa
+  Pa   1 Pa
+  dyne/cm² 0.1 Pa
+  kPa   1000 Pa
+19 Pressure
+  psi  6894.76 Pa
+  kPa  1000 Pa
+  Pa  1 Pa
+  kg/cm² 98066.5 Pa
+  atm  101325 Pa
+  bar  100000 Pa
+  MPa  1000000 Pa
+20 Pressure Gradient
+  psi/ft  22.6206 kPa/m
+  kPa/m  1 kPa/m
+  ppg   1.1751 kPa/m
+  MPa/m  0.001 kPa/m
+  S.G   9.8066 kPa/m
+  kg/L  9.8066 kPa/m
+  bar/10m  10 kPa/m
+21 Stress
+  psi  6894.76 Pa
+  kPa  1000 Pa
+  Pa  1 Pa
+  kg/cm² 98066.5 Pa
+  MPa  1000000 Pa
+22 Force
+  lbf 4.448222 N
+  N 1 N
+  ton 8896.443231 N #(american short ton)
+  kN 1000 N
+  kg 9.80665 N
+  T 9806.65 N
+  daN 10 N
+23 Torque
+  ft∙lb 1 ft∙lb
+  N∙m  14.5939 ft∙lb
+  kN∙m 14593.90 ft∙lb
+  kg∙m 7.2330 ft∙lb
+24 Power
+  HP   745.699872 W
+  kW   1000 W
+  btu/s  1055.055854 W
+  btu/min  17.58426 W
+  ft∙lb/s 1.355818 W
+  ft∙lb/min 0.022597 W
+  W   1 W
+  kg∙m/min 0.163444 W
+25 Dogleg
+  °/100ft 0.98425 °/30m
+  °/30m  1   °/30m
+26 Inclination
+  °  1  °
+  rad  57.2958  °

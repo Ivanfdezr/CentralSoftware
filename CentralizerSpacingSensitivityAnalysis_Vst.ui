@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OutputWindow</class>
+ <widget class="QMainWindow" name="OutputWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1321</width>
+    <height>872</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Central Software - Centralizer Spacing Sensitivity Analysis</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>421</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Sensitivity study is only for the &lt;Specify spacing&gt; mode.</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>53</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Pipes:</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="owSpacingSensitivityPipes_tableWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>100</y>
+      <width>401</width>
+      <height>411</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>540</y>
+      <width>111</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Spacing range:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="owSpacingSensitivityCalculate_pushButton">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>660</y>
+      <width>191</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Calculate</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="owSpacingSensitivityMinMaxSpacing_tableWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>570</y>
+      <width>401</width>
+      <height>62</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="sortingEnabled">
+     <bool>false</bool>
+    </property>
+    <property name="columnCount">
+     <number>1</number>
+    </property>
+    <attribute name="horizontalHeaderVisible">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderCascadingSectionResizes">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderDefaultSectionSize">
+     <number>130</number>
+    </attribute>
+    <attribute name="horizontalHeaderHighlightSections">
+     <bool>true</bool>
+    </attribute>
+    <attribute name="horizontalHeaderMinimumSectionSize">
+     <number>55</number>
+    </attribute>
+    <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderStretchLastSection">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderDefaultSectionSize">
+     <number>30</number>
+    </attribute>
+    <attribute name="verticalHeaderMinimumSectionSize">
+     <number>28</number>
+    </attribute>
+    <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+     <bool>false</bool>
+    </attribute>
+    <row>
+     <property name="text">
+      <string>Min. spacing                                </string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Max. spacing                               </string>
+     </property>
+    </row>
+    <column/>
+   </widget>
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>0</y>
+      <width>881</width>
+      <height>806</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Standoff @ Mid Span</string>
+     </attribute>
+     <widget class="MatplotlibWidget" name="owSpacingSensitivityStandoffMidSpan_graphicsView">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>891</width>
+        <height>781</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>Standoff @ cent.</string>
+     </attribute>
+     <widget class="MatplotlibWidget" name="owSpacingSensitivityStandoffCentr_graphicsView">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>891</width>
+        <height>779</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_3">
+     <attribute name="title">
+      <string>Table</string>
+     </attribute>
+     <widget class="QTableWidget" name="owSpacingSensitivityStandoff_tableWidget">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>40</y>
+        <width>881</width>
+        <height>735</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QToolBar" name="iw_toolBar">
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>30</width>
+     <height>30</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="separator"/>
+   <addaction name="actionStar_Calculation"/>
+   <addaction name="separator"/>
+   <addaction name="actionUnit_Conversion"/>
+   <addaction name="actionCalculator"/>
+   <addaction name="actionNotepad"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1321</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuClose">
+    <property name="title">
+     <string>Close</string>
+    </property>
+   </widget>
+   <addaction name="menuClose"/>
+  </widget>
+  <action name="actionNew">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/document-new.png</normaloff>iconos/document-new.png</iconset>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/document-open.png</normaloff>iconos/document-open.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/document-save.png</normaloff>iconos/document-save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_As">
+   <property name="text">
+    <string>Save As...</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="text">
+    <string>Print Preview...</string>
+   </property>
+  </action>
+  <action name="actionPrint_2">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/document-print.png</normaloff>iconos/document-print.png</iconset>
+   </property>
+   <property name="text">
+    <string>Print..</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionCopy_Selection">
+   <property name="text">
+    <string>Copy Selection</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="text">
+    <string>Paste</string>
+   </property>
+  </action>
+  <action name="actionOne_Span_Analysis">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/games-solve.png</normaloff>iconos/games-solve.png</iconset>
+   </property>
+   <property name="text">
+    <string>One Span Analysis...</string>
+   </property>
+  </action>
+  <action name="actionUnit_Setting">
+   <property name="text">
+    <string>Unit Setting...</string>
+   </property>
+  </action>
+  <action name="actionUnit_Conversion">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/measure.png</normaloff>iconos/measure.png</iconset>
+   </property>
+   <property name="text">
+    <string>Unit Conversion...</string>
+   </property>
+  </action>
+  <action name="actionCalculator">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/accessories-calculator.png</normaloff>iconos/accessories-calculator.png</iconset>
+   </property>
+   <property name="text">
+    <string>Calculator...</string>
+   </property>
+  </action>
+  <action name="actionNotepad">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/story-editor.png</normaloff>iconos/story-editor.png</iconset>
+   </property>
+   <property name="text">
+    <string>Notepad...</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/system-help.png</normaloff>iconos/system-help.png</iconset>
+   </property>
+   <property name="text">
+    <string>About...</string>
+   </property>
+  </action>
+  <action name="actionAbbreviation">
+   <property name="text">
+    <string>Abbreviation...</string>
+   </property>
+  </action>
+  <action name="actionDisclaimer">
+   <property name="text">
+    <string>Disclaimer...</string>
+   </property>
+  </action>
+  <action name="actionStar_Calculation">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/arrow-left.png</normaloff>iconos/arrow-left.png</iconset>
+   </property>
+   <property name="text">
+    <string>Star Calculation</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionReturn_to_Input_Window">
+   <property name="text">
+    <string>Return to Input Window</string>
+   </property>
+  </action>
+  <action name="actionPrint_All">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/document-print.png</normaloff>iconos/document-print.png</iconset>
+   </property>
+   <property name="text">
+    <string>Print Report ...</string>
+   </property>
+  </action>
+  <action name="actionPrint_Summary_Only">
+   <property name="text">
+    <string>Print Summary Only ...</string>
+   </property>
+  </action>
+  <action name="actionGenerate_Report">
+   <property name="text">
+    <string>Generate Report ...</string>
+   </property>
+  </action>
+  <action name="actionStandoff_Profile">
+   <property name="text">
+    <string>Standoff Profile ...</string>
+   </property>
+  </action>
+  <action name="action3D_Wellpath">
+   <property name="text">
+    <string>3D Parameter Visualization ...</string>
+   </property>
+  </action>
+  <action name="actionCentralizer">
+   <property name="text">
+    <string>Centralizer Spacing Sensitivity Analysis ...</string>
+   </property>
+  </action>
+  <action name="actionGraph_Settings">
+   <property name="text">
+    <string>Graph Settings ...</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MatplotlibWidget</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">matplotlibwidget</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>OutputWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>748</x>
+     <y>498</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

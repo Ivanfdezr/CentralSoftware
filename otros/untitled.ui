@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>713</width>
+    <height>689</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Inner stage properties</string>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>70</y>
+     <width>81</width>
+     <height>241</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QTabWidget" name="TabWidget">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>40</y>
+     <width>541</width>
+     <height>631</height>
+    </rect>
+   </property>
+   <property name="contextMenuPolicy">
+    <enum>Qt::NoContextMenu</enum>
+   </property>
+   <property name="tabShape">
+    <enum>QTabWidget::Rounded</enum>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="tab_10">
+    <attribute name="title">
+     <string>Pipe</string>
+    </attribute>
+    <widget class="QPushButton" name="s3PipeDB_pushButton">
+     <property name="geometry">
+      <rect>
+       <x>349</x>
+       <y>14</y>
+       <width>141</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Database...</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="s3ODID_pushButton">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>70</y>
+       <width>111</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>OD, ID -&gt; Wt</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="s3ODWt_pushButton">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>110</y>
+       <width>111</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>OD, Wt -&gt; ID</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="s3TJODIDUpdate_pushButton">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>144</y>
+       <width>31</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>iconos/edit-redo.png</normaloff>iconos/edit-redo.png</iconset>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="s3FFReduction_pushButton">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>308</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>iconos/edit-redo.png</normaloff>iconos/edit-redo.png</iconset>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="s3DensityE_pushButton">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>263</y>
+       <width>31</width>
+       <height>45</height>
+      </rect>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>iconos/edit-redo.png</normaloff>iconos/edit-redo.png</iconset>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_34">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>216</y>
+       <width>31</width>
+       <height>45</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>3</y>
+       <width>321</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <property name="spacing">
+       <number>30</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="s3Pipe_label">
+        <property name="text">
+         <string>Pipe:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="s3Pipe_entry"/>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QTableWidget" name="s3Pipe_tableWidget">
+     <property name="geometry">
+      <rect>
+       <x>14</x>
+       <y>60</y>
+       <width>401</width>
+       <height>291</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="columnCount">
+      <number>2</number>
+     </property>
+     <attribute name="horizontalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>90</number>
+     </attribute>
+     <attribute name="verticalHeaderDefaultSectionSize">
+      <number>25</number>
+     </attribute>
+     <row>
+      <property name="text">
+       <string>Adjusted Wt                                                 </string>
+      </property>
+      <property name="font">
+       <font>
+        <kerning>false</kerning>
+       </font>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>OD</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>ID</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>TJ OD</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>TJ ID</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>TJ lenght</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Tensile limit</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Torsional limit</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Density</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>E</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>FF reduction</string>
+      </property>
+     </row>
+     <column/>
+     <column/>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_11">
+    <attribute name="title">
+     <string>Centralizer</string>
+    </attribute>
+    <widget class="QFrame" name="frame_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>3</y>
+       <width>501</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <widget class="QWidget" name="layoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>11</x>
+        <y>4</y>
+        <width>481</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>7</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="spacing">
+          <number>45</number>
+         </property>
+         <item>
+          <widget class="QRadioButton" name="s3NoneCentralization_radioButton">
+           <property name="text">
+            <string>None</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="s3SpecifySpacingCentralization_radioButton">
+           <property name="text">
+            <string>Specify spacing</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="s3SpecifyLocationCentralization_radioButton">
+           <property name="text">
+            <string>Specify location</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="s3SpecifyStandoffCentralization_radioButton">
+         <property name="text">
+          <string>Specify standoff</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QFrame" name="frame_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>78</y>
+       <width>501</width>
+       <height>586</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <widget class="QPushButton" name="s3SpacingUpdate_pushButton">
+      <property name="geometry">
+       <rect>
+        <x>440</x>
+        <y>37</y>
+        <width>25</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>iconos/edit-redo.png</normaloff>iconos/edit-redo.png</iconset>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="s3Standoff_pushButton">
+      <property name="geometry">
+       <rect>
+        <x>440</x>
+        <y>61</y>
+        <width>25</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>iconos/edit-redo.png</normaloff>iconos/edit-redo.png</iconset>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="s3StandoffInfo_pushButton">
+      <property name="geometry">
+       <rect>
+        <x>466</x>
+        <y>61</y>
+        <width>25</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>iconos/documentinfo.png</normaloff>iconos/documentinfo.png</iconset>
+      </property>
+     </widget>
+     <widget class="QLabel" name="s3RunningForce_label">
+      <property name="geometry">
+       <rect>
+        <x>11</x>
+        <y>342</y>
+        <width>121</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Running force:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="s3Location_label">
+      <property name="geometry">
+       <rect>
+        <x>314</x>
+        <y>342</y>
+        <width>71</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Location:</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="s3ODUncompressedUpdate_pushButton">
+      <property name="geometry">
+       <rect>
+        <x>440</x>
+        <y>135</y>
+        <width>25</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>iconos/edit-redo.png</normaloff>iconos/edit-redo.png</iconset>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="s3ODRigidUpdate_pushButton">
+      <property name="geometry">
+       <rect>
+        <x>440</x>
+        <y>110</y>
+        <width>25</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>iconos/edit-redo.png</normaloff>iconos/edit-redo.png</iconset>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="s3BowSpringCentralizer_radioButton">
+      <property name="geometry">
+       <rect>
+        <x>13</x>
+        <y>7</y>
+        <width>109</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Bow spring</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="s3RigidCentralizer_radioButton">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>7</y>
+        <width>64</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Rigid</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="s3CentralizerDB_pushButton">
+      <property name="geometry">
+       <rect>
+        <x>297</x>
+        <y>5</y>
+        <width>131</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Centralizer DB...</string>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="s3CentralizerProperties_tableWidget">
+      <property name="geometry">
+       <rect>
+        <x>11</x>
+        <y>35</y>
+        <width>418</width>
+        <height>302</height>
+       </rect>
+      </property>
+      <property name="columnCount">
+       <number>2</number>
+      </property>
+      <attribute name="horizontalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>90</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>25</number>
+      </attribute>
+      <row>
+       <property name="text">
+        <string>Spacing</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Standoff @ mid span (%)</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Part No.</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Blade OD (rigid)</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Bow spring OD (uncompressed)</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Min. compressed OD</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Start F. (CH)</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>New Row</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Start F. (OH)</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Restoring F. (OH)</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Free to rotate</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Rotational FF</string>
+       </property>
+      </row>
+      <column/>
+      <column/>
+     </widget>
+     <widget class="QTableWidget" name="s3CentralizerRunningForce_tableWidget">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>370</y>
+        <width>293</width>
+        <height>141</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::WinPanel</enum>
+      </property>
+      <property name="alternatingRowColors">
+       <bool>true</bool>
+      </property>
+      <property name="rowCount">
+       <number>10</number>
+      </property>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>120</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>25</number>
+      </attribute>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <column>
+       <property name="text">
+        <string>New Column</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Running F.</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTableWidget" name="s3CentralizerLocation_tableWidget">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>370</y>
+        <width>175</width>
+        <height>131</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::WinPanel</enum>
+      </property>
+      <property name="alternatingRowColors">
+       <bool>true</bool>
+      </property>
+      <property name="rowCount">
+       <number>10</number>
+      </property>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>125</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>25</number>
+      </attribute>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <column>
+       <property name="text">
+        <string>MD</string>
+       </property>
+      </column>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>Dialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

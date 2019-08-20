@@ -1,0 +1,730 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OutputWindow</class>
+ <widget class="QMainWindow" name="OutputWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1321</width>
+    <height>872</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Central Software - Output Window</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1321</width>
+      <height>791</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Centralizer</string>
+     </attribute>
+     <widget class="QTabWidget" name="tabWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1321</width>
+        <height>761</height>
+       </rect>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>Tables</string>
+       </attribute>
+       <widget class="QTabWidget" name="tabWidget_3">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>1321</width>
+          <height>731</height>
+         </rect>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="tab_9">
+         <attribute name="title">
+          <string>Summary</string>
+         </attribute>
+         <widget class="MatplotlibWidget" name="owMechanicalState_graphicsView">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>281</width>
+            <height>697</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label">
+          <property name="geometry">
+           <rect>
+            <x>290</x>
+            <y>10</y>
+            <width>91</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Table color:</string>
+          </property>
+         </widget>
+         <widget class="QTableWidget" name="owSummary_tableWidget">
+          <property name="geometry">
+           <rect>
+            <x>290</x>
+            <y>40</y>
+            <width>1021</width>
+            <height>657</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_2">
+          <property name="geometry">
+           <rect>
+            <x>420</x>
+            <y>10</y>
+            <width>121</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>No Centralizer</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_3">
+          <property name="geometry">
+           <rect>
+            <x>550</x>
+            <y>10</y>
+            <width>121</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Specify spacing</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_4">
+          <property name="geometry">
+           <rect>
+            <x>690</x>
+            <y>10</y>
+            <width>121</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Specify standoff</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_5">
+          <property name="geometry">
+           <rect>
+            <x>836</x>
+            <y>10</y>
+            <width>121</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Specify location</string>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="tab_10">
+         <attribute name="title">
+          <string>Centralizer Calculation</string>
+         </attribute>
+         <widget class="QLabel" name="label_6">
+          <property name="geometry">
+           <rect>
+            <x>556</x>
+            <y>10</y>
+            <width>121</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Specify location</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_7">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>91</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Table color:</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_8">
+          <property name="geometry">
+           <rect>
+            <x>410</x>
+            <y>10</y>
+            <width>121</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Specify standoff</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_9">
+          <property name="geometry">
+           <rect>
+            <x>140</x>
+            <y>10</y>
+            <width>121</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>No Centralizer</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_10">
+          <property name="geometry">
+           <rect>
+            <x>270</x>
+            <y>10</y>
+            <width>121</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Specify spacing</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="owCentralizerCalculationDown_pushButton">
+          <property name="geometry">
+           <rect>
+            <x>1278</x>
+            <y>70</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>iconos/arrow-down-double.png</normaloff>iconos/arrow-down-double.png</iconset>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="owCentralizerCalculationUp_pushButton">
+          <property name="geometry">
+           <rect>
+            <x>1278</x>
+            <y>33</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>iconos/arrow-up-double.png</normaloff>iconos/arrow-up-double.png</iconset>
+          </property>
+         </widget>
+         <widget class="QTableWidget" name="owCentralizerCalculation_tableWidget">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>35</y>
+            <width>1271</width>
+            <height>661</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_4">
+       <attribute name="title">
+        <string>Spacing</string>
+       </attribute>
+       <widget class="MatplotlibWidget" name="owSpacing_graphicsView">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>1311</width>
+          <height>727</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_6">
+       <attribute name="title">
+        <string>Side Force</string>
+       </attribute>
+       <widget class="MatplotlibWidget" name="owSideForce_graphicsView">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>1311</width>
+          <height>727</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_5">
+       <attribute name="title">
+        <string>Standoff (%)</string>
+       </attribute>
+       <widget class="MatplotlibWidget" name="owStandoff_graphicsView">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>1311</width>
+          <height>727</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_7">
+       <attribute name="title">
+        <string>Dogleg</string>
+       </attribute>
+       <widget class="MatplotlibWidget" name="owDogleg_graphicsView">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>1311</width>
+          <height>727</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_8">
+       <attribute name="title">
+        <string>Side Force 2D</string>
+       </attribute>
+       <widget class="MatplotlibWidget" name="owSideForce2D_graphicsView">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>1311</width>
+          <height>727</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>Torque and Drag</string>
+     </attribute>
+     <widget class="QTabWidget" name="tabWidget_4">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1321</width>
+        <height>761</height>
+       </rect>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab_11">
+       <attribute name="title">
+        <string>Table</string>
+       </attribute>
+       <widget class="QTableWidget" name="owTorqueAndDrag_tableWidget">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>1271</width>
+          <height>726</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="owTorqueAndDragDown_pushButton">
+        <property name="geometry">
+         <rect>
+          <x>1278</x>
+          <y>37</y>
+          <width>31</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>iconos/arrow-down-double.png</normaloff>iconos/arrow-down-double.png</iconset>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="owTorqueAndDragUp_pushButton">
+        <property name="geometry">
+         <rect>
+          <x>1278</x>
+          <y>0</y>
+          <width>31</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>iconos/arrow-up-double.png</normaloff>iconos/arrow-up-double.png</iconset>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_12">
+       <attribute name="title">
+        <string>Hook Load</string>
+       </attribute>
+       <widget class="MatplotlibWidget" name="owHookLoad_graphicsView">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>1311</width>
+          <height>727</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_13">
+       <attribute name="title">
+        <string>Surface Torque</string>
+       </attribute>
+       <widget class="MatplotlibWidget" name="owSurfaceTorque_graphicsView">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>1311</width>
+          <height>727</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QToolBar" name="iw_toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>30</width>
+     <height>30</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionPrint_2"/>
+   <addaction name="separator"/>
+   <addaction name="actionStar_Calculation"/>
+   <addaction name="separator"/>
+   <addaction name="actionOne_Span_Analysis"/>
+   <addaction name="separator"/>
+   <addaction name="actionUnit_Conversion"/>
+   <addaction name="actionCalculator"/>
+   <addaction name="actionNotepad"/>
+   <addaction name="separator"/>
+   <addaction name="actionAbout"/>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1321</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuWindows">
+    <property name="title">
+     <string>Windows</string>
+    </property>
+    <addaction name="actionOne_Span_Analysis"/>
+    <addaction name="action3D_Wellpath"/>
+    <addaction name="actionCentralizer"/>
+   </widget>
+   <widget class="QMenu" name="menuUtilities">
+    <property name="title">
+     <string>Utilities</string>
+    </property>
+    <addaction name="actionUnit_Conversion"/>
+    <addaction name="actionCalculator"/>
+    <addaction name="actionNotepad"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAbbreviation"/>
+    <addaction name="separator"/>
+    <addaction name="actionDisclaimer"/>
+   </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionGenerate_Report"/>
+    <addaction name="actionGraph_Settings"/>
+    <addaction name="separator"/>
+    <addaction name="actionPrint_All"/>
+    <addaction name="separator"/>
+    <addaction name="actionReturn_to_Input_Window"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuWindows"/>
+   <addaction name="menuUtilities"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <action name="actionNew">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/document-new.png</normaloff>iconos/document-new.png</iconset>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/document-open.png</normaloff>iconos/document-open.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/document-save.png</normaloff>iconos/document-save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_As">
+   <property name="text">
+    <string>Save As...</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="text">
+    <string>Print Preview...</string>
+   </property>
+  </action>
+  <action name="actionPrint_2">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/document-print.png</normaloff>iconos/document-print.png</iconset>
+   </property>
+   <property name="text">
+    <string>Print..</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionCopy_Selection">
+   <property name="text">
+    <string>Copy Selection</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="text">
+    <string>Paste</string>
+   </property>
+  </action>
+  <action name="actionOne_Span_Analysis">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/games-solve.png</normaloff>iconos/games-solve.png</iconset>
+   </property>
+   <property name="text">
+    <string>One Span Analysis...</string>
+   </property>
+  </action>
+  <action name="actionUnit_Setting">
+   <property name="text">
+    <string>Unit Setting...</string>
+   </property>
+  </action>
+  <action name="actionUnit_Conversion">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/measure.png</normaloff>iconos/measure.png</iconset>
+   </property>
+   <property name="text">
+    <string>Unit Conversion...</string>
+   </property>
+  </action>
+  <action name="actionCalculator">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/accessories-calculator.png</normaloff>iconos/accessories-calculator.png</iconset>
+   </property>
+   <property name="text">
+    <string>Calculator...</string>
+   </property>
+  </action>
+  <action name="actionNotepad">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/story-editor.png</normaloff>iconos/story-editor.png</iconset>
+   </property>
+   <property name="text">
+    <string>Notepad...</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/system-help.png</normaloff>iconos/system-help.png</iconset>
+   </property>
+   <property name="text">
+    <string>About...</string>
+   </property>
+  </action>
+  <action name="actionAbbreviation">
+   <property name="text">
+    <string>Abbreviation...</string>
+   </property>
+  </action>
+  <action name="actionDisclaimer">
+   <property name="text">
+    <string>Disclaimer...</string>
+   </property>
+  </action>
+  <action name="actionStar_Calculation">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/arrow-left.png</normaloff>iconos/arrow-left.png</iconset>
+   </property>
+   <property name="text">
+    <string>Star Calculation</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionReturn_to_Input_Window">
+   <property name="text">
+    <string>Return to Input Window</string>
+   </property>
+  </action>
+  <action name="actionPrint_All">
+   <property name="icon">
+    <iconset>
+     <normaloff>iconos/document-print.png</normaloff>iconos/document-print.png</iconset>
+   </property>
+   <property name="text">
+    <string>Print Report ...</string>
+   </property>
+  </action>
+  <action name="actionPrint_Summary_Only">
+   <property name="text">
+    <string>Print Summary Only ...</string>
+   </property>
+  </action>
+  <action name="actionGenerate_Report">
+   <property name="text">
+    <string>Generate Report ...</string>
+   </property>
+  </action>
+  <action name="actionStandoff_Profile">
+   <property name="text">
+    <string>Standoff Profile ...</string>
+   </property>
+  </action>
+  <action name="action3D_Wellpath">
+   <property name="text">
+    <string>3D Parameter Visualization ...</string>
+   </property>
+  </action>
+  <action name="actionCentralizer">
+   <property name="text">
+    <string>Centralizer Spacing Sensitivity Analysis ...</string>
+   </property>
+  </action>
+  <action name="actionGraph_Settings">
+   <property name="text">
+    <string>Graph Settings ...</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MatplotlibWidget</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">matplotlibwidget</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>OutputWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>748</x>
+     <y>498</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
