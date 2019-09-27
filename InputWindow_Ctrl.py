@@ -169,9 +169,9 @@ class Main_InputWindow(Ui_InputWindow):
 		ax.set_zlim( max(self.s2DataSurvey_fields.TVD), min(self.s2DataSurvey_fields.TVD) )
 		plt.show()
 
-		#window = QtGui.QMainWindow(self.iw_toolBar)
-		#Main_OutputWindow(window)
-		#window.show()
+		##window = QtGui.QMainWindow(self.iw_toolBar)
+		##Main_OutputWindow(window)
+		##window.show()
 
 
 		
