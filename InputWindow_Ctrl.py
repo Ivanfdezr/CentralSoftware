@@ -12,9 +12,6 @@ import WellboreFunctions as wf
 import importlib
 import testlib as tl
 
-# ESTO ES UNA PRUEBA
-
-
 
 class Main_InputWindow(Ui_InputWindow):
 
