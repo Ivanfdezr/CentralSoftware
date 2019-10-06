@@ -76,7 +76,7 @@ for i,Yi in enumerate(Y[:-1]):
 
 
 R = np.array(R)
-#print(R)
+##
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')

@@ -22,9 +22,9 @@ def get_caliper( index ):
 					continue
 			if ready_flag and line[0]!='#':
 				L = np.array( re.split('[\s]+',line) )
-				#print(L)
+				##
 				items = np.array(list(map(float,L[L!=''])))
-				#print(items)
+				##
 				rows.append( items[index] )
 	MD = []
 	ID = []

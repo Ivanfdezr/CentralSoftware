@@ -14,7 +14,7 @@ def set_workUnits_as(unitSystem):
 	query = """ update work_units,{defaultUnitTable} set work_units.unitID={defaultUnitTable}.unitID 
 				where work_units.parameterID={defaultUnitTable}.parameterID """.format(defaultUnitTable=defaultUnitTable)
 	dbUtils.execute_query(query)
-	print('Work units were successfully updated.')
+	#
 
 
 def get_s2DataSurvey_fields():
@@ -242,7 +242,7 @@ def calculate_ASCComplements( fields, tortuosity=None ):
 
 	w = Ma[1:,None]/Mb[:-1,None]
 
-	print(v.shape,Ma.shape,Mb.shape,Mc.shape,w.shape)
+	#
 
 	Mb[1:,None] = Mb[1:,None]-w*Mc[:-1,None]
 	v[1:] = v[1:]-w*v[:-1]

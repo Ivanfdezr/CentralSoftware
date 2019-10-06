@@ -46,10 +46,10 @@ with open('Tuberias de revestimiento_all.csv','r') as f:
 				while True:
 					os.system('clear')
 					for j,k in enumerate(param_a):
-						print(k+tabs[j]+A[k])
-					print('\n\t'+brs[0])
-					print('\t'+brs[1])
-					print('\t'+brs[2])
+						#
+					#
+					#
+					#
 					response = input("\t{br} == {grade} ?  ".format(br=brs[3],grade=grades[i]))
 					if response=='S' or response=='':
 						B['Grade'] = grades[i]
@@ -73,7 +73,7 @@ with open('Tuberias de revestimiento_all.csv','r') as f:
 					P[k] = v
 					
 				DB.append(P)
-				print(DB)
+				#
 
 with open('TR_DB.json','w') as f:				
 	f.write( json.dumps(DB, sort_keys=True, indent=4) )

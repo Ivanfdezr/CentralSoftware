@@ -300,7 +300,7 @@ class Ui_CaliperImport(object):
 		self.ciH1columnIndex_spinBox.setToolTip(_translate("CaliperImport", "MD and Hole ID indexes have to be different.", None))
 		self.ciBScolumnIndex_spinBox.setToolTip(_translate("CaliperImport", "0 means that any column is selected.", None))
 		self.label_8.setToolTip(_translate("CaliperImport", "BS unit must be the same as Hole ID unit,\n"
-"in order to show a congruet graph. (optional)", None))
+"in order to show a congruet graph.", None))
 		self.label_8.setText(_translate("CaliperImport", "<html><head/><body><p><span style=\" font-weight:600; color:#00aa00;\">BS</span></p></body></html>", None))
 		self.ciODcolumnIndex_spinBox.setToolTip(_translate("CaliperImport", "0 means that any column is selected.", None))
 		self.label_9.setToolTip(_translate("CaliperImport", "OD unit must be the same as Hole ID unit,\n"

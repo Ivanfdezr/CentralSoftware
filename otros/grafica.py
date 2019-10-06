@@ -18,9 +18,9 @@ x = 10 * np.outer(np.cos(u), np.sin(v))
 y = 10 * np.outer(np.sin(u), np.sin(v))
 z = 10 * np.outer(np.ones(np.size(u)), np.cos(v))
 
-print(x)
-print(y)
-print(z)
+#
+#
+#
 
 # Plot the surface
 ls = LightSource(270, 45)
@@ -29,7 +29,7 @@ ls = LightSource(270, 45)
 rgb = ls.shade(z, cmap=cm.gist_earth, vert_exag=0.1, blend_mode='soft')
 ax = fig.add_subplot(121, projection='3d')
 o=ax.plot_surface(x, y, z, linewidth=0, facecolors=rgb, antialiased=False, shade=True)
-print(rgb,rgb.shape)
+#
 ax = fig.add_subplot(122, projection='3d')
 ax.plot_surface(x, y, z, color='b' )#, linewidth=0, facecolors=rgb, antialiased=False, shade=False)
 

@@ -80,7 +80,7 @@ class Main_CaliperImport(Ui_CaliperImport):
 		cu.create_physicalValue_and_appendTo_field( min_MD,   self.ciCaliperReport_fields.MDtop   )
 		cu.create_physicalValue_and_appendTo_field( max_MD,   self.ciCaliperReport_fields.MDbot   )
 
-		#print( self.ciCaliperReport_fields  )
+		##
 		self.data = self.ciCaliperReport_fields.extract_data_from_row( 0 )
 		self.fields = self.ciCaliperReport_fields
 		self.dialog.done(0)
@@ -236,7 +236,7 @@ class Main_CaliperImport(Ui_CaliperImport):
 						fieldIndex = index-fileTextH1columnIndex
 						cu.create_physicalValue_and_appendTo_field( IDvalue, self.ciCALData_fields[fieldIndex] )
 				except IndexError:
-					#print(index, IDvalue,fieldIndex, len(self.ciCALData_fields))
+					##
 					#self.dialog.done(0)
 					self.feasibleDrawFlagMDID = False
 
@@ -331,5 +331,5 @@ class Main_CaliperImport(Ui_CaliperImport):
 		self.ciLocationsCount_label.setText( 'Number of locations: 0' )
 
 		# l, b, w, h 
-		#print( 'dataLim: ', self.ciHoleIDsmoothing_graphicsView.axes.get_position().bounds )
+		##
 

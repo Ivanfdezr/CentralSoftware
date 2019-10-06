@@ -73,8 +73,8 @@ class ZoomPan:
 			
 			x,y,z = self.get_xyz_from_cursor(event, ax, curve)
 			
-			#print(event.xdata,event.ydata)
-			#print(ax.elev,ax.azim,ax.dist,ax.eye)
+			##
+			##
 			if event.button == 'down':
 				ax.set_xlim( (curr_xlim-x)*base_scale+x )
 				ax.set_ylim( (curr_ylim-y)*base_scale+y )
@@ -101,7 +101,7 @@ class ZoomPan:
 		
 	def point3D_factory(self,ax,dot,curve):
 		def move_dot(event):
-			#print(event.xdata,event.ydata)
+			##
 			try:
 				x,y,z = self.get_xyz_from_cursor(event,ax,curve)
 				dot.set_data([x],[y])
@@ -132,7 +132,7 @@ class ZoomPan:
 			else:
 				# deal with something that should never happen
 				scale_factor = 1
-				#print(event.button)
+				##
 
 			new_width = (cur_xlim[1] - cur_xlim[0]) * scale_factor
 			new_height = (cur_ylim[1] - cur_ylim[0]) * scale_factor
@@ -202,7 +202,7 @@ class ZoomPan:
 			else:
 				# deal with something that should never happen
 				scale_factor = 1
-				#print(event.button)
+				##
 
 			#new_width = (cur_xlim[1] - cur_xlim[0]) * scale_factor
 			new_height = (cur_ylim[1] - cur_ylim[0]) * scale_factor

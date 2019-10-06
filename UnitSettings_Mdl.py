@@ -13,7 +13,7 @@ def update_customizedUnits( parameters, units ):
 					where parameterID={parameterID} """.format(parameterID=parameterID, unitID=unitID)
 		dbUtils.execute_query(query)
 
-	print('Customized units were successfully updated.')
+	#
 
 
 def get_parametersAndUnits(unitSystem):

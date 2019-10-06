@@ -74,7 +74,7 @@ xmin += xmin*0.1
 xmax = np.max(_a)
 xmax += xmax*0.1
 
-print(xmin,xmax)
+#
 
 plt.xlim(xmin,xmax)
 plt.ylim(xmin,xmax)

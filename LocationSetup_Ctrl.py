@@ -1,5 +1,6 @@
 from PyQt4 import QtCore, QtGui
 from LocationSetup_Vst import Ui_LocationSetup
+import LocationSetup_Vst as vst
 import LocationSetup_Mdl as mdl
 import CtrlUtilities as cu
 import PlotUtilities as pu
@@ -15,6 +16,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 		
 		importlib.reload(pu)
 		importlib.reload(mdl)
+		importlib.reload(vst)
 
 		Ui_LocationSetup.__init__(self)
 		self.setupUi(dialog)
@@ -161,7 +163,8 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.lsCentralizerLocations_tableWidget.cellPressed.connect(self.select_row)
 		self.lsCentralizerLocations_tableWidget.itemChanged.connect(cu.update_fieldItem)
 
-		for field in self.lsCentralizerLocations_fields[:4]:
+		for field in self.lsCentralizerLocations_fields[:3]:
+			#
 			item = self.lsCentralizerLocations_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( field.headerName )
 			
@@ -216,7 +219,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 			self.centralizerCount = len(self.lsCentralizerLocations_fields.MD)
 
 			#F = mdl.get_axialTension_below_MD(self, MD)
-			#print( str(F) +' '+ F.unit )
+			##
 			
 			mdl.calculate_standOff_atCentralizers(self)
 			mdl.calculate_standOff_atMidspan(self)
@@ -248,7 +251,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 				previousMDi = MDi
 
 			self.lsCaliperMap_graphicsView.axes.plot( xlim, [MD, MD], color='C3', lw=4, alpha=0.4 )
-			print( 'Number of locations: '+str(len(self.lsCaliperMap_graphicsView_yselection)) )
+			#
 			
 			self.lsWellbore3D_graphicsView.axes.plot( 	self.lsCentralizerLocations_fields.EW,
 														self.lsCentralizerLocations_fields.NS,

@@ -28,7 +28,7 @@ with open('Base de Datos ICI Flex + UR Flex.csv','r') as f:
 		items = re.split(',',line[:-1])
 		query = """ insert into centralizers (centralizerID,productNumber) values ('{cID}','{number}') """.format(cID=cID,number=items[0])
 		dbUtils.execute_query(query)
-		#print(query+'\n')
+		##
 		
 		for fIDi in fIDis[1:]:
 			fID = fIDs[fIDi[0]]
@@ -38,7 +38,7 @@ with open('Base de Datos ICI Flex + UR Flex.csv','r') as f:
 			query = """ insert into centralizer_properties (centralizerID,fieldID,nativeUnitID,valueRepresentation) 
 					values ('{cID}','{fID}',(select u.unitID from units u where u.representation='{uRe}'),'{value}') """.format(cID=cID,fID=fID,uRe=uRe,value=value)
 			dbUtils.execute_query(query)
-			#print(query+'\n')
+			##
 		cID +=1
 		#input('...')
 		

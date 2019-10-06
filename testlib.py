@@ -9,7 +9,7 @@ def get_centralizersLocations(self, ax):
 			md0=self.s2DataSurvey_fields.MD[0] if k==0 else self.wellboreInnerStageData[k-1]['MD']
 			md1=self.wellboreInnerStageData[k]['MD']
 			
-			print(k,md0)
+			#
 
 			MDc = []
 			EW = []
@@ -19,7 +19,7 @@ def get_centralizersLocations(self, ax):
 				MDc.append(md0)
 				md0 += spacing
 
-			print(MDc)
+			#
 
 			for mdc in MDc:
 				for i, mdi in enumerate(self.s2DataSurvey_fields.MD):

@@ -65,7 +65,7 @@
     <number>1000</number>
    </property>
    <property name="columnCount">
-    <number>3</number>
+    <number>4</number>
    </property>
    <attribute name="horizontalHeaderDefaultSectionSize">
     <number>110</number>
@@ -1080,12 +1080,17 @@
    </column>
    <column>
     <property name="text">
-     <string>DL</string>
+     <string>Inc</string>
     </property>
    </column>
    <column>
     <property name="text">
-     <string>SO at midspan</string>
+     <string>SO at\ncentralizer</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>SO at\nmidspan</string>
     </property>
    </column>
   </widget>

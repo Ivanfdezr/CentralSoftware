@@ -15,7 +15,7 @@ class Main_TubularDatabase(Ui_TubularDatabase):
 		self.__init__TDB_tableWidget()
 		
 		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-		print(dialog.parent())
+		#
 		dialog.exec_()
 	
 	

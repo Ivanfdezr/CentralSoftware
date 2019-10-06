@@ -150,7 +150,7 @@ def disableByBlock_currentWellboreInnerStageDataItem(function):
 		self.wellboreInnerStageDataIsEnabled = False
 		function(*args, **kwargs)
 		self.wellboreInnerStageDataIsEnabled = True
-		print('\n',self.currentWellboreInnerStageDataItem,'\n')
+		#
 
 	return wrap_function
 
@@ -795,18 +795,18 @@ def adjust_ID(self):
 
 
 def print_wellboreInnerStageData(self):
-	print('-----------------------------------------')
+	#
 	K = list(self.wellboreInnerStageData.keys())
 	K.sort()
 	for k in K:
-		print('\n',self.wellboreInnerStageData[k],'\n')
-	print('-----------------------------------------\n')
+		#
+	#
 
 
 def print_wellboreOuterStageData(self):
-	print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv')
+	#
 	K = list(self.wellboreOuterStageData.keys())
 	K.sort()
 	for k in K:
-		print('\n',self.wellboreOuterStageData[k],'\n')
-	print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n')
+		#
+	#

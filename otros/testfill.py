@@ -8,9 +8,9 @@ x2 = 1.2 * np.sin(4 * np.pi * y)
 
 fig, [ax1, ax2, ax3] = plt.subplots(1, 3, sharey=True, figsize=(6, 6))
 
-print(type(y),type(y[0]))
-print(type(x1),type(x1[0]))
-print(type(x2),type(x2[0]))
+#
+#
+#
 
 ax1.fill_betweenx(y, 0, x1)
 ax1.set_title('between (x1, 0)')

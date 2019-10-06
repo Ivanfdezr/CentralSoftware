@@ -9,7 +9,7 @@ class Main_UnitConversion(Ui_Dialog):
 		self.setupUi(window)
 
 		L = mdl.read_parameters()
-		print(type(L))
+		#
 
 		self.comboBox.addItems(L)
 		
@@ -30,7 +30,7 @@ class Main_UnitConversion(Ui_Dialog):
 	def decimal_places_selected(self,index):
 		self.decimal_places = index + 1
 
-		print(self.decimal_places) 
+		# 
 
 	def parameter_selected(self,index):
 		self.Parameter = self.comboBox.itemText(index)
