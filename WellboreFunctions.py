@@ -251,6 +251,8 @@ def update_wellboreInnerStageData(self):
 
 def update_wellboreOuterStageData(self):
 
+	importlib.reload(cu)
+
 	if self.wellboreOuterStageDataIsUpdatable:
 
 		self.currentWellboreOuterStageDataItem['WellboreProps'] = None
@@ -264,21 +266,20 @@ def update_wellboreOuterStageData(self):
 
 		self.currentWellboreOuterStageDataItem['WellboreProps'] = copy.deepcopy(self.s3WellboreIntervals_fields)
 
-		print_wellboreOuterStageData(self)
-
 		workWellbore_exist = False
 		K = list(self.wellboreOuterStageData.keys())
 		K.sort()
 		for k in K:
 			stage = self.wellboreOuterStageData[k]
 
-			if stage['PipeBase']:
-				MD = cu.mdl.array( [stage['WellboreProps'].MDtop[0], stage['WellboreProps'].MDbot[0]] )
-				ID = cu.mdl.array( [stage['WellboreProps'].DriftID[0], stage['WellboreProps'].DriftID[0]] )
-
-			elif stage['CaliperData']:
+			if stage['CaliperData']!=None:
 				MD = stage['CaliperData']['MD_array']
 				ID = stage['CaliperData']['CALmax_array']
+			elif stage['WellboreProps']!=None:
+				MD = cu.mdl.array( [stage['WellboreProps'].MDtop[0], stage['WellboreProps'].MDbot[0]] )
+				ID = cu.mdl.array( [stage['WellboreProps'].DriftID[0], stage['WellboreProps'].DriftID[0]] )
+			else:
+				del self.wellboreOuterStageData[k]
 				
 			if workWellbore_exist:
 				self.workWellboreMD = cu.mdl.np.hstack( (self.workWellboreMD, MD) )
@@ -287,6 +288,8 @@ def update_wellboreOuterStageData(self):
 				self.workWellboreMD = MD
 				self.workWellboreID = ID
 				workWellbore_exist = True
+
+		print_wellboreOuterStageData(self)
 
 
 @disableByBlock_currentWellboreInnerStageDataItem
@@ -795,18 +798,23 @@ def adjust_ID(self):
 
 
 def print_wellboreInnerStageData(self):
-	#
+
+	print('-----------------------------------------')
 	K = list(self.wellboreInnerStageData.keys())
 	K.sort()
 	for k in K:
-		#
-	#
-
+		print('\n',self.wellboreInnerStageData[k],'\n')
+	print('-----------------------------------------\n')
+	pass
 
 def print_wellboreOuterStageData(self):
-	#
+	
+	print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv')
 	K = list(self.wellboreOuterStageData.keys())
 	K.sort()
 	for k in K:
-		#
-	#
+		print('\n',self.wellboreOuterStageData[k],'\n')
+	print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n')
+	print(self.workWellboreMD,self.workWellboreID)
+	
+	pass

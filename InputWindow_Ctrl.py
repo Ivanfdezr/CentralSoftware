@@ -11,6 +11,7 @@ import SurveyFunctions as sf
 import WellboreFunctions as wf
 import importlib
 import testlib as tl
+import sys
 
 
 class Main_InputWindow(Ui_InputWindow):
@@ -38,6 +39,9 @@ class Main_InputWindow(Ui_InputWindow):
 		self.__init__s3CentralizerRunningForce_tableWidgets()
 		self.__init__s3CentralizerLocation_tableWidgets()
 
+		self.actionAbout.triggered.connect(self.about)
+		self.objectsSizes = {}
+
 		self.actionOne_Span_Analysis.triggered.connect(self.open_oneSpanAnalysisDialog)
 		self.actionStar_Calculation.triggered.connect(self.open_outputWindow)
 		self.s1UnitSetting_pushButton.clicked.connect(self.open_unitSettingsDialog)
@@ -64,7 +68,7 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s3ODID_pushButton.clicked.connect(adjust_Wt)
 		self.s3ODWt_pushButton.clicked.connect(adjust_ID)
 
-		self.s3SpecifyLocationCentralization_pushButton.clicked.connect(self.open_LocationSetup_dialog)
+		self.s3SpecifyLocationCentralization_pushButton.clicked.connect(self.open_LocationSetupDialog)
 
 		open_CDB_dialog_A = lambda: wf.open_CDB_dialog(self, 'A')
 		open_CDB_dialog_B = lambda: wf.open_CDB_dialog(self, 'B')
@@ -101,6 +105,32 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s3BowSpringCentralizer_radioButton_C.clicked.connect(setEnabled_bowSpringToolkit_C)
 		self.s3RigidCentralizer_radioButton_C.clicked.connect(setEnabled_rigidToolkit_C)
 		self.s3NoneCentralizer_radioButton_C.clicked.connect(setDisabled_centralizerToolkit_C)
+
+	def about(self):
+
+		importlib.reload(tl)
+		importlib.reload(lsctrl)
+		importlib.reload(mdl)
+		importlib.reload(cu)
+		importlib.reload(wf)
+		importlib.reload(sf)
+
+		print('----------------------------------------')
+		for i,attr in enumerate(dir(self)):
+			size = eval('sys.getsizeof(self.'+attr+')')
+			try:
+				if self.objectsSizes[attr]!=size:
+					try:
+						print( i,attr,self.objectsSizes[attr],size,eval('len(self.'+attr+')') )
+					except TypeError:
+						print( i,attr,self.objectsSizes[attr],size,'NA' )
+					self.objectsSizes[attr] = size
+			except KeyError:
+				try:
+					print( i,attr,'---',size,eval('len(self.'+attr+')') )
+				except TypeError:
+					print( i,attr,'---',size,'NA' )
+				self.objectsSizes[attr] = size
 
 
 	def set_workUnits_as(self, unitSystem):
@@ -142,11 +172,10 @@ class Main_InputWindow(Ui_InputWindow):
 		Main_UnitSettings(dialog)
 
 
-	def open_LocationSetup_dialog(self):
+	def open_LocationSetupDialog(self):
 		dialog = QtGui.QDialog(self.s3SpecifyLocationCentralization_pushButton)
-		importlib.reload(lsctrl)
 		lsctrl.Main_LocationSetup(dialog, self)
-
+		
 
 	def open_oneSpanAnalysisDialog(self):
 		dialog = QtGui.QDialog(self.iw_toolBar)
@@ -154,10 +183,8 @@ class Main_InputWindow(Ui_InputWindow):
 
 
 	def open_outputWindow(self):
-
 		from mpl_toolkits.mplot3d import Axes3D
 		import matplotlib.pyplot as plt
-		importlib.reload(tl)
 
 		fig = plt.figure()
 		ax = fig.gca(projection='3d')

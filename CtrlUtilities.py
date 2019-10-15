@@ -87,12 +87,25 @@ def select_tableWidgetRow(tableWidget, row):
 
 def update_fieldItem(item):
 	
+	"""
+	print('?',type(item))
+	print('-',item.text(),item.field.unit,item.field.dataType,item.currentChangebyVst)
+	print('??',TableWidgetFieldItem,isinstance(item,TableWidgetFieldItem))
 	if isinstance(item,TableWidgetFieldItem):
+		print('>')
 		if item.currentChangebyVst:
+			print('>>')
 			item.set_text(item.text())
 
 		item.currentChangebyVst = True
-
+	"""
+	try:
+		if item.currentChangebyVst:
+			item.set_text(item.text())
+		item.currentChangebyVst = True
+	
+	except AttributeError:
+		pass
 
 def create_physicalValue_and_appendTo_field(value, field, unit=None ):
 
