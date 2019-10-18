@@ -5,6 +5,8 @@ import codecs
 from MdlUtilities import Field, FieldList
 import MdlUtilities as mdl
 import dbUtils
+import time
+import copy
 
 
 def get_lengthUnits():
@@ -82,11 +84,13 @@ class DerivativeLevelsMatrix( object ):
 
 	def __init__( self, MD, ID ):
 
+		tic = time.time()
 		self.MD = np.array( MD )
-		self.ID = np.array( ID )
-		self.IDmaxOrig = np.max( self.ID, axis=0 )
-		self.IDminOrig = np.min( self.ID, axis=0 )
+		self.IDOrig = np.array( ID )
+		self.IDmaxOrig = np.max( self.IDOrig, axis=0 )
+		self.IDminOrig = np.min( self.IDOrig, axis=0 )
 		self.IDmax = np.array(self.IDmaxOrig)
+		self.ID = np.array(self.IDOrig)
 
 		assert( len(self.MD)==len(self.IDmax) )
 	
@@ -107,6 +111,8 @@ class DerivativeLevelsMatrix( object ):
 		levels = levels.reshape(-1,1)
 
 		self.indexKeepingMatrix = derivativeLevel>=levels
+		toc = time.time()
+		print('ETA: ',toc-tic,'s')
 
 
 	def get_leveredID( self, thresholdLevel ):
@@ -116,18 +122,21 @@ class DerivativeLevelsMatrix( object ):
 		indexesKeepingRowR = indexesKeepingRow + [True]
 		indexesKeepingRow = np.logical_or( indexesKeepingRowL, indexesKeepingRowR )
 
+		self.IDmax = np.array(self.IDmaxOrig)
+		self.ID = np.array(self.IDOrig)
+
 		avgIndexes = []
 		for i,index in enumerate(indexesKeepingRow):
 			if index:
 				#self.ID[avgIndexes] = np.mean(self.ID[avgIndexes])
 				for arm in range(len(self.ID)):
-					self.ID[arm][avgIndexes] = mdl.make_cleanAverage(self.ID[arm][avgIndexes])
-				self.IDmax[avgIndexes] = mdl.make_cleanAverage(self.IDmax[avgIndexes])
+					self.ID[arm][avgIndexes] = mdl.make_cleanAverage(self.IDOrig[arm][avgIndexes])
+				self.IDmax[avgIndexes] = mdl.make_cleanAverage(self.IDmaxOrig[avgIndexes])
 				avgIndexes = []
 			else:
 				avgIndexes.append(i)
 
-		return list(self.ID), self.IDmax, self.IDmaxOrig, self.IDminOrig
+		#return list(self.ID), self.IDmax, self.IDmaxOrig, self.IDminOrig
 
 
 def reduce_IDandMD( ID, MD ):
@@ -145,6 +154,21 @@ def reduce_IDandMD( ID, MD ):
 	MD = MD[indexesKeepingRow]
 
 	return ID, MD
+
+
+def reduce_ID( ID ):
+
+	ID = np.array(ID)
+
+	boolIDvariance = list(ID[1:]!=ID[:-1])
+	boolIDvariance_L = boolIDvariance + [True]
+	boolIDvariance_R = [True] + boolIDvariance
+
+	indexesKeepingRow = np.logical_or( boolIDvariance_L, boolIDvariance_R )
+
+	ID = ID[indexesKeepingRow]
+
+	return ID
 
 
 	

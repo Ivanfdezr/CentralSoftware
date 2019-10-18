@@ -30,7 +30,8 @@ class Main_CaliperImport(Ui_CaliperImport):
 		self.ciIDvalueUnit_comboBox.setCurrentIndex(i)
 		self.ciApplyAndDraw_pushButton.clicked.connect( self.applyAndDraw_caliperData )
 		self.ciCommaDelimiter_checkBox.stateChanged.connect( self.setNumberPattern )
-		self.ciHoleIDsmoothing_slider.valueChanged.connect( self.draw_caliperData )
+		self.ciHoleIDsmoothing_slider.valueChanged.connect( self.update_ciHoleIDsmoothing_label )
+		self.ciHoleIDsmoothing_slider.sliderReleased.connect( self.draw_caliperData )
 		self.ciHoleIDsmoothing_slider.actionTriggered.connect( self.update_sliderValue )
 		self.ciAccept_pushButton.clicked.connect( self.makeResults_and_done )
 
@@ -54,16 +55,15 @@ class Main_CaliperImport(Ui_CaliperImport):
 		for MDvalue in self.ciHoleIDsmoothing_graphicsView_yselection:
 			cu.create_physicalValue_and_appendTo_field( MDvalue, self.ciLASData_fields.selectedMD )
 
-		for arm,ID in enumerate(self.ID):
-			self.ID[arm], self.MD = mdl.reduce_IDandMD( ID, self.ciLASData_fields.MD )
-		id_mean = mu.make_cleanAverage( self.IDmax )
-
-		for arm,field in enumerate(self.ciCALData_fields):
+		for arm,ID in enumerate(self.DLM.ID):
+			ID = mdl.reduce_ID( ID )
+			field = self.ciCALData_fields[arm]
 			field.clear()
-			for IDvalue in self.ID[arm]:
+			for IDvalue in ID:
 				cu.create_physicalValue_and_appendTo_field( IDvalue, field )
-
-		self.CALID_max = mu.np.max( self.ID, axis=0 )
+		
+		id_mean = mu.make_cleanAverage( self.DLM.IDmax )
+		self.CALID_max, self.MD = mdl.reduce_IDandMD( self.DLM.IDmax, self.ciLASData_fields.MD )
 
 		self.ciLASData_fields.MD.clear()
 		for MDvalue in self.MD:
@@ -260,7 +260,7 @@ class Main_CaliperImport(Ui_CaliperImport):
 		if self.feasibleDrawFlagOD:
 			self.OD = mu.array(self.ciLASData_fields.CD)
 
-		if True:#self.check_conditionsForDraw():
+		if self.check_conditionsForDraw(): #True
 			self.wasPushedApplyAndDrawButton = True
 			self.draw_caliperData()
 
@@ -286,28 +286,40 @@ class Main_CaliperImport(Ui_CaliperImport):
 		self.ciLocationsCount_label.setText( 'Number of locations: '+str(len(self.ciHoleIDsmoothing_graphicsView_yselection)) )
 
 
-	def draw_caliperData(self, value=None):
+	def update_ciHoleIDsmoothing_label(self, value=None):
 
 		if not value:
 			value = self.ciHoleIDsmoothing_slider.value()
-		
 		self.ciHoleIDsmoothing_label.setText( str(value)+'%' )
-		DLM = mdl.DerivativeLevelsMatrix( self.ciLASData_fields.MD, self.ciCALData_fields )
-		self.ID, self.IDmax, self.IDmaxOrig, self.IDminOrig = DLM.get_leveredID(value)
+
+		return value
+
+
+	def draw_caliperData(self, value=None):
+
+		#if not value:
+		#	value = self.ciHoleIDsmoothing_slider.value()
+		#self.ciHoleIDsmoothing_label.setText( str(value)+'%' )
+
+		value = self.update_ciHoleIDsmoothing_label(value)
+
+		if self.wasPushedApplyAndDrawButton:
+			self.DLM = mdl.DerivativeLevelsMatrix( self.ciLASData_fields.MD, self.ciCALData_fields )
+		self.DLM.get_leveredID(value)
 
 		self.ciHoleIDsmoothing_graphicsView_yselection.clear()
 		self.ciHoleIDsmoothing_graphicsView.axes.clear()
-		#self.ciHoleIDsmoothing_graphicsView.axes.plot( self.IDmaxOrig, self.ciLASData_fields.MD, 'C0' )
-		#self.ciHoleIDsmoothing_graphicsView.axes.plot( self.IDminOrig, self.ciLASData_fields.MD, 'C0', alpha=0.5 )
+		#self.ciHoleIDsmoothing_graphicsView.axes.plot( self.DLM.IDmaxOrig, self.ciLASData_fields.MD, 'C0' )
+		#self.ciHoleIDsmoothing_graphicsView.axes.plot( self.DLM.IDminOrig, self.ciLASData_fields.MD, 'C0', alpha=0.5 )
 		
-		#self.IDmaxOrig = list(self.IDmaxOrig)
+		#self.DLM.IDmaxOrig = list(self.DLM.IDmaxOrig)
 		MD_array = mu.array(self.ciLASData_fields.MD)
 		
-		self.ciHoleIDsmoothing_graphicsView.axes.fill_betweenx( MD_array, -self.IDmaxOrig, +self.IDmaxOrig, alpha=0.3)
-		self.ciHoleIDsmoothing_graphicsView.axes.fill_betweenx( MD_array, -self.IDminOrig, -self.IDmaxOrig, alpha=0.6, color='C0')
-		self.ciHoleIDsmoothing_graphicsView.axes.fill_betweenx( MD_array, +self.IDminOrig, +self.IDmaxOrig, alpha=0.6, color='C0')
-		self.ciHoleIDsmoothing_graphicsView.axes.plot( -self.IDmax, self.ciLASData_fields.MD, 'C1', lw=1.5 )
-		self.ciHoleIDsmoothing_graphicsView.axes.plot( +self.IDmax, self.ciLASData_fields.MD, 'C1', lw=1.5 )
+		self.ciHoleIDsmoothing_graphicsView.axes.fill_betweenx( MD_array, -self.DLM.IDmaxOrig, +self.DLM.IDmaxOrig, alpha=0.3)
+		self.ciHoleIDsmoothing_graphicsView.axes.fill_betweenx( MD_array, -self.DLM.IDminOrig, -self.DLM.IDmaxOrig, alpha=0.6, color='C0')
+		self.ciHoleIDsmoothing_graphicsView.axes.fill_betweenx( MD_array, +self.DLM.IDminOrig, +self.DLM.IDmaxOrig, alpha=0.6, color='C0')
+		self.ciHoleIDsmoothing_graphicsView.axes.plot( -self.DLM.IDmax, self.ciLASData_fields.MD, 'C1', lw=1.5 )
+		self.ciHoleIDsmoothing_graphicsView.axes.plot( +self.DLM.IDmax, self.ciLASData_fields.MD, 'C1', lw=1.5 )
 		self.ciHoleIDsmoothing_graphicsView.axes.plot( -self.BS, self.ciLASData_fields.MD, 'C2--', lw=1.5 )
 		self.ciHoleIDsmoothing_graphicsView.axes.plot( +self.BS, self.ciLASData_fields.MD, 'C2--', lw=1.5 )
 
@@ -318,7 +330,7 @@ class Main_CaliperImport(Ui_CaliperImport):
 		self.ciHoleIDsmoothing_graphicsView.axes.set_xlabel( self.ciCALData_fields.CAL1.headerName )
 		self.ciHoleIDsmoothing_graphicsView.axes.set_ylabel( self.ciLASData_fields.MD.headerName )
 
-		lim_ID = max(self.IDmaxOrig)*1.2	
+		lim_ID = max(self.DLM.IDmaxOrig)*1.2	
 		self.ciHoleIDsmoothing_graphicsView.axes.set_xlim( -lim_ID, lim_ID )
 		if self.wasPushedApplyAndDrawButton:
 			self.ciHoleIDsmoothing_graphicsView.axes.set_ylim( max(self.ciLASData_fields.MD), min(self.ciLASData_fields.MD) )

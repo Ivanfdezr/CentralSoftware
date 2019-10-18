@@ -280,6 +280,8 @@ def update_wellboreOuterStageData(self):
 				ID = cu.mdl.array( [stage['WellboreProps'].DriftID[0], stage['WellboreProps'].DriftID[0]] )
 			else:
 				del self.wellboreOuterStageData[k]
+				MD = cu.mdl.array([])
+				ID = cu.mdl.array([])
 				
 			if workWellbore_exist:
 				self.workWellboreMD = cu.mdl.np.hstack( (self.workWellboreMD, MD) )
@@ -290,6 +292,7 @@ def update_wellboreOuterStageData(self):
 				workWellbore_exist = True
 
 		print_wellboreOuterStageData(self)
+		print('>>>',len(self.workWellboreMD),len(self.workWellboreID))
 
 
 @disableByBlock_currentWellboreInnerStageDataItem
@@ -815,6 +818,4 @@ def print_wellboreOuterStageData(self):
 	for k in K:
 		print('\n',self.wellboreOuterStageData[k],'\n')
 	print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n')
-	print(self.workWellboreMD,self.workWellboreID)
-	
 	pass

@@ -1,11 +1,23 @@
 import numpy as np
-from numpy import array
+#from numpy import array
 import re
 import dbUtils
 import matplotlib.tri as mpltri
 
 
 gravitationalAcceleration = 32.17405*12 #in/s²
+
+
+def __repr__(self):
+	if len(self)==0:
+		return '[]'
+	elif len(self)==1:
+		return '[' + str(self[0]) +']'
+	else:
+		return '[' + str(self[0]) +', ... '+ str(self[-1]) + ']'
+
+np.set_string_function(__repr__)
+array = lambda L: np.array(L)
 
 
 def get_decimalPointPattern():
@@ -364,14 +376,16 @@ class Field( list ):
 			self.offsetToReferenceUnit = None
 			self.referenceUnit = None
 
-
 	def __repr__(self):
+		"""
 		if len(self)==0:
 			return '[]'
 		elif len(self)==1:
 			return '[' + str(self[0]) +']'
 		else:
 			return '[' + str(self[0]) +', ... '+ str(self[-1]) + ']'
+		"""
+		return __repr__(self)
 
 	
 	def set_abbreviation(self, newAbbreviation):
