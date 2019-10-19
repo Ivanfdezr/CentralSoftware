@@ -1,12 +1,7 @@
-import re
 import numpy as np
-import numpy.linalg as la
-import codecs
 from MdlUtilities import Field, FieldList
 import MdlUtilities as mdl
 import dbUtils
-import time
-import copy
 
 
 def get_lengthUnits():
@@ -84,7 +79,6 @@ class DerivativeLevelsMatrix( object ):
 
 	def __init__( self, MD, ID ):
 
-		tic = time.time()
 		self.MD = np.array( MD )
 		self.IDOrig = np.array( ID )
 		self.IDmaxOrig = np.max( self.IDOrig, axis=0 )
@@ -111,8 +105,6 @@ class DerivativeLevelsMatrix( object ):
 		levels = levels.reshape(-1,1)
 
 		self.indexKeepingMatrix = derivativeLevel>=levels
-		toc = time.time()
-		print('ETA: ',toc-tic,'s')
 
 
 	def get_leveredID( self, thresholdLevel ):

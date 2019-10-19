@@ -32,7 +32,7 @@ class Main_CaliperImport(Ui_CaliperImport):
 		self.ciCommaDelimiter_checkBox.stateChanged.connect( self.setNumberPattern )
 		self.ciHoleIDsmoothing_slider.valueChanged.connect( self.update_ciHoleIDsmoothing_label )
 		self.ciHoleIDsmoothing_slider.sliderReleased.connect( self.draw_caliperData )
-		self.ciHoleIDsmoothing_slider.actionTriggered.connect( self.update_sliderValue )
+		#self.ciHoleIDsmoothing_slider.actionTriggered.connect( self.update_sliderValue )
 		self.ciAccept_pushButton.clicked.connect( self.makeResults_and_done )
 
 		self.ciHoleIDsmoothing_graphicsView.axes.set_position([0.23,0.1,0.7,0.85])
@@ -49,47 +49,19 @@ class Main_CaliperImport(Ui_CaliperImport):
 		dialog.exec_()
 
 
-	def makeResults_and_done(self):
-
-		self.ciLASData_fields.selectedMD.clear()
-		for MDvalue in self.ciHoleIDsmoothing_graphicsView_yselection:
-			cu.create_physicalValue_and_appendTo_field( MDvalue, self.ciLASData_fields.selectedMD )
-
-		for arm,ID in enumerate(self.DLM.ID):
-			ID = mdl.reduce_ID( ID )
-			field = self.ciCALData_fields[arm]
-			field.clear()
-			for IDvalue in ID:
-				cu.create_physicalValue_and_appendTo_field( IDvalue, field )
-		
-		id_mean = mu.make_cleanAverage( self.DLM.IDmax )
-		self.CALID_max, self.MD = mdl.reduce_IDandMD( self.DLM.IDmax, self.ciLASData_fields.MD )
-
-		self.ciLASData_fields.MD.clear()
-		for MDvalue in self.MD:
-			cu.create_physicalValue_and_appendTo_field( MDvalue, self.ciLASData_fields.MD )
-
-		self.ciCaliperReport_fields = mdl.get_ciCaliperReport_fields()
-		max_MD = max(self.ciLASData_fields.MD)
-		min_MD = min(self.ciLASData_fields.MD)
-
-		bs_mean = mu.make_cleanAverage( self.BS )
-		cu.create_physicalValue_and_appendTo_field( 'DR-CAL', self.ciCaliperReport_fields.Desc    )
-		cu.create_physicalValue_and_appendTo_field( id_mean,  self.ciCaliperReport_fields.ID      )
-		cu.create_physicalValue_and_appendTo_field( bs_mean,  self.ciCaliperReport_fields.DriftID )
-		cu.create_physicalValue_and_appendTo_field( min_MD,   self.ciCaliperReport_fields.MDtop   )
-		cu.create_physicalValue_and_appendTo_field( max_MD,   self.ciCaliperReport_fields.MDbot   )
-
-		##
-		self.data = self.ciCaliperReport_fields.extract_data_from_row( 0 )
-		self.fields = self.ciCaliperReport_fields
-		self.dialog.done(0)
-	
-
 	def update_sliderValue(self, intAction):
 		
 		self.ciHoleIDsmoothing_slider.setValue( self.ciHoleIDsmoothing_slider.sliderPosition() )
-	
+
+
+	def update_ciHoleIDsmoothing_label(self, value=None):
+
+		if not value:
+			value = self.ciHoleIDsmoothing_slider.value()
+		self.ciHoleIDsmoothing_label.setText( str(value)+'%' )
+
+		return value
+
 
 	def setNumberPattern(self, state=None):
 
@@ -124,11 +96,15 @@ class Main_CaliperImport(Ui_CaliperImport):
 		with open(filepath,'r') as file:
 			self.FileLines = file.readlines()
 
-		text = ''
+		self.numofRows = len(self.FileLines)
 		for row, line in enumerate(self.FileLines):
-			text += str(row+1)+'\t'+line
-
-		self.ciFileText_textEdit.setText(text)
+			text = str(row+1)+'\t'+line
+			self.ciFileText_textEdit.insertPlainText(text)
+			self.ciStatus_label.setText( 'Loading ... {val}%'.format(val=int(row/self.numofRows*100)) )
+			if row%500==0:
+				cu.idleFunction()
+		
+		self.ciStatus_label.setText('')
 		self.setEnabled_parsingDRCalToolkit()
 
 
@@ -139,6 +115,9 @@ class Main_CaliperImport(Ui_CaliperImport):
 		self.ciColumnIndexes_groupBox.setEnabled(boolean)
 		self.ciFilter_groupBox.setEnabled(boolean)
 		self.ciApplyAndDraw_pushButton.setEnabled(boolean)
+
+
+	def setEnabled_smoothingDRCalToolkit(self, boolean=True):
 		self.ciHoleIDsmoothing_slider.setEnabled(boolean)
 		self.ciHoleIDsmoothing_graphicsView.setEnabled(boolean)
 		self.ciHoleIDsmoothing_label.setEnabled(boolean)
@@ -148,10 +127,11 @@ class Main_CaliperImport(Ui_CaliperImport):
 	def applyAndDraw_caliperData(self):
 
 		self.setEnabled_parsingDRCalToolkit(False)
+		self.setEnabled_smoothingDRCalToolkit(False)
 		cu.idleFunction()
 
-		fileTextStartingRow   = (self.ciStartingRow_spinBox.value()-1)%len(self.FileLines) #self.ciFileText_tableWidget.rowCount()
-		fileTextEndingRow     = (self.ciEndingRow_spinBox.value() - 1)%len(self.FileLines) #self.ciFileText_tableWidget.rowCount()
+		fileTextStartingRow   = (self.ciStartingRow_spinBox.value()-1)%self.numofRows #self.ciFileText_tableWidget.rowCount()
+		fileTextEndingRow     = (self.ciEndingRow_spinBox.value() - 1)%self.numofRows #self.ciFileText_tableWidget.rowCount()
 		fileTextMDcolumnIndex = (self.ciMDcolumnIndex_spinBox.value()-1)%99
 		fileTextH1columnIndex = (self.ciH1columnIndex_spinBox.value()-1)%99
 		fileTextH2columnIndex = (self.ciH2columnIndex_spinBox.value()-1)%99
@@ -255,6 +235,12 @@ class Main_CaliperImport(Ui_CaliperImport):
 			except AssertionError:
 				continue
 
+			self.ciStatus_label.setText( 'Drawing ... {val}%'.format(val=int(row/self.numofRows*100)) )
+			if row%500==0:
+				cu.idleFunction()
+
+		self.ciStatus_label.setText('')
+
 		if self.feasibleDrawFlagBS:
 			self.BS = mu.array(self.ciLASData_fields.BS)
 		if self.feasibleDrawFlagOD:
@@ -265,6 +251,7 @@ class Main_CaliperImport(Ui_CaliperImport):
 			self.draw_caliperData()
 
 		self.setEnabled_parsingDRCalToolkit(True)
+		self.setEnabled_smoothingDRCalToolkit(True)
 		self.wasPushedApplyAndDrawButton = False
 
 	
@@ -284,15 +271,6 @@ class Main_CaliperImport(Ui_CaliperImport):
 		xlim = self.ciHoleIDsmoothing_graphicsView.axes.get_xlim()
 		self.ciHoleIDsmoothing_graphicsView.axes.plot( xlim, [MDposition,MDposition], 'C3' )
 		self.ciLocationsCount_label.setText( 'Number of locations: '+str(len(self.ciHoleIDsmoothing_graphicsView_yselection)) )
-
-
-	def update_ciHoleIDsmoothing_label(self, value=None):
-
-		if not value:
-			value = self.ciHoleIDsmoothing_slider.value()
-		self.ciHoleIDsmoothing_label.setText( str(value)+'%' )
-
-		return value
 
 
 	def draw_caliperData(self, value=None):
@@ -345,3 +323,40 @@ class Main_CaliperImport(Ui_CaliperImport):
 		# l, b, w, h 
 		##
 
+
+	def makeResults_and_done(self):
+
+		self.ciLASData_fields.selectedMD.clear()
+		for MDvalue in self.ciHoleIDsmoothing_graphicsView_yselection:
+			cu.create_physicalValue_and_appendTo_field( MDvalue, self.ciLASData_fields.selectedMD )
+
+		for arm,ID in enumerate(self.DLM.ID):
+			ID = mdl.reduce_ID( ID )
+			field = self.ciCALData_fields[arm]
+			field.clear()
+			for IDvalue in ID:
+				cu.create_physicalValue_and_appendTo_field( IDvalue, field )
+		
+		id_mean = mu.make_cleanAverage( self.DLM.IDmax )
+		self.CALID_max, self.MD = mdl.reduce_IDandMD( self.DLM.IDmax, self.ciLASData_fields.MD )
+
+		self.ciLASData_fields.MD.clear()
+		for MDvalue in self.MD:
+			cu.create_physicalValue_and_appendTo_field( MDvalue, self.ciLASData_fields.MD )
+
+		self.ciCaliperReport_fields = mdl.get_ciCaliperReport_fields()
+		max_MD = max(self.ciLASData_fields.MD)
+		min_MD = min(self.ciLASData_fields.MD)
+
+		bs_mean = mu.make_cleanAverage( self.BS )
+		cu.create_physicalValue_and_appendTo_field( 'DR-CAL', self.ciCaliperReport_fields.Desc    )
+		cu.create_physicalValue_and_appendTo_field( id_mean,  self.ciCaliperReport_fields.ID      )
+		cu.create_physicalValue_and_appendTo_field( bs_mean,  self.ciCaliperReport_fields.DriftID )
+		cu.create_physicalValue_and_appendTo_field( min_MD,   self.ciCaliperReport_fields.MDtop   )
+		cu.create_physicalValue_and_appendTo_field( max_MD,   self.ciCaliperReport_fields.MDbot   )
+
+		##
+		self.data = self.ciCaliperReport_fields.extract_data_from_row( 0 )
+		self.fields = self.ciCaliperReport_fields
+		self.dialog.done(0)
+	
