@@ -1,6 +1,7 @@
 import numpy as np
 #from numpy import array
 import re
+import copy
 import dbUtils
 import matplotlib.tri as mpltri
 
@@ -301,8 +302,16 @@ class FieldList( list ):
 		
 		fields = FieldList()
 
+		"""
 		for field in self:
 			newfield = Field(field.id)
+			newfield.append(field[row])
+			fields.append(newfield)
+		"""
+
+		for field in self:
+			newfield = copy.deepcopy( field )
+			newfield.clear()
 			newfield.append(field[row])
 			fields.append(newfield)
 
@@ -426,6 +435,18 @@ class Field( list ):
 			value = physicalValue(value, unit)
 			value._repr_ = newValue
 		super().append(value)
+
+
+	def put(self, pos, newValue):
+		if isNoneEntry(newValue) or newValue==None:
+			value = physicalValue(None, self.unit)
+			value._repr_ = physicalValue(None, self.unit)
+		else:
+			unit = newValue.unit
+			value = self.dataType(newValue)
+			value = physicalValue(value, unit)
+			value._repr_ = newValue
+		self[pos] = value
 
 
 	def referenceUnitConvert(self):

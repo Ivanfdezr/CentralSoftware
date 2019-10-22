@@ -31,11 +31,11 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.lsCalculate_pushButton.clicked.connect( self.calculate_SO )
 
 		self.stage = parent.currentWellboreInnerStageDataItem
-		if self.stage['row']>=1:
-			row = self.stage['row']-1
-			self.previousStage = parent.wellboreInnerStageData[row]
-		else:
-			self.previousStage = None
+		#if self.stage['row']>=1:
+		#	row = self.stage['row']-1
+		#	self.previousStage = parent.wellboreInnerStageData[row]
+		#else:
+		#	self.previousStage = None
 
 		self.max_MD = self.stage['MD']
 		self.min_MD = self.max_MD-self.stage['Length']
@@ -100,6 +100,8 @@ class Main_LocationSetup(Ui_LocationSetup):
 		NS = parent.s2DataSurvey_fields.NS[min_index:max_index+1]
 		VD = parent.s2DataSurvey_fields.TVD[min_index:max_index+1]
 		
+		print(self.min_MD, self.max_MD, min_index,max_index,parent.s2DataSurvey_fields)
+
 		EW[0] = min_EW
 		NS[0] = min_NS
 		VD[0] = min_VD
@@ -221,8 +223,8 @@ class Main_LocationSetup(Ui_LocationSetup):
 			#F = mdl.get_axialTension_below_MD(self, MD)
 			##
 			
-			mdl.calculate_standOff_atCentralizers(self)
-			mdl.calculate_standOff_atMidspan(self)
+			#mdl.calculate_standOff_atCentralizers(self)
+			#mdl.calculate_standOff_atMidspan(self)
 
 			for i, MDi in enumerate(self.lsCentralizerLocations_fields.MD):
 				

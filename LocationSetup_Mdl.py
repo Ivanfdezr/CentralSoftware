@@ -147,9 +147,10 @@ def calculate_axialForce_field(self):
 	L = MDs[1]-MDs[0]
 
 	for i in range(len(MDs)-1):
-		for j in range(len(self.parent.wellboreInnerStageData)):
-		
-			stage = self.parent.wellboreInnerStageData[j]
+		K = list(self.parent.wellboreInnerStageData.keys())
+		K.sort()
+		for k in K:
+			stage = self.parent.wellboreInnerStageData[k]
 			stageTopMD = mdl.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
 			W = mdl.referenceUnitConvert_value( stage['PipeProps'].W[0], stage['PipeProps'].W[0].unit )
 			

@@ -99,13 +99,11 @@ def update_fieldItem(item):
 
 		item.currentChangebyVst = True
 	"""
-	try:
+	if 'text' in dir(item):
 		if item.currentChangebyVst:
 			item.set_text(item.text())
 		item.currentChangebyVst = True
 	
-	except AttributeError:
-		pass
 
 def create_physicalValue_and_appendTo_field(value, field, unit=None ):
 

@@ -7,7 +7,6 @@ import InputWindow_Mdl as mdl
 import CtrlUtilities as cu
 import copy
 
-
 import importlib
 import CaliperImport_Ctrl as caliper
 
@@ -127,6 +126,7 @@ def updateByBlock_currentWellboreInnerStageDataItem(function):
 		function(*args, **kwargs)
 		self.wellboreInnerStageDataIsUpdatable = True
 		update_wellboreInnerStageData(self)
+		print_wellboreInnerStageData(self)
 
 	return wrap_function
 
@@ -159,6 +159,7 @@ def update_fieldItem_and_wellboreInnerStageData(self, item):
 
 	cu.update_fieldItem(item)
 	update_wellboreInnerStageData(self)
+	#print_wellboreInnerStageData(self)
 
 
 def update_fieldItem_and_wellboreOuterStageData(self, item):
@@ -179,12 +180,18 @@ def update_wellboreInnerStageData(self):
 			item = self.s3PipeProperties_tableWidget.item(field.pos, 0)
 			field.append(item.realValue)
 
-		#row = self.currentWellboreInnerStageDataItem['row']
 		row = self.s3PipeCentralizationStage_tableWidget.selectedRow
 		description = self.s3PipeCentralizationStage_fields.Desc
 		descriptionItem = self.s3PipeCentralizationStage_tableWidget.item(row, description.pos)
 
 		self.currentWellboreInnerStageDataItem['PipeProps'] = copy.deepcopy(self.s3PipeProperties_fields)
+
+		K = list(self.wellboreInnerStageData.keys())
+		K.sort()
+		for k in K:
+			stage = self.wellboreInnerStageData[k]
+			if stage['PipeProps']==None:
+				del stage
 
 		if self.s3SpecifySpacingCentralization_radioButton.isChecked():
 			label = 'by Spacing'
@@ -197,7 +204,6 @@ def update_wellboreInnerStageData(self):
 
 		elif self.s3NoneCentralization_radioButton.isChecked():
 			descriptionItem.set_text( self.s3PipeProperties_fields.Desc[0] +'\nwithout Centralization'  )
-			print_wellboreInnerStageData(self)
 			return
 
 		self.currentWellboreInnerStageDataItem['Centralization']['Mode'] = label
@@ -246,7 +252,6 @@ def update_wellboreInnerStageData(self):
 					field.append(item.realValue)
 
 			self.currentWellboreInnerStageDataItem['Centralization'][tab]['Location'] = copy.deepcopy(s3CentralizerLocation_fields)
-		print_wellboreInnerStageData(self)
 
 
 def update_wellboreOuterStageData(self):
@@ -292,7 +297,7 @@ def update_wellboreOuterStageData(self):
 				workWellbore_exist = True
 
 		print_wellboreOuterStageData(self)
-		print('>>>',len(self.workWellboreMD),len(self.workWellboreID))
+		print('>> MD ID =',len(self.workWellboreMD),len(self.workWellboreID))
 
 
 @disableByBlock_currentWellboreInnerStageDataItem
@@ -331,12 +336,12 @@ def delete_outerStageObjects(self):
 	#assert( row in self.wellboreOuterStageData )
 
 
-@updateByBlock_currentWellboreInnerStageDataItem
+@disableByBlock_currentWellboreInnerStageDataItem 
 def delete_innerStageObjects(self):
 
 	row = cu.clear_tableWidgetRow(self.s3PipeCentralizationStage_tableWidget)
+	clear_wellboreInnerStageToolkit(self)
 	del self.wellboreInnerStageData[row]
-	#assert( row in self.wellboreInnerStageData )
 
 
 #@updateByBlock_currentWellboreInnerStageDataItem
@@ -596,6 +601,7 @@ def open_TDB_dialog_for_innerStages(self):
 	
 	dialog = QtGui.QDialog(self.s3PipeProperties_tableWidget)
 	TDB = Main_TubularDatabase(dialog)
+	if 'fields' not in dir(TDB): return
 	self.currentWellboreInnerStageDataItem['PipeBase'] = TDB.fields
 
 	for field in self.s3PipeProperties_fields:
@@ -627,6 +633,7 @@ def open_CDB_dialog(self, tab):
 	elif s3RigidCentralizer_radioButton.isChecked():
 		CDB = Main_CentralizerDatabase(dialog, 'Rigid' )
 	
+	if 'fields' not in dir(CDB): return
 	self.currentWellboreInnerStageDataItem['Centralization'][tab]['CentralizerBase'] = CDB.fields
 
 	for field in s3CentralizerProperties_fields:
@@ -671,6 +678,7 @@ def open_caliper_dialog(self):
 
 	dialog = QtGui.QDialog(self.s3WellboreIntervals_tableWidget)
 	CI = caliper.Main_CaliperImport(dialog)
+	if 'data' not in dir(CI): return
 
 	row = self.s3WellboreIntervals_tableWidget.selectedRow
 	self.currentWellboreOuterStageDataItem['CaliperData'] = {	'CAL_fields': CI.ciCALData_fields, 
@@ -745,7 +753,8 @@ def adjust_Length_and_MD(self, item):
 			self.s3PipeCentralizationStage_tableWidget.item(row, self.s3PipeCentralizationStage_fields.L.pos).set_text()
 		
 		try:
-			lastMD = min(self.s3WellboreIntervals_fields.MDtop)
+			lastMD = min(self.workWellboreMD)
+			print(lastMD)
 		except ValueError:
 			msg = "Any top MD has been assigned yet in Wellbore intervals. Can not proceed."
 			QtGui.QMessageBox.critical(self.s3PipeCentralizationStage_tableWidget, 'Error', msg)
@@ -778,6 +787,7 @@ def adjust_Length_and_MD(self, item):
 				self.wellboreInnerStageData[i]['Length'] = LTitem.realValue
 		
 		self._PipeCentralizationStageAdjusting_isEnabled = True
+		print_wellboreInnerStageData(self)
 
 
 def adjust_Wt(self):
