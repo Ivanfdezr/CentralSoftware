@@ -165,7 +165,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.lsCentralizerLocations_tableWidget.cellPressed.connect(self.select_row)
 		self.lsCentralizerLocations_tableWidget.itemChanged.connect(cu.update_fieldItem)
 
-		for field in self.lsCentralizerLocations_fields[:3]:
+		for field in self.lsCentralizerLocations_fields[:4]:
 			#
 			item = self.lsCentralizerLocations_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( field.headerName )
@@ -239,8 +239,8 @@ class Main_LocationSetup(Ui_LocationSetup):
 				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.MD.pos )
 				item.set_text( MDi )
 
-				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.DL.pos )
-				item.set_text( DLi )
+				#item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.DL.pos )
+				#item.set_text( DLi )
 
 				self.lsCaliperMap_graphicsView.axes.plot( xlim, [MDi, MDi], color='C3', lw=1 )
 
