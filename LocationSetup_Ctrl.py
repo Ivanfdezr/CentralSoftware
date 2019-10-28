@@ -157,8 +157,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 		V = cu.PasteToCells_action(self.lsCentralizerLocations_tableWidget)
 		self.lsCentralizerLocations_tableWidget.addAction(V)
 
-		clear_row = lambda: cu.clear_tableWidgetRow(self.lsCentralizerLocations_tableWidget)
-		D = cu.FunctionToWidget_action(self.lsCentralizerLocations_tableWidget, clear_row, "Delete", 'Del')
+		D = cu.FunctionToWidget_action(self.lsCentralizerLocations_tableWidget, self.remove_location, "Delete", 'Del')
 		self.lsCentralizerLocations_tableWidget.addAction(D)
 
 		#select_row = lambda r,c : cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,r)
@@ -177,35 +176,48 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.lsCentralizerLocations_tableWidget.resizeColumnsToContents()
 
 
+	def remove_location(self):
+
+		#cu.clear_tableWidgetRow(self.lsCentralizerLocations_tableWidget)
+		r = self.lsCentralizerLocations_tableWidget.selectedRow
+		self.lsCentralizerLocations_tableWidget.removeRow(r)
+		
+		if r<self.centralizerCount:
+			del self.lsCentralizerLocations_fields.MD[r]
+			del self.lsCentralizerLocations_fields.EW[r]
+			del self.lsCentralizerLocations_fields.NS[r]
+			del self.lsCentralizerLocations_fields.TVD[r]
+			self.centralizerCount-=1
+
+			if self.centralizerCount>0:
+				MD = self.lsCentralizerLocations_fields.MD[0]
+				EW = self.lsCentralizerLocations_fields.EW[0]
+				NS = self.lsCentralizerLocations_fields.NS[0]
+				VD = self.lsCentralizerLocations_fields.TVD[0]
+
+				cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,0)
+				self.draw_MDlocations(MD, EW, NS, VD, isRemoving=True)
+
+			else:
+				self.draw_MDlocations()
+
+
 	def select_row(self, r, c):
 
 		cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,r)
 		
 		if r<self.centralizerCount:
-			del self.lsCaliperMap_graphicsView.axes.lines[-1]
-			del self.lsWellbore3D_graphicsView.axes.lines[-1]
-
 			MD = self.lsCentralizerLocations_fields.MD[r]
 			EW = self.lsCentralizerLocations_fields.EW[r]
 			NS = self.lsCentralizerLocations_fields.NS[r]
-			TVD = self.lsCentralizerLocations_fields.TVD[r]
+			VD = self.lsCentralizerLocations_fields.TVD[r]
 
-			xlim = self.lsCaliperMap_graphicsView.axes.get_xlim()
-			self.lsCaliperMap_graphicsView.axes.plot( xlim, [MD, MD], 'C3', lw=4, alpha=0.4 )
-			self.lsWellbore3D_graphicsView.axes.plot( [EW],[NS],[TVD], marker='o', mec='black', color='C3', ms='8' )
-			self.lsCaliperMap_graphicsView.draw()
-			self.lsWellbore3D_graphicsView.draw()
+			self.draw_MDlocations(MD, EW, NS, VD)
 
 
 	def choose_MDlocation(self, MD):
 
-		xlim = self.lsCaliperMap_graphicsView.axes.get_xlim()
-
 		if MD>=self.min_MD and MD<=self.max_MD:
-
-			if self.centralizerCount>0:
-				del self.lsCaliperMap_graphicsView.axes.lines[-self.centralizerCount-1:]
-				del self.lsWellbore3D_graphicsView.axes.lines[-2:]
 
 			cu.create_physicalValue_and_appendTo_field( MD, self.lsCentralizerLocations_fields.MD )
 			MD = self.lsCentralizerLocations_fields.MD[-1]
@@ -220,14 +232,8 @@ class Main_LocationSetup(Ui_LocationSetup):
 			self.lsCentralizerLocations_fields.SideF.clear()
 			self.centralizerCount = len(self.lsCentralizerLocations_fields.MD)
 
-			#F = mdl.get_axialTension_below_MD(self, MD)
-			##
-			
-			#mdl.calculate_standOff_atCentralizers(self)
-			#mdl.calculate_standOff_atMidspan(self)
-
 			for i, MDi in enumerate(self.lsCentralizerLocations_fields.MD):
-				
+					
 				EWi,NSi,VDi,_ = mdl.get_ASCCoordinates_from_MD(self, MDi)
 				DLi = mdl.get_ASCDogleg_from_MD(self, MDi)
 				#SOi = mdl.get_standOff_for_MD(self, previousMDi, MDi)
@@ -239,28 +245,46 @@ class Main_LocationSetup(Ui_LocationSetup):
 				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.MD.pos )
 				item.set_text( MDi )
 
-				#item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.DL.pos )
-				#item.set_text( DLi )
-
-				self.lsCaliperMap_graphicsView.axes.plot( xlim, [MDi, MDi], color='C3', lw=1 )
-
 				if MDi==MD:
 					EW = EWi
 					NS = NSi
 					VD = VDi
 					cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,i)
 
-				previousMDi = MDi
+			self.draw_MDlocations(MD, EW, NS, VD)
+
+
+			#F = mdl.get_axialTension_below_MD(self, MD)
+			##
+			
+			#mdl.calculate_standOff_atCentralizers(self)
+			#mdl.calculate_standOff_atMidspan(self)		
+
+
+	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None):
+
+		xlim = self.lsCaliperMap_graphicsView.axes.get_xlim()
+
+		del self.lsCaliperMap_graphicsView.axes.lines[2:]
+		del self.lsWellbore3D_graphicsView.axes.lines[1:]
+
+		if MD!=None:
+
+			for MDi in self.lsCentralizerLocations_fields.MD:
+				self.lsCaliperMap_graphicsView.axes.plot( xlim, [MDi, MDi], color='C3', lw=1 )
 
 			self.lsCaliperMap_graphicsView.axes.plot( xlim, [MD, MD], color='C3', lw=4, alpha=0.4 )
-			#
 			
 			self.lsWellbore3D_graphicsView.axes.plot( 	self.lsCentralizerLocations_fields.EW,
 														self.lsCentralizerLocations_fields.NS,
 														self.lsCentralizerLocations_fields.TVD, marker='o', color='C3', alpha=0.5, ls='' )
 			
 			self.lsWellbore3D_graphicsView.axes.plot( [EW],[NS],[VD], marker='o', mec='black', color='C3', ms='8' )
-			self.lsWellbore3D_graphicsView.draw()
+		
+		self.lsCaliperMap_graphicsView.draw()
+		self.lsWellbore3D_graphicsView.draw()
+
+
 
 
 	def calculate_SO(self):
