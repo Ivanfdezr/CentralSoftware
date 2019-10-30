@@ -91,7 +91,7 @@ def get_s3WellboreIntervals_fields():
 def get_s3PipeCentralizationStage_fields():
 
 	Desc   = Field(2055, altBg=True, altFg=True)
-	Length = Field(2045)
+	Length = Field(2080)
 	MD     = Field(2001)
 	s3PipeCentralizationStage_fields = FieldList()
 	s3PipeCentralizationStage_fields.append( Desc   )

@@ -100,8 +100,6 @@ class Main_LocationSetup(Ui_LocationSetup):
 		NS = parent.s2DataSurvey_fields.NS[min_index:max_index+1]
 		VD = parent.s2DataSurvey_fields.TVD[min_index:max_index+1]
 		
-		print(self.min_MD, self.max_MD, min_index,max_index,parent.s2DataSurvey_fields)
-
 		EW[0] = min_EW
 		NS[0] = min_NS
 		VD[0] = min_VD
@@ -178,7 +176,6 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 	def remove_location(self):
 
-		#cu.clear_tableWidgetRow(self.lsCentralizerLocations_tableWidget)
 		r = self.lsCentralizerLocations_tableWidget.selectedRow
 		self.lsCentralizerLocations_tableWidget.removeRow(r)
 		

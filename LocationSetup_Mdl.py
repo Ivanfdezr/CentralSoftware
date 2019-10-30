@@ -43,7 +43,6 @@ def get_lsCentralizerLocations_fields():
 	return lsCentralizerLocations_fields
 
 
-
 def get_ASCCoordinates_from_MD(self, MD, unit=None):
 	
 	if unit:
@@ -152,7 +151,7 @@ def calculate_axialForce_field(self):
 		for k in K:
 			stage = self.parent.wellboreInnerStageData[k]
 			stageTopMD = mdl.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
-			W = mdl.referenceUnitConvert_value( stage['PipeProps'].W[0], stage['PipeProps'].W[0].unit )
+			W = mdl.referenceUnitConvert_value( stage['PipeProps'].PW[0], stage['PipeProps'].PW[0].unit )
 			
 			if MDs[-i-2]<stageTopMD: 
 				AxialTension = AxialTension + W*L*cosIncs[-i-1]
@@ -184,7 +183,7 @@ def get_axialTension_below_MD(self, MD, unit=None, referenceUnit=False):
 	stage = self.parent.currentWellboreInnerStageDataItem
 	stageTopMD = mdl.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
 	assert( MD<stageTopMD )
-	W = mdl.referenceUnitConvert_value( stage['PipeProps'].W[0], stage['PipeProps'].W[0].unit )
+	W = mdl.referenceUnitConvert_value( stage['PipeProps'].PW[0], stage['PipeProps'].PW[0].unit )
 	L = MD_AxF_i-MD
 
 	AxialTension = AxialF_i + W*L*cosInc
@@ -229,8 +228,9 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 	D = self.stage['PipeProps'].OD[0]
 	d = self.stage['PipeProps'].ID[0]
 	E = self.stage['PipeProps'].E[0]
-	W = self.stage['PipeProps'].W[0]
+	W = self.stage['PipeProps'].PW[0]
 	self.stage['PipeProps'].inverseReferenceUnitConvert()
+	PL = self.stage['PipeBase'].PL[0]
 
 	self.centralizer1['CentralizerProps'].referenceUnitConvert()
 	self.centralizer2['CentralizerProps'].referenceUnitConvert()
@@ -246,15 +246,18 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 	In2, Az2 = get_inclination_and_azimuth(self, MD2, referenceUnit=True)
 	MD1 = mdl.referenceUnitConvert_value( MD1, MD1.unit )
 	MD2 = mdl.referenceUnitConvert_value( MD2, MD2.unit )
+	PL  = mdl.referenceUnitConvert_value( PL,  PL.unit  )
+
+	L = MD2-MD1-PL
 
 	k1 = ResF1/(D1/2-0.335*(D1-D))
 	k2 = ResF2/(D2/2-0.335*(D2-D))
 
 	doverDsq = (d/D)**2
 	buoyancyFactor = 1 #( (1-ρe/ρs)-doverDsq*(1-ρi/ρs) )/( 1-doverDsq )
-	w *= buoyancyFactor
+	W *= buoyancyFactor
 
-	fC = w*L*np.sin(θ)/2
+	fC = W*L*np.sin(θ)/2
 	y1 = fC/k1
 	y2 = fC/k2
 
@@ -283,7 +286,7 @@ def calculate_standOff_atCentralizers(self):
 	D = self.stage['PipeProps'].OD[0]
 	d = self.stage['PipeProps'].ID[0]
 	E = self.stage['PipeProps'].E[0]
-	W = self.stage['PipeProps'].W[0]
+	W = self.stage['PipeProps'].PW[0]
 	self.stage['PipeProps'].inverseReferenceUnitConvert()
 
 	self.centralizer1['CentralizerProps'].referenceUnitConvert()
@@ -295,8 +298,6 @@ def calculate_standOff_atCentralizers(self):
 	self.centralizer1['CentralizerProps'].inverseReferenceUnitConvert()
 	self.centralizer2['CentralizerProps'].inverseReferenceUnitConvert()
 
-	
-
 
 def calculate_standOff_atMidspan(self):
 
@@ -304,7 +305,7 @@ def calculate_standOff_atMidspan(self):
 	D = self.stage['PipeProps'].OD[0]
 	d = self.stage['PipeProps'].ID[0]
 	E = self.stage['PipeProps'].E[0]
-	W = self.stage['PipeProps'].W[0]
+	W = self.stage['PipeProps'].PW[0]
 	self.stage['PipeProps'].inverseReferenceUnitConvert()
 
 	self.centralizer1['CentralizerProps'].referenceUnitConvert()

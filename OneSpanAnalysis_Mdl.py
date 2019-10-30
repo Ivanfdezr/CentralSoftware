@@ -154,7 +154,7 @@ def get_casingDeflectionCurve(self):
 	ρi = self.osaWellbore_fields.MudIPDensity[0]
 	ρs = self.osaCasing_fields.Density[0]
 	E = self.osaCasing_fields.E[0]
-	w = self.osaCasing_fields.W[0]
+	w = self.osaCasing_fields.PW[0]
 	D = self.osaCasing_fields.OD[0]
 	d = self.osaCasing_fields.ID[0]
 	ResFA = self.osaCentA_fields.ResF_SO67[0]

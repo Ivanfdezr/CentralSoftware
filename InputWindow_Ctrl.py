@@ -361,6 +361,10 @@ class Main_InputWindow(Ui_InputWindow):
 		#V = cu.PasteToCells_action(self.s3PipeCentralizationStage_tableWidget)
 		#self.s3PipeCentralizationStage_tableWidget.addAction(V)
 
+		adjust_MD_to_wellboreDeep = lambda: wf.adjust_MD_to_wellboreDeep(self)
+		A = cu.FunctionToWidget_action(self.s3PipeCentralizationStage_tableWidget, adjust_MD_to_wellboreDeep, "Adjust stage to depth", '')
+		self.s3PipeCentralizationStage_tableWidget.addAction(A)
+
 		delete_innerStageObjects = lambda: wf.delete_innerStageObjects(self)
 		D = cu.FunctionToWidget_action(self.s3PipeCentralizationStage_tableWidget, delete_innerStageObjects, "Delete stage", 'Del')
 		self.s3PipeCentralizationStage_tableWidget.addAction(D)

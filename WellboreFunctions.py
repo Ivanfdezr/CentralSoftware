@@ -754,7 +754,6 @@ def adjust_Length_and_MD(self, item):
 		
 		try:
 			lastMD = min(self.workWellboreMD)
-			print(lastMD)
 		except ValueError:
 			msg = "Any top MD has been assigned yet in Wellbore intervals. Can not proceed."
 			QtGui.QMessageBox.critical(self.s3PipeCentralizationStage_tableWidget, 'Error', msg)
@@ -788,6 +787,21 @@ def adjust_Length_and_MD(self, item):
 		
 		self._PipeCentralizationStageAdjusting_isEnabled = True
 		print_wellboreInnerStageData(self)
+
+
+def adjust_MD_to_wellboreDeep(self):
+
+	try:
+		deepestMD = max(self.workWellboreMD)
+	except ValueError:
+		msg = "Any bottom MD has been assigned yet in Wellbore intervals. Can not proceed."
+		QtGui.QMessageBox.critical(self.s3PipeCentralizationStage_tableWidget, 'Error', msg)
+		self._PipeCentralizationStageAdjusting_isEnabled = True
+		return
+
+	row  = self.s3PipeCentralizationStage_tableWidget.selectedRow
+	item = self.s3PipeCentralizationStage_tableWidget.item(row, self.s3PipeCentralizationStage_fields.MD.pos)
+	item.set_text( deepestMD )
 
 
 def adjust_Wt(self):
