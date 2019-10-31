@@ -248,18 +248,61 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 	MD2 = mdl.referenceUnitConvert_value( MD2, MD2.unit )
 	PL  = mdl.referenceUnitConvert_value( PL,  PL.unit  )
 
-	L = MD2-MD1-PL
-
-	k1 = ResF1/(D1/2-0.335*(D1-D))
-	k2 = ResF2/(D2/2-0.335*(D2-D))
+	supports = 0
+	numofRigids = 0
+	numofBows = 0
+	for X in ['A','B','C']:
+		if self.stage['Centralization'][X]['Type']=='Bow Spring':
+			supports+=1
+			numofBows+=1
+		elif self.stage['Centralization'][X]['Type']=='Rigid':
+			supports+=self.stage['Centralization'][X]['CentralizerBase'].Blades[0]
+			numofRigids+=1
+	numofCent = numofRigids+numofBows
 
 	doverDsq = (d/D)**2
 	buoyancyFactor = 1 #( (1-ρe/ρs)-doverDsq*(1-ρi/ρs) )/( 1-doverDsq )
 	W *= buoyancyFactor
+	minspace = mdl.referenceUnitConvert_value( 1, 'm' )
 
-	fC = W*L*np.sin(θ)/2
-	y1 = fC/k1
-	y2 = fC/k2
+	ε = 0
+	if numofCent==2:
+		if self.stage['Centralization']['B']['Type']==None:
+			L = MD2-MD1-PL
+			f1 = W*L*np.sin(In1)/supports
+			f2 = W*L*np.sin(In2)/supports
+			kA = ResF1/(D1/2-0.335*(D1-D))
+			kC = ResF2/(D2/2-0.335*(D2-D))
+
+			if self.stage['Centralization']['A']['Type']=='Rigid':
+				if self.stage['Centralization']['C']['Type']=='Bow Spring':
+					efectiveL = PL-self.stage['Centralization']['A']['CentralizerBase'].CL
+					yC = f2/kC
+					ε1 = 0
+					ε2 = yC/efectiveL
+
+			elif self.stage['Centralization']['A']['Type']=='Bow Spring':
+				if self.stage['Centralization']['C']['Type']=='Rigid':
+					efectiveL = PL-self.stage['Centralization']['C']['CentralizerBase'].CL
+					yA = f1/kA
+					ε1 = -yA/efectiveL
+					ε2 = 0
+
+				elif self.stage['Centralization']['C']['Type']=='Bow Spring':
+					yA = f1/kA
+					yC = f1/kC
+					ε1 = (yC-yA)/PL
+					yA = f2/kA
+					yC = f2/kC
+					ε2 = (yC-yA)/PL
+
+		elif numofBows==2:
+
+
+
+
+
+	
 
 	
 
