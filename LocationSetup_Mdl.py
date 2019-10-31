@@ -234,8 +234,10 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 
 	self.centralizer1['CentralizerProps'].referenceUnitConvert()
 	self.centralizer2['CentralizerProps'].referenceUnitConvert()
-	ResF1 = self.centralizer1['CentralizerProps'].ResF_CH[0]
-	ResF2 = self.centralizer2['CentralizerProps'].ResF_CH[0]
+	if self.centralizer1['Type']=='Bow Spring':
+		ResF1 = self.centralizer1['CentralizerProps'].ResF_CH[0]
+	if self.centralizer2['Type']=='Bow Spring':
+		ResF2 = self.centralizer2['CentralizerProps'].ResF_CH[0]
 	D1 = self.centralizer1['CentralizerProps'].COD[0]
 	D2 = self.centralizer2['CentralizerProps'].COD[0]
 	self.centralizer1['CentralizerProps'].inverseReferenceUnitConvert()
@@ -249,34 +251,33 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 	PL  = mdl.referenceUnitConvert_value( PL,  PL.unit  )
 
 	supports = 0
-	numofRigids = 0
-	numofBows = 0
+	numofRigCent = 0
+	numofBowCent = 0
 	for X in ['A','B','C']:
 		if self.stage['Centralization'][X]['Type']=='Bow Spring':
 			supports+=1
-			numofBows+=1
+			numofBowCent+=1
 		elif self.stage['Centralization'][X]['Type']=='Rigid':
 			supports+=self.stage['Centralization'][X]['CentralizerBase'].Blades[0]
-			numofRigids+=1
-	numofCent = numofRigids+numofBows
+			numofRigCent+=1
+	numofCent = numofBowCent+numofRigCent
 
 	doverDsq = (d/D)**2
 	buoyancyFactor = 1 #( (1-ρe/ρs)-doverDsq*(1-ρi/ρs) )/( 1-doverDsq )
 	W *= buoyancyFactor
-	minspace = mdl.referenceUnitConvert_value( 1, 'm' )
+	L = MD2-MD1
+	f1 = W*L*np.sin(In1)/supports
+	f2 = W*L*np.sin(In2)/supports
+	gap = mdl.referenceUnitConvert_value( 2.0, 'm' )
 
-	ε = 0
+	ε1 = 0
+	ε2 = 0
 	if numofCent==2:
 		if self.stage['Centralization']['B']['Type']==None:
-			L = MD2-MD1-PL
-			f1 = W*L*np.sin(In1)/supports
-			f2 = W*L*np.sin(In2)/supports
-			kA = ResF1/(D1/2-0.335*(D1-D))
-			kC = ResF2/(D2/2-0.335*(D2-D))
-
 			if self.stage['Centralization']['A']['Type']=='Rigid':
 				if self.stage['Centralization']['C']['Type']=='Bow Spring':
 					efectiveL = PL-self.stage['Centralization']['A']['CentralizerBase'].CL
+					kC = ResF2/(D2/2-0.335*(D2-D))
 					yC = f2/kC
 					ε1 = 0
 					ε2 = yC/efectiveL
@@ -284,11 +285,14 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 			elif self.stage['Centralization']['A']['Type']=='Bow Spring':
 				if self.stage['Centralization']['C']['Type']=='Rigid':
 					efectiveL = PL-self.stage['Centralization']['C']['CentralizerBase'].CL
+					kA = ResF1/(D1/2-0.335*(D1-D))
 					yA = f1/kA
 					ε1 = -yA/efectiveL
 					ε2 = 0
 
 				elif self.stage['Centralization']['C']['Type']=='Bow Spring':
+					kA = ResF1/(D1/2-0.335*(D1-D))
+					kC = ResF2/(D2/2-0.335*(D2-D))
 					yA = f1/kA
 					yC = f1/kC
 					ε1 = (yC-yA)/PL
@@ -296,11 +300,85 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 					yC = f2/kC
 					ε2 = (yC-yA)/PL
 
-		elif numofBows==2:
+		elif numofBowCent==2:
+			k1 = ResF1/(D1/2-0.335*(D1-D))
+			k2 = ResF2/(D2/2-0.335*(D2-D))
+			y1 = f1/k1
+			y2 = f1/k2
+			ε1 = (y2-y1)/gap
+			y1 = f2/k1
+			y2 = f2/k2
+			ε2 = (y2-y1)/gap
 
+	elif numofCent==3:
+		if numofBowCent==1:
+			if self.stage['Centralization']['A']['Type']=='Bow Spring':
+				efectiveL = PL-gap
+				efectiveL -= self.stage['Centralization']['B']['CentralizerBase'].CL
+				efectiveL -= self.stage['Centralization']['C']['CentralizerBase'].CL
+				kA = ResF1/(D1/2-0.335*(D1-D))
+				yA = f1/kA
+				ε1 = -yA/efectiveL
+				ε2 = 0
 
+			elif self.stage['Centralization']['C']['Type']=='Bow Spring':
+				efectiveL = PL-gap
+				efectiveL -= self.stage['Centralization']['A']['CentralizerBase'].CL
+				efectiveL -= self.stage['Centralization']['B']['CentralizerBase'].CL
+				kC = ResF2/(D2/2-0.335*(D2-D))
+				yC = f2/kC
+				ε1 = 0
+				ε2 = yC/efectiveL
 
+		elif numofBowCent==2:
+			if self.stage['Centralization']['A']['Type']=='Rigid':
+				efectiveL = PL-gap
+				efectiveL -= self.stage['Centralization']['A']['CentralizerBase'].CL
+				ResFB = self.stage['Centralization']['B']['CentralizerProps'].ResF_CH[0]
+				DB = self.stage['Centralization']['B']['CentralizerProps'].COD[0]
+				kB = ResFB/(DB/2-0.335*(DB-D))
+				kC = ResF2/(D2/2-0.335*(D2-D))
+				yB = f2/kB
+				yC = f2/kC
+				ε1 = 0
+				ε2 = (yC-yB)/efectiveL
 
+			elif self.stage['Centralization']['C']['Type']=='Rigid':
+				efectiveL = PL-gap
+				efectiveL -= self.stage['Centralization']['C']['CentralizerBase'].CL
+				ResFB = self.stage['Centralization']['B']['CentralizerProps'].ResF_CH[0]
+				DB = self.stage['Centralization']['B']['CentralizerProps'].COD[0]
+				kB = ResFB/(DB/2-0.335*(DB-D))
+				kA = ResF1/(D1/2-0.335*(D1-D))
+				yB = f1/kB
+				yA = f1/kA
+				ε1 = (yB-yA)/efectiveL
+				ε2 = 0
+
+			elif self.stage['Centralization']['B']['Type']=='Rigid':
+				efectiveL = PL-gap
+				efectiveL -= self.stage['Centralization']['B']['CentralizerBase'].CL
+				efectiveL /=2
+				kA = ResF1/(D1/2-0.335*(D1-D))
+				kC = ResF2/(D2/2-0.335*(D2-D))
+				yA = f1/kA
+				yC = f2/kC
+				ε1 = -yA/efectiveL
+				ε2 = yC/efectiveL
+
+		elif numofBowCent==3:
+			efectiveL = PL/2
+			ResFB = self.stage['Centralization']['B']['CentralizerProps'].ResF_CH[0]
+			DB = self.stage['Centralization']['B']['CentralizerProps'].COD[0]
+			kA = ResF1/(D1/2-0.335*(D1-D))
+			kB = ResFB/(DB/2-0.335*(DB-D))
+			kC = ResF2/(D2/2-0.335*(D2-D))
+			yA = f1/kA
+			yB = f1/kB
+			ε1 = (yB-yA)/efectiveL
+			yB = f2/kB
+			yC = f2/kC
+			ε2 = (yC-yB)/efectiveL
 
 	
 
