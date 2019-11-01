@@ -270,16 +270,26 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 	f2 = W*L*np.sin(In2)/supports
 	gap = mdl.referenceUnitConvert_value( 2.0, 'm' )
 
-	ε1 = 0
-	ε2 = 0
-	if numofCent==2:
+	y1 = y2 = 0
+	ε1 = ε2 = 0
+	if numofCent==1:
+		if self.centralizer1['Type']=='Bow Spring':
+			kA = ResF1/(D1/2-0.335*(D1-D))
+			y1 = f1/kA
+			y2 = f2/kA
+			ε1 = ε2 = 0
+	
+	elif numofCent==2:
 		if self.stage['Centralization']['B']['Type']==None:
 			if self.stage['Centralization']['A']['Type']=='Rigid':
 				if self.stage['Centralization']['C']['Type']=='Bow Spring':
 					efectiveL = PL-self.stage['Centralization']['A']['CentralizerBase'].CL
 					kC = ResF2/(D2/2-0.335*(D2-D))
-					yC = f2/kC
+					yC = f1/kC
+					y1 = yC/2
 					ε1 = 0
+					yC = f2/kC
+					y2 = yC/2
 					ε2 = yC/efectiveL
 
 			elif self.stage['Centralization']['A']['Type']=='Bow Spring':
@@ -287,7 +297,10 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 					efectiveL = PL-self.stage['Centralization']['C']['CentralizerBase'].CL
 					kA = ResF1/(D1/2-0.335*(D1-D))
 					yA = f1/kA
+					y1 = yA/2
 					ε1 = -yA/efectiveL
+					yA = f2/kA
+					y2 = yA/2
 					ε2 = 0
 
 				elif self.stage['Centralization']['C']['Type']=='Bow Spring':
@@ -295,20 +308,43 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 					kC = ResF2/(D2/2-0.335*(D2-D))
 					yA = f1/kA
 					yC = f1/kC
+					y1 = (yA+yC)/2
 					ε1 = (yC-yA)/PL
 					yA = f2/kA
 					yC = f2/kC
+					y2 = (yA+yC)/2
 					ε2 = (yC-yA)/PL
 
+		elif numofBowCent==1:
+			if self.centralizer1['Type']=='Bow Spring': 
+				kA = ResF1/(D1/2-0.335*(D1-D))
+				yA = f1/kA
+				y1 = yA/2
+				ε1 = -yA/gap
+				yA = f2/kA
+				y2 = yA/2
+				ε2 = 0
+
+			elif self.centralizer2['Type']=='Bow Spring': 
+				kB = ResF2/(D2/2-0.335*(D2-D))
+				yB = f1/kB
+				y1 = yB/2
+				ε1 = 0
+				yB = f2/kB
+				y2 = yB/2
+				ε2 = yB/gap
+
 		elif numofBowCent==2:
-			k1 = ResF1/(D1/2-0.335*(D1-D))
-			k2 = ResF2/(D2/2-0.335*(D2-D))
-			y1 = f1/k1
-			y2 = f1/k2
-			ε1 = (y2-y1)/gap
-			y1 = f2/k1
-			y2 = f2/k2
-			ε2 = (y2-y1)/gap
+			kA = ResF1/(D1/2-0.335*(D1-D))
+			kB = ResF2/(D2/2-0.335*(D2-D))
+			yA = f1/kA
+			yB = f1/kB
+			y1 = (yA+yB)/2
+			ε1 = (yB-yA)/gap
+			yA = f2/kA
+			yB = f2/kB
+			y2 = (yA+yB)/2
+			ε2 = (yB-yA)/gap
 
 	elif numofCent==3:
 		if numofBowCent==1:
@@ -318,7 +354,9 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 				efectiveL -= self.stage['Centralization']['C']['CentralizerBase'].CL
 				kA = ResF1/(D1/2-0.335*(D1-D))
 				yA = f1/kA
+				y1 = yA/2
 				ε1 = -yA/efectiveL
+				y2 = 0
 				ε2 = 0
 
 			elif self.stage['Centralization']['C']['Type']=='Bow Spring':
@@ -326,8 +364,10 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 				efectiveL -= self.stage['Centralization']['A']['CentralizerBase'].CL
 				efectiveL -= self.stage['Centralization']['B']['CentralizerBase'].CL
 				kC = ResF2/(D2/2-0.335*(D2-D))
-				yC = f2/kC
+				y1 = 0
 				ε1 = 0
+				yC = f2/kC
+				y2 = yC/2
 				ε2 = yC/efectiveL
 
 		elif numofBowCent==2:
@@ -338,9 +378,12 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 				DB = self.stage['Centralization']['B']['CentralizerProps'].COD[0]
 				kB = ResFB/(DB/2-0.335*(DB-D))
 				kC = ResF2/(D2/2-0.335*(D2-D))
+				yB = f1/kB
+				y1 = yB/2
+				ε1 = 0
 				yB = f2/kB
 				yC = f2/kC
-				ε1 = 0
+				y2 = (yB+yC)/2
 				ε2 = (yC-yB)/efectiveL
 
 			elif self.stage['Centralization']['C']['Type']=='Rigid':
@@ -352,7 +395,10 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 				kA = ResF1/(D1/2-0.335*(D1-D))
 				yB = f1/kB
 				yA = f1/kA
+				y1 = (yA+yB)/2
 				ε1 = (yB-yA)/efectiveL
+				yB = f2/kB
+				y2 = yB/2
 				ε2 = 0
 
 			elif self.stage['Centralization']['B']['Type']=='Rigid':
@@ -362,8 +408,10 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 				kA = ResF1/(D1/2-0.335*(D1-D))
 				kC = ResF2/(D2/2-0.335*(D2-D))
 				yA = f1/kA
-				yC = f2/kC
+				y1 = yA/2
 				ε1 = -yA/efectiveL
+				yC = f2/kC
+				y2 = yC/2
 				ε2 = yC/efectiveL
 
 		elif numofBowCent==3:
@@ -375,20 +423,14 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 			kC = ResF2/(D2/2-0.335*(D2-D))
 			yA = f1/kA
 			yB = f1/kB
+			y1 = (yA+yB)/2
 			ε1 = (yB-yA)/efectiveL
 			yB = f2/kB
 			yC = f2/kC
+			y2 = (yB+yC)/2
 			ε2 = (yC-yB)/efectiveL
 
-	
-
-	
-
 	I = np.pi/64*(D**4-d**4)
-
-	
-	L = MD2-MD1
-
 	u = np.sqrt( Ft*L**2/4/E/I )
 	β = np.arccos( np.cos(In1)*np.cos(In2) + np.sin(In1)*np.sin(In2)*np.cos(Az2-Az1) )
 	cosγ0 = np.sin(In1)*np.sin(In2)*np.sin(Az2-Az1)/np.sin(β)
