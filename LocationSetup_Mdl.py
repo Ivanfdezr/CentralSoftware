@@ -11,7 +11,8 @@ def get_lsCentralizerLocations_fields():
 
 	MD  = Field(2001)
 	Inc = Field(2002, altBg=True, altFg=True)
-	SOatC  = Field(2078, altBg=True, altFg=True)
+	SOatC1  = Field(2078, altBg=True, altFg=True)
+	SOatC2  = Field(2078, altBg=True, altFg=True)
 	SOatM  = Field(2078, altBg=True, altFg=True)
 	EW  = Field(2007, altBg=True, altFg=True)
 	NS  = Field(2006, altBg=True, altFg=True)
@@ -21,16 +22,19 @@ def get_lsCentralizerLocations_fields():
 	SiF = Field(2074, altBg=True, altFg=True)
 	MD_ = Field(2001, altBg=True, altFg=True)
 
-	SOatC.set_abbreviation('SOatC')
+	SOatC1.set_abbreviation('SOatC1')
+	SOatC2.set_abbreviation('SOatC2')
 	SOatM.set_abbreviation('SOatM')
-	SOatC.set_representation('SO @ centralizer')
+	SOatC1.set_representation('SO @ centralizer1')
+	SOatC2.set_representation('SO @ centralizer2')
 	SOatM.set_representation('SO @ mid span')
 	MD_.set_abbreviation('MD_AxF')
 
 	lsCentralizerLocations_fields = FieldList()
 	lsCentralizerLocations_fields.append( MD )
 	lsCentralizerLocations_fields.append( Inc )
-	lsCentralizerLocations_fields.append( SOatC )
+	lsCentralizerLocations_fields.append( SOatC1 )
+	lsCentralizerLocations_fields.append( SOatC2 )
 	lsCentralizerLocations_fields.append( SOatM )
 	lsCentralizerLocations_fields.append( EW )
 	lsCentralizerLocations_fields.append( NS )
@@ -224,31 +228,34 @@ def get_inclination_and_azimuth(self, MD, unit=None, referenceUnit=False):
 
 def get_standOff_for_MD(self, MD1, MD2, unit=None):
 
-	self.stage['PipeProps'].referenceUnitConvert()
-	D = self.stage['PipeProps'].OD[0]
-	d = self.stage['PipeProps'].ID[0]
-	E = self.stage['PipeProps'].E[0]
-	W = self.stage['PipeProps'].PW[0]
-	self.stage['PipeProps'].inverseReferenceUnitConvert()
+	D = self.stage['PipeProps'].OD.referenceUnitConvert()[0]
+	d = self.stage['PipeProps'].ID.referenceUnitConvert()[0]
+	E = self.stage['PipeProps'].E.referenceUnitConvert()[0]
+	W = self.stage['PipeProps'].PW.referenceUnitConvert()[0]
 	PL = self.stage['PipeBase'].PL[0]
 
-	self.centralizer1['CentralizerProps'].referenceUnitConvert()
-	self.centralizer2['CentralizerProps'].referenceUnitConvert()
 	if self.centralizer1['Type']=='Bow Spring':
 		ResF1 = self.centralizer1['CentralizerProps'].ResF_CH[0]
+		ResF1 = mdl.referenceUnitConvert_value( ResF1, ResF1.unit )
 	if self.centralizer2['Type']=='Bow Spring':
 		ResF2 = self.centralizer2['CentralizerProps'].ResF_CH[0]
+		ResF2 = mdl.referenceUnitConvert_value( ResF2, ResF2.unit )
 	D1 = self.centralizer1['CentralizerProps'].COD[0]
 	D2 = self.centralizer2['CentralizerProps'].COD[0]
-	self.centralizer1['CentralizerProps'].inverseReferenceUnitConvert()
-	self.centralizer2['CentralizerProps'].inverseReferenceUnitConvert()
 
 	Ft = get_axialTension_below_MD(self, MD2, referenceUnit=True)
 	In1, Az1 = get_inclination_and_azimuth(self, MD1, referenceUnit=True)
 	In2, Az2 = get_inclination_and_azimuth(self, MD2, referenceUnit=True)
+	
+	D = mdl.referenceUnitConvert_value( D, D.unit )
+	d = mdl.referenceUnitConvert_value( d, d.unit )
+	E = mdl.referenceUnitConvert_value( E, E.unit )
+	W = mdl.referenceUnitConvert_value( W, W.unit )
 	MD1 = mdl.referenceUnitConvert_value( MD1, MD1.unit )
 	MD2 = mdl.referenceUnitConvert_value( MD2, MD2.unit )
 	PL  = mdl.referenceUnitConvert_value( PL,  PL.unit  )
+	D1 = mdl.referenceUnitConvert_value( D1, D1.unit )
+	D2 = mdl.referenceUnitConvert_value( D2, D2.unit )
 
 	supports = 0
 	numofRigCent = 0
@@ -274,13 +281,17 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 	ε1 = ε2 = 0
 	if numofCent==1:
 		if self.centralizer1['Type']=='Bow Spring':
+			CL = 0
 			kA = ResF1/(D1/2-0.335*(D1-D))
 			y1 = f1/kA
 			y2 = f2/kA
 			ε1 = ε2 = 0
+		elif self.centralizer1['Type']=='Rigid':
+			CL = self.centralizer1['CentralizerBase'].CL
 	
 	elif numofCent==2:
 		if self.stage['Centralization']['B']['Type']==None:
+			CL = PL
 			if self.stage['Centralization']['A']['Type']=='Rigid':
 				if self.stage['Centralization']['C']['Type']=='Bow Spring':
 					efectiveL = PL-self.stage['Centralization']['A']['CentralizerBase'].CL
@@ -316,7 +327,8 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 					ε2 = (yC-yA)/PL
 
 		elif numofBowCent==1:
-			if self.centralizer1['Type']=='Bow Spring': 
+			if self.centralizer1['Type']=='Bow Spring':
+				CL = self.centralizer2['CentralizerBase'].CL +gap
 				kA = ResF1/(D1/2-0.335*(D1-D))
 				yA = f1/kA
 				y1 = yA/2
@@ -325,7 +337,8 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 				y2 = yA/2
 				ε2 = 0
 
-			elif self.centralizer2['Type']=='Bow Spring': 
+			elif self.centralizer2['Type']=='Bow Spring':
+				CL = self.centralizer1['CentralizerBase'].CL +gap
 				kB = ResF2/(D2/2-0.335*(D2-D))
 				yB = f1/kB
 				y1 = yB/2
@@ -335,18 +348,21 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 				ε2 = yB/gap
 
 		elif numofBowCent==2:
+			CL = PL/2
+			efectiveL = PL/2
 			kA = ResF1/(D1/2-0.335*(D1-D))
 			kB = ResF2/(D2/2-0.335*(D2-D))
 			yA = f1/kA
 			yB = f1/kB
 			y1 = (yA+yB)/2
-			ε1 = (yB-yA)/gap
+			ε1 = (yB-yA)/efectiveL
 			yA = f2/kA
 			yB = f2/kB
 			y2 = (yA+yB)/2
-			ε2 = (yB-yA)/gap
+			ε2 = (yB-yA)/efectiveL
 
 	elif numofCent==3:
+		CL = PL
 		if numofBowCent==1:
 			if self.stage['Centralization']['A']['Type']=='Bow Spring':
 				efectiveL = PL-gap
@@ -430,6 +446,43 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 			y2 = (yB+yC)/2
 			ε2 = (yC-yB)/efectiveL
 
+	Inc1 += ε1
+	Inc2 += ε2
+	MD1 += CL
+
+	MDi = self.MD[0]
+	IDi = self.ID[0]
+	for MDj,IDj in zip(self.MD,self.ID):
+		if MD1<MDj:
+			dH1 = (MD1-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
+			break
+		else:
+			MDi = MDj
+			IDi = IDj
+
+	MDi = self.MD[0]
+	IDi = self.ID[0]
+	for MDj,IDj in zip(self.MD,self.ID):
+		if MD2<MDj:
+			dH2 = (MD2-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
+			break
+		else:
+			MDi = MDj
+			IDi = IDj
+
+	L = MD2-MD1
+	MDm = MD1 + L/2
+
+	MDi = self.MD[0]
+	IDi = self.ID[0]
+	for MDj,IDj in zip(self.MD,self.ID):
+		if MDm<MDj:
+			dHm = (MDm-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
+			break
+		else:
+			MDi = MDj
+			IDi = IDj
+
 	I = np.pi/64*(D**4-d**4)
 	u = np.sqrt( Ft*L**2/4/E/I )
 	β = np.arccos( np.cos(In1)*np.cos(In2) + np.sin(In1)*np.sin(In2)*np.cos(Az2-Az1) )
@@ -441,6 +494,41 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 	Fl   = np.sqrt( Fldp**2 + Flp**2 )
 
 	δ = Fl*L**3/384/E/I*24/u**4*(u**2/2 - u*(np.cosh(u)-1)/np.sinh(u) )
+
+	R = D/2
+	rH1 = dH1/2
+	rH2 = dH2/2
+	rHm = dHm/2
+	r1_min = R+(D1/2-R)*0.1
+	r2_min = R+(D2/2-R)*0.1
+	r1 = (D1/2-y1) if (D1<dH1) else (rH1-y1)
+	r2 = (D2/2-y2) if (D2<dH2) else (rH2-y2)
+	r1 = r1_min if (r1<r1_min) else r1
+	r2 = r2_min if (r2<r2_min) else r2
+
+	cH1 = rH1-R
+	cH2 = rH2-R
+	cHm = rHm-R
+	c1 = r1-R
+	c2 = r2-R
+	cm = (c1+c2)/2-δ
+	cm = cm if (cm>0) else 0 
+	S1 = c1/cH1
+	S2 = c2/cH2
+	Sm = cm/cHm
+
+	S1 = mdl.inverseReferenceUnitConvert_value( S1, self.lsCentralizerLocations_fields.SOatC1.unit )
+	S2 = mdl.inverseReferenceUnitConvert_value( S2, self.lsCentralizerLocations_fields.SOatC2.unit )
+	Sm = mdl.inverseReferenceUnitConvert_value( Sm, self.lsCentralizerLocations_fields.SOatM.unit )
+
+	return S1, S2, Sm
+
+	
+
+
+	
+
+
 
 
 def calculate_standOff_atCentralizers(self):

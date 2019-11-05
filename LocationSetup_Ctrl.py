@@ -60,6 +60,8 @@ class Main_LocationSetup(Ui_LocationSetup):
 		MD, ID, lim_ID = mdl.get_LASMDandCALID_intoInterval(self)
 		self.MD = MD
 		self.ID = ID
+		print(self.MD)
+		print(self.ID)
 
 		#self.lsCaliperMap_graphicsView.axes.set_position([0.23,0.1,0.7,0.85])
 		self.lsCaliperMap_graphicsView_ylimits    = [None,None]
@@ -223,24 +225,36 @@ class Main_LocationSetup(Ui_LocationSetup):
 			self.lsCentralizerLocations_fields.NS.clear()
 			self.lsCentralizerLocations_fields.TVD.clear()
 			self.lsCentralizerLocations_fields.DL.clear()
-			self.lsCentralizerLocations_fields.SOatC.clear()
+			self.lsCentralizerLocations_fields.SOatC1.clear()
+			self.lsCentralizerLocations_fields.SOatC2.clear()
 			self.lsCentralizerLocations_fields.SOatM.clear()
 			self.lsCentralizerLocations_fields.AxialF.clear()
 			self.lsCentralizerLocations_fields.SideF.clear()
 			self.centralizerCount = len(self.lsCentralizerLocations_fields.MD)
 
+			previousMDi = self.lsCentralizerLocations_fields.MD[0]
 			for i, MDi in enumerate(self.lsCentralizerLocations_fields.MD):
 					
 				EWi,NSi,VDi,_ = mdl.get_ASCCoordinates_from_MD(self, MDi)
 				DLi = mdl.get_ASCDogleg_from_MD(self, MDi)
-				#SOi = mdl.get_standOff_for_MD(self, previousMDi, MDi)
+				S1i,S2i,Smi = mdl.get_standOff_for_MD(self, previousMDi, MDi)
+				
 				cu.create_physicalValue_and_appendTo_field( EWi, self.lsCentralizerLocations_fields.EW )
 				cu.create_physicalValue_and_appendTo_field( NSi, self.lsCentralizerLocations_fields.NS )
 				cu.create_physicalValue_and_appendTo_field( VDi, self.lsCentralizerLocations_fields.TVD )
 				cu.create_physicalValue_and_appendTo_field( DLi, self.lsCentralizerLocations_fields.DL )
+				cu.create_physicalValue_and_appendTo_field( S1i, self.lsCentralizerLocations_fields.SOatC1 )
+				cu.create_physicalValue_and_appendTo_field( S2i, self.lsCentralizerLocations_fields.SOatC2 )
+				cu.create_physicalValue_and_appendTo_field( Smi, self.lsCentralizerLocations_fields.SOatM )
 
 				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.MD.pos )
 				item.set_text( MDi )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatC1.pos )
+				item.set_text( S1i )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatC2.pos )
+				item.set_text( S2i )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatM.pos )
+				item.set_text( Smi )
 
 				if MDi==MD:
 					EW = EWi
