@@ -50,18 +50,18 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.centralizer1 = None
 		self.centralizer2 = None
 		for c in centralizers:
-			if not self.centralizer1 and c:
+			if self.centralizer1==None and c['Type']!=None:
 				self.centralizer1 = c
-			elif self.centralizer1 and c:
+			elif self.centralizer1['Type']!=None and c['Type']!=None:
 				self.centralizer2 = c
-		if not self.centralizer2:
+		if self.centralizer2==None:
 			self.centralizer2 = self.centralizer1
 
 		MD, ID, lim_ID = mdl.get_LASMDandCALID_intoInterval(self)
 		self.MD = MD
 		self.ID = ID
-		print(self.MD)
-		print(self.ID)
+		print(self.centralizer1)
+		print(self.centralizer2)
 
 		#self.lsCaliperMap_graphicsView.axes.set_position([0.23,0.1,0.7,0.85])
 		self.lsCaliperMap_graphicsView_ylimits    = [None,None]
@@ -228,8 +228,8 @@ class Main_LocationSetup(Ui_LocationSetup):
 			self.lsCentralizerLocations_fields.SOatC1.clear()
 			self.lsCentralizerLocations_fields.SOatC2.clear()
 			self.lsCentralizerLocations_fields.SOatM.clear()
-			self.lsCentralizerLocations_fields.AxialF.clear()
-			self.lsCentralizerLocations_fields.SideF.clear()
+			#self.lsCentralizerLocations_fields.AxialF.clear()
+			#self.lsCentralizerLocations_fields.SideF.clear()
 			self.centralizerCount = len(self.lsCentralizerLocations_fields.MD)
 
 			previousMDi = self.lsCentralizerLocations_fields.MD[0]
@@ -272,7 +272,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 			#mdl.calculate_standOff_atMidspan(self)		
 
 
-	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None):
+	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None, isRemoving=False):
 
 		xlim = self.lsCaliperMap_graphicsView.axes.get_xlim()
 

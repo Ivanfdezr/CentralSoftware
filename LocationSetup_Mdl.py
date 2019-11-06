@@ -228,10 +228,10 @@ def get_inclination_and_azimuth(self, MD, unit=None, referenceUnit=False):
 
 def get_standOff_for_MD(self, MD1, MD2, unit=None):
 
-	D = self.stage['PipeProps'].OD.referenceUnitConvert()[0]
-	d = self.stage['PipeProps'].ID.referenceUnitConvert()[0]
-	E = self.stage['PipeProps'].E.referenceUnitConvert()[0]
-	W = self.stage['PipeProps'].PW.referenceUnitConvert()[0]
+	D = self.stage['PipeProps'].OD[0]
+	d = self.stage['PipeProps'].ID[0]
+	E = self.stage['PipeProps'].E[0]
+	W = self.stage['PipeProps'].PW[0]
 	PL = self.stage['PipeBase'].PL[0]
 
 	if self.centralizer1['Type']=='Bow Spring':
@@ -446,13 +446,16 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 			y2 = (yB+yC)/2
 			ε2 = (yC-yB)/efectiveL
 
-	Inc1 += ε1
-	Inc2 += ε2
+	In1 += ε1
+	In2 += ε2
 	MD1 += CL
 
-	MDi = self.MD[0]
-	IDi = self.ID[0]
-	for MDj,IDj in zip(self.MD,self.ID):
+	MDs = self.lsCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD
+	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
+
+	MDi = MDs[0]
+	IDi = IDs[0]
+	for MDj,IDj in zip(MDs,IDs):
 		if MD1<MDj:
 			dH1 = (MD1-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
 			break
@@ -460,9 +463,9 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 			MDi = MDj
 			IDi = IDj
 
-	MDi = self.MD[0]
-	IDi = self.ID[0]
-	for MDj,IDj in zip(self.MD,self.ID):
+	MDi = MDs[0]
+	IDi = IDs[0]
+	for MDj,IDj in zip(MDs,IDs):
 		if MD2<MDj:
 			dH2 = (MD2-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
 			break
@@ -473,9 +476,9 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 	L = MD2-MD1
 	MDm = MD1 + L/2
 
-	MDi = self.MD[0]
-	IDi = self.ID[0]
-	for MDj,IDj in zip(self.MD,self.ID):
+	MDi = MDs[0]
+	IDi = IDs[0]
+	for MDj,IDj in zip(MDs,IDs):
 		if MDm<MDj:
 			dHm = (MDm-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
 			break
@@ -486,6 +489,7 @@ def get_standOff_for_MD(self, MD1, MD2, unit=None):
 	I = np.pi/64*(D**4-d**4)
 	u = np.sqrt( Ft*L**2/4/E/I )
 	β = np.arccos( np.cos(In1)*np.cos(In2) + np.sin(In1)*np.sin(In2)*np.cos(Az2-Az1) )
+	#print(In1,In2,Az1,Az2,β)
 	cosγ0 = np.sin(In1)*np.sin(In2)*np.sin(Az2-Az1)/np.sin(β)
 	cosγn = np.sin( (In1-In2)/2 )*np.sin( (In1+In2)/2 )/np.sin(β/2)
 
