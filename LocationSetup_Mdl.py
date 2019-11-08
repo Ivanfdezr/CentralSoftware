@@ -273,76 +273,18 @@ def calculate_standOff_atCentralizers(self):
 	PI = np.pi/64*(PD**4-Pd**4)
 	PR = PD/2
 
-	def calculate_SO_per_centralizer(label):
-		"""
-		Define before use: MD0, MD1, MD2, inc
-		Return "y" in reference units.
-		"""
-		global MD0,MD1,MD2
-		print(MD0,MD1,MD2)
-		MDi = MDs[0]
-		IDi = IDs[0]
-		for MDj,IDj in zip(MDs,IDs):
-			if MD1<MDj:
-				Hd = (MD1-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
-				break
-			else:
-				MDi = MDj
-				IDi = IDj
-
-		Hr = Hd/2
-		R = D[label]/2
-
-		if M0==None and M2==None:
-			δ = Hr-PR
-			L = (384*PE*PI*δ/PW/np.sin(inc))**0.25
-		elif M0==None:
-			Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
-			L21 = (MD2-MD1)/2
-			L21 = L21 if (L21<Lalt) else Lalt
-			δ = Hr-PR
-			L = L21 + Lalt
-		elif M2==None:
-			Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
-			L10 = (MD1-MD0)/2
-			L10 = L10 if (L10<Lalt) else Lalt
-			δ = Hr-PR
-			L = L10 + Lalt
-		else:
-			Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
-			L21 = (MD2-MD1)/2
-			L21 = L21 if (L21<Lalt) else Lalt
-			L10 = (MD1-MD0)/2
-			L10 = L10 if (L10<Lalt) else Lalt
-			L = L21 + L10
-
-		if self.centralizers[label]['Type']=='Bow Spring':
-			f = PW*L*np.sin(inc)/supports
-			resK = ResF[label]/(D[label]/2-0.335*(D[label]-PD))
-			y = f/resK
-			Rmin = PR+(R-PR)*0.1
-			R = (R-y) if (R<Hr) else (Hr-y)
-			R = Rmin if (R<Rmin) else R
-
-		Hc = Hr-PR
-		Cc = R-PR
-		SO = Cc/Hc
-		
-		return SO, Cc
-
 	def calculate_SO_per_centralizersEnsemble():
 		SO = 0
 		Cc = 0
-		#global MD0,MD1,MD2
 		for x, c in self.centralizers.items():
 			if c['Type']=='Bow Spring':
-				so, cc = calculate_SO_per_centralizer(x)*c['CentralizerBase'].Blades[0]/supports
-				SO += so
-				Cc += cc
+				so, cc = calculate_SO_per_centralizer(x)
+				SO += so/supports
+				Cc += cc/supports
 			elif c['Type']=='Rigid':
-				so, cc = calculate_SO_per_centralizer(x)/supports
-				SO += so
-				Cc += cc
+				so, cc = calculate_SO_per_centralizer(x)
+				SO += so*c['CentralizerBase'].Blades[0]/supports
+				Cc += cc*c['CentralizerBase'].Blades[0]/supports
 		return SO, Cc
 
 	SOatC_field = self.lsCentralizerLocations_fields.SOatC
@@ -359,6 +301,61 @@ def calculate_standOff_atCentralizers(self):
 			MD2 = None
 		else:
 			MD2 = locations[k]
+
+		def calculate_SO_per_centralizer(label):
+			"""
+			Define before use: MD0, MD1, MD2, inc
+			Return "y" in reference units.
+			"""
+			MDi = MDs[0]
+			IDi = IDs[0]
+			for MDj,IDj in zip(MDs,IDs):
+				if MD1<MDj:
+					Hd = (MD1-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
+					break
+				else:
+					MDi = MDj
+					IDi = IDj
+
+			Hr = Hd/2
+			R = D[label]/2
+			δ = Hr-PR
+
+			if MD0==None and MD2==None:
+				L = (384*PE*PI*δ/PW/np.sin(inc))**0.25
+			elif MD0==None:
+				Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
+				L21 = (MD2-MD1)/2
+				L21 = L21 if (L21<Lalt) else Lalt
+				L = L21 + Lalt
+			elif MD2==None:
+				Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
+				L10 = (MD1-MD0)/2
+				L10 = L10 if (L10<Lalt) else Lalt
+				δ = Hr-PR
+				L = L10 + Lalt
+			else:
+				Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
+				L21 = (MD2-MD1)/2
+				L21 = L21 if (L21<Lalt) else Lalt
+				L10 = (MD1-MD0)/2
+				L10 = L10 if (L10<Lalt) else Lalt
+				L = L21 + L10
+
+			if self.centralizers[label]['Type']=='Bow Spring':
+				f = PW*L*np.sin(inc)/supports
+				resK = ResF[label]/(D[label]/2-0.335*(D[label]-PD))
+				y = f/resK
+				Rmin = PR+(R-PR)*0.1
+				R = (R-y) if (R<Hr) else (Hr-y)
+				R = Rmin if (R<Rmin) else R
+
+			Hc = Hr-PR
+			Cc = R-PR
+			SO = Cc/Hc
+			
+			return SO, Cc
+
 		SO, Cc = calculate_SO_per_centralizersEnsemble()
 		cu.create_physicalValue_and_appendTo_field( SO, SOatC_field, SOatC_field.referenceUnit )
 		cu.create_physicalValue_and_appendTo_field( Cc, ClatC_field, ClatC_field.referenceUnit )
@@ -410,7 +407,7 @@ def calculate_standOff_atMidspan(self):
 	numofCent = 0
 	for x, c in self.centralizers.items():
 		if c['Type']!=None:
-			CL += c['CentralizerBase'].CL
+			CL += c['CentralizerBase'].CL[0]
 			numofCent +=1
 
 	if numofCent==2:
@@ -467,8 +464,8 @@ def calculate_standOff_atMidspan(self):
 		Fl   = np.sqrt( Fldp**2 + Flp**2 )
 
 		δ = Fl*L**3/384/PE/PI*24/u**4*(u**2/2 - u*(np.cosh(u)-1)/np.sinh(u) )
-		c1 = ClatC[i]
-		c2 = ClatC[j]
+		c1 = ClatC_field[i]
+		c2 = ClatC_field[j]
 
 		Hr = Hd/2
 		Hc = Hr-PR
