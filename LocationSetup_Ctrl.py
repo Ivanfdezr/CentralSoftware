@@ -42,26 +42,12 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.IPOD = self.stage['PipeProps'].OD[0]
 		#self.COD = parent.currentWellboreInnerStageDataItem['Centralization']['A']['CentralizerProps'].COD[0]
 
-		centralizers = []
-		centralizers.append( self.stage['Centralization']['A'] )
-		centralizers.append( self.stage['Centralization']['B'] )
-		centralizers.append( self.stage['Centralization']['C'] )
-
-		self.centralizer1 = None
-		self.centralizer2 = None
-		for c in centralizers:
-			if self.centralizer1==None and c['Type']!=None:
-				self.centralizer1 = c
-			elif self.centralizer1['Type']!=None and c['Type']!=None:
-				self.centralizer2 = c
-		if self.centralizer2==None:
-			self.centralizer2 = self.centralizer1
+		self.centralizers = copy.deepcopy(self.stage['Centralization'])
+		del self.centralizers['Mode']
 
 		MD, ID, lim_ID = mdl.get_LASMDandCALID_intoInterval(self)
 		self.MD = MD
 		self.ID = ID
-		print(self.centralizer1)
-		print(self.centralizer2)
 
 		#self.lsCaliperMap_graphicsView.axes.set_position([0.23,0.1,0.7,0.85])
 		self.lsCaliperMap_graphicsView_ylimits    = [None,None]
@@ -195,7 +181,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 				VD = self.lsCentralizerLocations_fields.TVD[0]
 
 				cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,0)
-				self.draw_MDlocations(MD, EW, NS, VD, isRemoving=True)
+				self.draw_MDlocations(MD, EW, NS, VD)
 
 			else:
 				self.draw_MDlocations()
@@ -225,9 +211,11 @@ class Main_LocationSetup(Ui_LocationSetup):
 			self.lsCentralizerLocations_fields.NS.clear()
 			self.lsCentralizerLocations_fields.TVD.clear()
 			self.lsCentralizerLocations_fields.DL.clear()
-			self.lsCentralizerLocations_fields.SOatC1.clear()
-			self.lsCentralizerLocations_fields.SOatC2.clear()
+			self.lsCentralizerLocations_fields.Inc.clear()
+			self.lsCentralizerLocations_fields.SOatC.clear()
 			self.lsCentralizerLocations_fields.SOatM.clear()
+			self.lsCentralizerLocations_fields.ClatC.clear()
+			self.lsCentralizerLocations_fields.ClatM.clear()
 			#self.lsCentralizerLocations_fields.AxialF.clear()
 			#self.lsCentralizerLocations_fields.SideF.clear()
 			self.centralizerCount = len(self.lsCentralizerLocations_fields.MD)
@@ -237,30 +225,36 @@ class Main_LocationSetup(Ui_LocationSetup):
 					
 				EWi,NSi,VDi,_ = mdl.get_ASCCoordinates_from_MD(self, MDi)
 				DLi = mdl.get_ASCDogleg_from_MD(self, MDi)
-				S1i,S2i,Smi = mdl.get_standOff_for_MD(self, previousMDi, MDi)
 				
 				cu.create_physicalValue_and_appendTo_field( EWi, self.lsCentralizerLocations_fields.EW )
 				cu.create_physicalValue_and_appendTo_field( NSi, self.lsCentralizerLocations_fields.NS )
 				cu.create_physicalValue_and_appendTo_field( VDi, self.lsCentralizerLocations_fields.TVD )
 				cu.create_physicalValue_and_appendTo_field( DLi, self.lsCentralizerLocations_fields.DL )
-				cu.create_physicalValue_and_appendTo_field( S1i, self.lsCentralizerLocations_fields.SOatC1 )
-				cu.create_physicalValue_and_appendTo_field( S2i, self.lsCentralizerLocations_fields.SOatC2 )
-				cu.create_physicalValue_and_appendTo_field( Smi, self.lsCentralizerLocations_fields.SOatM )
 
 				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.MD.pos )
 				item.set_text( MDi )
-				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatC1.pos )
-				item.set_text( S1i )
-				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatC2.pos )
-				item.set_text( S2i )
-				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatM.pos )
-				item.set_text( Smi )
-
 				if MDi==MD:
 					EW = EWi
 					NS = NSi
 					VD = VDi
 					cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,i)
+
+			mdl.calculate_standOff_atCentralizers(self)
+			mdl.calculate_standOff_atMidspan(self)
+
+			for i, inc in enumerate(self.lsCentralizerLocations_fields.Inc):
+
+				SOatCi = self.lsCentralizerLocations_fields.SOatC[i]
+				SOatMi = self.lsCentralizerLocations_fields.SOatM[i]
+
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.Inc.pos )
+				item.set_text( inc )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatC.pos )
+				item.set_text( SOatCi )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatM.pos )
+				item.set_text( SOatMi )
+
+				
 
 			self.draw_MDlocations(MD, EW, NS, VD)
 
@@ -272,7 +266,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 			#mdl.calculate_standOff_atMidspan(self)		
 
 
-	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None, isRemoving=False):
+	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None):
 
 		xlim = self.lsCaliperMap_graphicsView.axes.get_xlim()
 

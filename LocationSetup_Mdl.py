@@ -4,6 +4,7 @@ import numpy.linalg as la
 import codecs
 from MdlUtilities import Field, FieldList
 import MdlUtilities as mdl
+import CtrlUtilities as cu
 import dbUtils
 
 
@@ -11,9 +12,10 @@ def get_lsCentralizerLocations_fields():
 
 	MD  = Field(2001)
 	Inc = Field(2002, altBg=True, altFg=True)
-	SOatC1  = Field(2078, altBg=True, altFg=True)
-	SOatC2  = Field(2078, altBg=True, altFg=True)
-	SOatM  = Field(2078, altBg=True, altFg=True)
+	SOatC = Field(2078, altBg=True, altFg=True)
+	SOatM = Field(2078, altBg=True, altFg=True)
+	ClatC = Field(2073, altBg=True, altFg=True)
+	ClatM = Field(2073, altBg=True, altFg=True)
 	EW  = Field(2007, altBg=True, altFg=True)
 	NS  = Field(2006, altBg=True, altFg=True)
 	TVD = Field(2004, altBg=True, altFg=True)
@@ -22,20 +24,23 @@ def get_lsCentralizerLocations_fields():
 	SiF = Field(2074, altBg=True, altFg=True)
 	MD_ = Field(2001, altBg=True, altFg=True)
 
-	SOatC1.set_abbreviation('SOatC1')
-	SOatC2.set_abbreviation('SOatC2')
+	SOatC.set_abbreviation('SOatC')
 	SOatM.set_abbreviation('SOatM')
-	SOatC1.set_representation('SO @ centralizer1')
-	SOatC2.set_representation('SO @ centralizer2')
+	ClatC.set_abbreviation('ClatC')
+	ClatM.set_abbreviation('ClatM')
+	SOatC.set_representation('<SO> @ centr.')
 	SOatM.set_representation('SO @ mid span')
+	ClatC.set_representation('<Cl> @ centr.')
+	ClatM.set_representation('Cl @ mid span')
 	MD_.set_abbreviation('MD_AxF')
 
 	lsCentralizerLocations_fields = FieldList()
 	lsCentralizerLocations_fields.append( MD )
 	lsCentralizerLocations_fields.append( Inc )
-	lsCentralizerLocations_fields.append( SOatC1 )
-	lsCentralizerLocations_fields.append( SOatC2 )
+	lsCentralizerLocations_fields.append( SOatC )
 	lsCentralizerLocations_fields.append( SOatM )
+	lsCentralizerLocations_fields.append( ClatC )
+	lsCentralizerLocations_fields.append( ClatM )
 	lsCentralizerLocations_fields.append( EW )
 	lsCentralizerLocations_fields.append( NS )
 	lsCentralizerLocations_fields.append( TVD )
@@ -199,381 +204,287 @@ def get_axialTension_below_MD(self, MD, unit=None, referenceUnit=False):
 	return AxialTension
 
 
-def get_inclination_and_azimuth(self, MD, unit=None, referenceUnit=False):
+def get_inclination_and_azimuth_from_locations(self, locations):
 
-	if unit:
-		MD = mdl.unitConvert_value( MD, unit, self.lsCentralizerLocations_fields.MD_AxF.unit )
-	else:
-		MD = mdl.unitConvert_value( MD, MD.unit, self.lsCentralizerLocations_fields.MD_AxF.unit )
+	"""
+	Field "locations" must be in reference units.
+	Return "Inc" and "Azi" array objects in reference units.
+	"""
 
-	T_values = get_ASCT_from_MD(self, MD)
-	inc = np.arccos( T_values[2] )
-	sinazi = T_values[0]/np.sin(inc)
-	cosazi = T_values[1]/np.sin(inc)
+	Inc = []
+	Azi = []
+	for MD in locations:
+		T_values = get_ASCT_from_MD(self, MD)
+		inc = np.arccos( T_values[2] )
+		sinazi = T_values[0]/np.sin(inc)
+		cosazi = T_values[1]/np.sin(inc)
 
-	if sinazi>=0:
-		azi = np.arccos( cosazi )
-	elif sinazi<0:
-		azi = 2*np.pi-np.arccos( cosazi )
+		if sinazi>=0:
+			azi = np.arccos( cosazi )
+		elif sinazi<0:
+			azi = 2*np.pi-np.arccos( cosazi )
 
-	if referenceUnit:
-		inc = mdl.physicalValue( inc, self.parent.s2DataSurvey_fields.Inc.referenceUnit )
-		azi = mdl.physicalValue( azi, self.parent.s2DataSurvey_fields.Azi.referenceUnit )
-		return inc, azi
-	else:
-		inc = mdl.inverseReferenceUnitConvert_value( inc, self.parent.s2DataSurvey_fields.Inc.unit )
-		azi = mdl.inverseReferenceUnitConvert_value( azi, self.parent.s2DataSurvey_fields.Azi.unit )
-		return inc, azi
+		Inc.append(inc)
+		Azi.append(azi)
 
-
-def get_standOff_for_MD(self, MD1, MD2, unit=None):
-
-	D = self.stage['PipeProps'].OD[0]
-	d = self.stage['PipeProps'].ID[0]
-	E = self.stage['PipeProps'].E[0]
-	W = self.stage['PipeProps'].PW[0]
-	PL = self.stage['PipeBase'].PL[0]
-
-	if self.centralizer1['Type']=='Bow Spring':
-		ResF1 = self.centralizer1['CentralizerProps'].ResF_CH[0]
-		ResF1 = mdl.referenceUnitConvert_value( ResF1, ResF1.unit )
-	if self.centralizer2['Type']=='Bow Spring':
-		ResF2 = self.centralizer2['CentralizerProps'].ResF_CH[0]
-		ResF2 = mdl.referenceUnitConvert_value( ResF2, ResF2.unit )
-	D1 = self.centralizer1['CentralizerProps'].COD[0]
-	D2 = self.centralizer2['CentralizerProps'].COD[0]
-
-	Ft = get_axialTension_below_MD(self, MD2, referenceUnit=True)
-	In1, Az1 = get_inclination_and_azimuth(self, MD1, referenceUnit=True)
-	In2, Az2 = get_inclination_and_azimuth(self, MD2, referenceUnit=True)
-	
-	D = mdl.referenceUnitConvert_value( D, D.unit )
-	d = mdl.referenceUnitConvert_value( d, d.unit )
-	E = mdl.referenceUnitConvert_value( E, E.unit )
-	W = mdl.referenceUnitConvert_value( W, W.unit )
-	MD1 = mdl.referenceUnitConvert_value( MD1, MD1.unit )
-	MD2 = mdl.referenceUnitConvert_value( MD2, MD2.unit )
-	PL  = mdl.referenceUnitConvert_value( PL,  PL.unit  )
-	D1 = mdl.referenceUnitConvert_value( D1, D1.unit )
-	D2 = mdl.referenceUnitConvert_value( D2, D2.unit )
-
-	supports = 0
-	numofRigCent = 0
-	numofBowCent = 0
-	for X in ['A','B','C']:
-		if self.stage['Centralization'][X]['Type']=='Bow Spring':
-			supports+=1
-			numofBowCent+=1
-		elif self.stage['Centralization'][X]['Type']=='Rigid':
-			supports+=self.stage['Centralization'][X]['CentralizerBase'].Blades[0]
-			numofRigCent+=1
-	numofCent = numofBowCent+numofRigCent
-
-	doverDsq = (d/D)**2
-	buoyancyFactor = 1 #( (1-ρe/ρs)-doverDsq*(1-ρi/ρs) )/( 1-doverDsq )
-	W *= buoyancyFactor
-	L = MD2-MD1
-	f1 = W*L*np.sin(In1)/supports
-	f2 = W*L*np.sin(In2)/supports
-	gap = mdl.referenceUnitConvert_value( 2.0, 'm' )
-
-	y1 = y2 = 0
-	ε1 = ε2 = 0
-	if numofCent==1:
-		if self.centralizer1['Type']=='Bow Spring':
-			CL = 0
-			kA = ResF1/(D1/2-0.335*(D1-D))
-			y1 = f1/kA
-			y2 = f2/kA
-			ε1 = ε2 = 0
-		elif self.centralizer1['Type']=='Rigid':
-			CL = self.centralizer1['CentralizerBase'].CL
-	
-	elif numofCent==2:
-		if self.stage['Centralization']['B']['Type']==None:
-			CL = PL
-			if self.stage['Centralization']['A']['Type']=='Rigid':
-				if self.stage['Centralization']['C']['Type']=='Bow Spring':
-					efectiveL = PL-self.stage['Centralization']['A']['CentralizerBase'].CL
-					kC = ResF2/(D2/2-0.335*(D2-D))
-					yC = f1/kC
-					y1 = yC/2
-					ε1 = 0
-					yC = f2/kC
-					y2 = yC/2
-					ε2 = yC/efectiveL
-
-			elif self.stage['Centralization']['A']['Type']=='Bow Spring':
-				if self.stage['Centralization']['C']['Type']=='Rigid':
-					efectiveL = PL-self.stage['Centralization']['C']['CentralizerBase'].CL
-					kA = ResF1/(D1/2-0.335*(D1-D))
-					yA = f1/kA
-					y1 = yA/2
-					ε1 = -yA/efectiveL
-					yA = f2/kA
-					y2 = yA/2
-					ε2 = 0
-
-				elif self.stage['Centralization']['C']['Type']=='Bow Spring':
-					kA = ResF1/(D1/2-0.335*(D1-D))
-					kC = ResF2/(D2/2-0.335*(D2-D))
-					yA = f1/kA
-					yC = f1/kC
-					y1 = (yA+yC)/2
-					ε1 = (yC-yA)/PL
-					yA = f2/kA
-					yC = f2/kC
-					y2 = (yA+yC)/2
-					ε2 = (yC-yA)/PL
-
-		elif numofBowCent==1:
-			if self.centralizer1['Type']=='Bow Spring':
-				CL = self.centralizer2['CentralizerBase'].CL +gap
-				kA = ResF1/(D1/2-0.335*(D1-D))
-				yA = f1/kA
-				y1 = yA/2
-				ε1 = -yA/gap
-				yA = f2/kA
-				y2 = yA/2
-				ε2 = 0
-
-			elif self.centralizer2['Type']=='Bow Spring':
-				CL = self.centralizer1['CentralizerBase'].CL +gap
-				kB = ResF2/(D2/2-0.335*(D2-D))
-				yB = f1/kB
-				y1 = yB/2
-				ε1 = 0
-				yB = f2/kB
-				y2 = yB/2
-				ε2 = yB/gap
-
-		elif numofBowCent==2:
-			CL = PL/2
-			efectiveL = PL/2
-			kA = ResF1/(D1/2-0.335*(D1-D))
-			kB = ResF2/(D2/2-0.335*(D2-D))
-			yA = f1/kA
-			yB = f1/kB
-			y1 = (yA+yB)/2
-			ε1 = (yB-yA)/efectiveL
-			yA = f2/kA
-			yB = f2/kB
-			y2 = (yA+yB)/2
-			ε2 = (yB-yA)/efectiveL
-
-	elif numofCent==3:
-		CL = PL
-		if numofBowCent==1:
-			if self.stage['Centralization']['A']['Type']=='Bow Spring':
-				efectiveL = PL-gap
-				efectiveL -= self.stage['Centralization']['B']['CentralizerBase'].CL
-				efectiveL -= self.stage['Centralization']['C']['CentralizerBase'].CL
-				kA = ResF1/(D1/2-0.335*(D1-D))
-				yA = f1/kA
-				y1 = yA/2
-				ε1 = -yA/efectiveL
-				y2 = 0
-				ε2 = 0
-
-			elif self.stage['Centralization']['C']['Type']=='Bow Spring':
-				efectiveL = PL-gap
-				efectiveL -= self.stage['Centralization']['A']['CentralizerBase'].CL
-				efectiveL -= self.stage['Centralization']['B']['CentralizerBase'].CL
-				kC = ResF2/(D2/2-0.335*(D2-D))
-				y1 = 0
-				ε1 = 0
-				yC = f2/kC
-				y2 = yC/2
-				ε2 = yC/efectiveL
-
-		elif numofBowCent==2:
-			if self.stage['Centralization']['A']['Type']=='Rigid':
-				efectiveL = PL-gap
-				efectiveL -= self.stage['Centralization']['A']['CentralizerBase'].CL
-				ResFB = self.stage['Centralization']['B']['CentralizerProps'].ResF_CH[0]
-				DB = self.stage['Centralization']['B']['CentralizerProps'].COD[0]
-				kB = ResFB/(DB/2-0.335*(DB-D))
-				kC = ResF2/(D2/2-0.335*(D2-D))
-				yB = f1/kB
-				y1 = yB/2
-				ε1 = 0
-				yB = f2/kB
-				yC = f2/kC
-				y2 = (yB+yC)/2
-				ε2 = (yC-yB)/efectiveL
-
-			elif self.stage['Centralization']['C']['Type']=='Rigid':
-				efectiveL = PL-gap
-				efectiveL -= self.stage['Centralization']['C']['CentralizerBase'].CL
-				ResFB = self.stage['Centralization']['B']['CentralizerProps'].ResF_CH[0]
-				DB = self.stage['Centralization']['B']['CentralizerProps'].COD[0]
-				kB = ResFB/(DB/2-0.335*(DB-D))
-				kA = ResF1/(D1/2-0.335*(D1-D))
-				yB = f1/kB
-				yA = f1/kA
-				y1 = (yA+yB)/2
-				ε1 = (yB-yA)/efectiveL
-				yB = f2/kB
-				y2 = yB/2
-				ε2 = 0
-
-			elif self.stage['Centralization']['B']['Type']=='Rigid':
-				efectiveL = PL-gap
-				efectiveL -= self.stage['Centralization']['B']['CentralizerBase'].CL
-				efectiveL /=2
-				kA = ResF1/(D1/2-0.335*(D1-D))
-				kC = ResF2/(D2/2-0.335*(D2-D))
-				yA = f1/kA
-				y1 = yA/2
-				ε1 = -yA/efectiveL
-				yC = f2/kC
-				y2 = yC/2
-				ε2 = yC/efectiveL
-
-		elif numofBowCent==3:
-			efectiveL = PL/2
-			ResFB = self.stage['Centralization']['B']['CentralizerProps'].ResF_CH[0]
-			DB = self.stage['Centralization']['B']['CentralizerProps'].COD[0]
-			kA = ResF1/(D1/2-0.335*(D1-D))
-			kB = ResFB/(DB/2-0.335*(DB-D))
-			kC = ResF2/(D2/2-0.335*(D2-D))
-			yA = f1/kA
-			yB = f1/kB
-			y1 = (yA+yB)/2
-			ε1 = (yB-yA)/efectiveL
-			yB = f2/kB
-			yC = f2/kC
-			y2 = (yB+yC)/2
-			ε2 = (yC-yB)/efectiveL
-
-	In1 += ε1
-	In2 += ε2
-	MD1 += CL
-
-	MDs = self.lsCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD
-	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
-
-	MDi = MDs[0]
-	IDi = IDs[0]
-	for MDj,IDj in zip(MDs,IDs):
-		if MD1<MDj:
-			dH1 = (MD1-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
-			break
-		else:
-			MDi = MDj
-			IDi = IDj
-
-	MDi = MDs[0]
-	IDi = IDs[0]
-	for MDj,IDj in zip(MDs,IDs):
-		if MD2<MDj:
-			dH2 = (MD2-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
-			break
-		else:
-			MDi = MDj
-			IDi = IDj
-
-	L = MD2-MD1
-	MDm = MD1 + L/2
-
-	MDi = MDs[0]
-	IDi = IDs[0]
-	for MDj,IDj in zip(MDs,IDs):
-		if MDm<MDj:
-			dHm = (MDm-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
-			break
-		else:
-			MDi = MDj
-			IDi = IDj
-
-	I = np.pi/64*(D**4-d**4)
-	u = np.sqrt( Ft*L**2/4/E/I )
-	β = np.arccos( np.cos(In1)*np.cos(In2) + np.sin(In1)*np.sin(In2)*np.cos(Az2-Az1) )
-	#print(In1,In2,Az1,Az2,β)
-	cosγ0 = np.sin(In1)*np.sin(In2)*np.sin(Az2-Az1)/np.sin(β)
-	cosγn = np.sin( (In1-In2)/2 )*np.sin( (In1+In2)/2 )/np.sin(β/2)
-
-	Fldp = W*L*cosγn + 2*Ft*np.sin(β/2)
-	Flp  = W*L*cosγ0
-	Fl   = np.sqrt( Fldp**2 + Flp**2 )
-
-	δ = Fl*L**3/384/E/I*24/u**4*(u**2/2 - u*(np.cosh(u)-1)/np.sinh(u) )
-
-	R = D/2
-	rH1 = dH1/2
-	rH2 = dH2/2
-	rHm = dHm/2
-	r1_min = R+(D1/2-R)*0.1
-	r2_min = R+(D2/2-R)*0.1
-	r1 = (D1/2-y1) if (D1<dH1) else (rH1-y1)
-	r2 = (D2/2-y2) if (D2<dH2) else (rH2-y2)
-	r1 = r1_min if (r1<r1_min) else r1
-	r2 = r2_min if (r2<r2_min) else r2
-
-	cH1 = rH1-R
-	cH2 = rH2-R
-	cHm = rHm-R
-	c1 = r1-R
-	c2 = r2-R
-	cm = (c1+c2)/2-δ
-	cm = cm if (cm>0) else 0 
-	S1 = c1/cH1
-	S2 = c2/cH2
-	Sm = cm/cHm
-
-	S1 = mdl.inverseReferenceUnitConvert_value( S1, self.lsCentralizerLocations_fields.SOatC1.unit )
-	S2 = mdl.inverseReferenceUnitConvert_value( S2, self.lsCentralizerLocations_fields.SOatC2.unit )
-	Sm = mdl.inverseReferenceUnitConvert_value( Sm, self.lsCentralizerLocations_fields.SOatM.unit )
-
-	return S1, S2, Sm
-
-	
-
-
-	
-
-
+	return np.array(Inc), np.array(Azi)
 
 
 def calculate_standOff_atCentralizers(self):
 
-	self.stage['PipeProps'].referenceUnitConvert()
-	D = self.stage['PipeProps'].OD[0]
-	d = self.stage['PipeProps'].ID[0]
-	E = self.stage['PipeProps'].E[0]
-	W = self.stage['PipeProps'].PW[0]
-	self.stage['PipeProps'].inverseReferenceUnitConvert()
+	locations = self.lsCentralizerLocations_fields.MD
+	locations.referenceUnitConvert()
+	Inc, Azi = get_inclination_and_azimuth_from_locations(self, locations)
+	MDs = self.lsCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD
+	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
 
-	self.centralizer1['CentralizerProps'].referenceUnitConvert()
-	self.centralizer2['CentralizerProps'].referenceUnitConvert()
-	ResF1 = self.centralizer1['CentralizerProps'].ResF_CH[0]
-	ResF2 = self.centralizer2['CentralizerProps'].ResF_CH[0]
-	D1 = self.centralizer1['CentralizerProps'].COD[0]
-	D2 = self.centralizer2['CentralizerProps'].COD[0]
-	self.centralizer1['CentralizerProps'].inverseReferenceUnitConvert()
-	self.centralizer2['CentralizerProps'].inverseReferenceUnitConvert()
+	PD = self.stage['PipeProps'].OD[0]
+	Pd = self.stage['PipeProps'].ID[0]
+	PE = self.stage['PipeProps'].E[0]
+	PW = self.stage['PipeProps'].PW[0]
+	PL = self.stage['PipeBase'].PL[0]
+
+	PD = mdl.referenceUnitConvert_value( PD, PD.unit )
+	Pd = mdl.referenceUnitConvert_value( Pd, Pd.unit )
+	PE = mdl.referenceUnitConvert_value( PE, PE.unit )
+	PW = mdl.referenceUnitConvert_value( PW, PW.unit )
+	PL = mdl.referenceUnitConvert_value( PL, PL.unit )
+
+	ResF = {}
+	D = {}
+	supports = 0
+
+	for x, c in self.centralizers.items():
+		if c['Type']=='Bow Spring':
+			ResF[x] = c['CentralizerProps'].ResF_CH[0]
+			ResF[x] = mdl.referenceUnitConvert_value( ResF[x], ResF[x].unit )
+			D[x] = c['CentralizerProps'].COD[0]
+			D[x] = mdl.referenceUnitConvert_value( D[x], D[x].unit )
+			supports+=1
+
+		elif c['Type']=='Rigid':
+			D[x] = c['CentralizerProps'].COD[0]
+			D[x] = mdl.referenceUnitConvert_value( D[x], D[x].unit )
+			supports+=c['CentralizerBase'].Blades[0]
+
+	doverDsq = (Pd/PD)**2
+	buoyancyFactor = 1 #( (1-ρe/ρs)-doverDsq*(1-ρi/ρs) )/( 1-doverDsq )
+	PW *= buoyancyFactor
+	PI = np.pi/64*(PD**4-Pd**4)
+	PR = PD/2
+
+	def calculate_SO_per_centralizer(label):
+		"""
+		Define before use: MD0, MD1, MD2, inc
+		Return "y" in reference units.
+		"""
+		global MD0,MD1,MD2
+		print(MD0,MD1,MD2)
+		MDi = MDs[0]
+		IDi = IDs[0]
+		for MDj,IDj in zip(MDs,IDs):
+			if MD1<MDj:
+				Hd = (MD1-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
+				break
+			else:
+				MDi = MDj
+				IDi = IDj
+
+		Hr = Hd/2
+		R = D[label]/2
+
+		if M0==None and M2==None:
+			δ = Hr-PR
+			L = (384*PE*PI*δ/PW/np.sin(inc))**0.25
+		elif M0==None:
+			Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
+			L21 = (MD2-MD1)/2
+			L21 = L21 if (L21<Lalt) else Lalt
+			δ = Hr-PR
+			L = L21 + Lalt
+		elif M2==None:
+			Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
+			L10 = (MD1-MD0)/2
+			L10 = L10 if (L10<Lalt) else Lalt
+			δ = Hr-PR
+			L = L10 + Lalt
+		else:
+			Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
+			L21 = (MD2-MD1)/2
+			L21 = L21 if (L21<Lalt) else Lalt
+			L10 = (MD1-MD0)/2
+			L10 = L10 if (L10<Lalt) else Lalt
+			L = L21 + L10
+
+		if self.centralizers[label]['Type']=='Bow Spring':
+			f = PW*L*np.sin(inc)/supports
+			resK = ResF[label]/(D[label]/2-0.335*(D[label]-PD))
+			y = f/resK
+			Rmin = PR+(R-PR)*0.1
+			R = (R-y) if (R<Hr) else (Hr-y)
+			R = Rmin if (R<Rmin) else R
+
+		Hc = Hr-PR
+		Cc = R-PR
+		SO = Cc/Hc
+		
+		return SO, Cc
+
+	def calculate_SO_per_centralizersEnsemble():
+		SO = 0
+		Cc = 0
+		#global MD0,MD1,MD2
+		for x, c in self.centralizers.items():
+			if c['Type']=='Bow Spring':
+				so, cc = calculate_SO_per_centralizer(x)*c['CentralizerBase'].Blades[0]/supports
+				SO += so
+				Cc += cc
+			elif c['Type']=='Rigid':
+				so, cc = calculate_SO_per_centralizer(x)/supports
+				SO += so
+				Cc += cc
+		return SO, Cc
+
+	SOatC_field = self.lsCentralizerLocations_fields.SOatC
+	ClatC_field = self.lsCentralizerLocations_fields.ClatC
+	
+	for j, (MD1,inc) in enumerate(zip(locations,Inc)):
+		i = j-1
+		k = j+1
+		if i==-1:
+			MD0 = None
+		else:
+			MD0 = locations[i]
+		if k==len(locations):
+			MD2 = None
+		else:
+			MD2 = locations[k]
+		SO, Cc = calculate_SO_per_centralizersEnsemble()
+		cu.create_physicalValue_and_appendTo_field( SO, SOatC_field, SOatC_field.referenceUnit )
+		cu.create_physicalValue_and_appendTo_field( Cc, ClatC_field, ClatC_field.referenceUnit )
+
+	SOatC_field.inverseReferenceUnitConvert()
+	ClatC_field.inverseReferenceUnitConvert()
+	locations.inverseReferenceUnitConvert()
 
 
 def calculate_standOff_atMidspan(self):
 
-	self.stage['PipeProps'].referenceUnitConvert()
-	D = self.stage['PipeProps'].OD[0]
-	d = self.stage['PipeProps'].ID[0]
-	E = self.stage['PipeProps'].E[0]
-	W = self.stage['PipeProps'].PW[0]
-	self.stage['PipeProps'].inverseReferenceUnitConvert()
+	locations = self.lsCentralizerLocations_fields.MD
+	locations.referenceUnitConvert()
+	ClatC_field = self.lsCentralizerLocations_fields.ClatC
+	ClatC_field.referenceUnitConvert()
 
-	self.centralizer1['CentralizerProps'].referenceUnitConvert()
-	self.centralizer2['CentralizerProps'].referenceUnitConvert()
-	ResF1 = self.centralizer1['CentralizerProps'].ResF_CH[0]
-	ResF2 = self.centralizer2['CentralizerProps'].ResF_CH[0]
-	D1 = self.centralizer1['CentralizerProps'].COD[0]
-	D2 = self.centralizer2['CentralizerProps'].COD[0]
-	self.centralizer1['CentralizerProps'].inverseReferenceUnitConvert()
-	self.centralizer2['CentralizerProps'].inverseReferenceUnitConvert()
+	SOatM_field = self.lsCentralizerLocations_fields.SOatM
+	ClatM_field = self.lsCentralizerLocations_fields.ClatM
+	Inc_field   = self.lsCentralizerLocations_fields.Inc
 
+	Inc, Azi = get_inclination_and_azimuth_from_locations(self, locations)
+	MDs = self.lsCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD
+	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
 
-	
+	PD = self.stage['PipeProps'].OD[0]
+	Pd = self.stage['PipeProps'].ID[0]
+	PE = self.stage['PipeProps'].E[0]
+	PW = self.stage['PipeProps'].PW[0]
+	PL = self.stage['PipeBase'].PL[0]
+
+	PD = mdl.referenceUnitConvert_value( PD, PD.unit )
+	Pd = mdl.referenceUnitConvert_value( Pd, Pd.unit )
+	PE = mdl.referenceUnitConvert_value( PE, PE.unit )
+	PW = mdl.referenceUnitConvert_value( PW, PW.unit )
+	PL = mdl.referenceUnitConvert_value( PL, PL.unit )
+	gap = mdl.referenceUnitConvert_value( 2.0, 'm' )
+
+	firstCent = None
+	lastCent  = None
+	for x, c in self.centralizers.items():
+		if firstCent==None and c['Type']!=None:
+			firstCent = x
+		elif firstCent!=None and c['Type']!=None:
+			lastCent = x
+	if lastCent==None:
+		lastCent = firstCent
+
+	CL = 0
+	numofCent = 0
+	for x, c in self.centralizers.items():
+		if c['Type']!=None:
+			CL += c['CentralizerBase'].CL
+			numofCent +=1
+
+	if numofCent==2:
+		if firstCent=='A' and lastCent=='C':
+			CL = PL
+		else:
+			CL += gap
+
+	if numofCent==3:
+		CL += gap
+
+	if CL>PL:
+		print('SIZE ERROR in CENTRALIZERS ENSEMBLE')
+
+	doverDsq = (Pd/PD)**2
+	buoyancyFactor = 1 #( (1-ρe/ρs)-doverDsq*(1-ρi/ρs) )/( 1-doverDsq )
+	PW *= buoyancyFactor
+	PI = np.pi/64*(PD**4-Pd**4)
+	PR = PD/2
+
+	cu.create_physicalValue_and_appendTo_field( 0, SOatM_field, SOatM_field.referenceUnit )
+	cu.create_physicalValue_and_appendTo_field( 0, ClatM_field, ClatM_field.referenceUnit )
+	cu.create_physicalValue_and_appendTo_field( Inc[0], Inc_field, Inc_field.referenceUnit )
+
+	for i in range(len(locations)-1):
+		j = i+1
+		MD1 = locations[i]+CL
+		MD2 = locations[j]
+		In1 = Inc[i]
+		In2 = Inc[j]
+		Az1 = Azi[i]
+		Az2 = Azi[j]
+		L = MD2-MD1
+		MDm = MD1 + L/2
+
+		MDi = MDs[0]
+		IDi = IDs[0]
+		for MDj,IDj in zip(MDs,IDs):
+			if MDm<MDj:
+				Hd = (MDm-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
+				break
+			else:
+				MDi = MDj
+				IDi = IDj
+
+		Ft = get_axialTension_below_MD(self, MD2, referenceUnit=True)
+		u = np.sqrt( Ft*L**2/4/PE/PI )
+		β = np.arccos( np.cos(In1)*np.cos(In2) + np.sin(In1)*np.sin(In2)*np.cos(Az2-Az1) )
+		cosγ0 = np.sin(In1)*np.sin(In2)*np.sin(Az2-Az1)/np.sin(β)
+		cosγn = np.sin( (In1-In2)/2 )*np.sin( (In1+In2)/2 )/np.sin(β/2)
+
+		Fldp = PW*L*cosγn + 2*Ft*np.sin(β/2)
+		Flp  = PW*L*cosγ0
+		Fl   = np.sqrt( Fldp**2 + Flp**2 )
+
+		δ = Fl*L**3/384/PE/PI*24/u**4*(u**2/2 - u*(np.cosh(u)-1)/np.sinh(u) )
+		c1 = ClatC[i]
+		c2 = ClatC[j]
+
+		Hr = Hd/2
+		Hc = Hr-PR
+		Mc = (c1+c2)/2-δ
+		Mc = Mc if (Mc>0) else 0
+		SO = Mc/Hc
+
+		cu.create_physicalValue_and_appendTo_field( In2, Inc_field, Inc_field.referenceUnit )
+		cu.create_physicalValue_and_appendTo_field( SO, SOatM_field, SOatM_field.referenceUnit )
+		cu.create_physicalValue_and_appendTo_field( Mc, ClatM_field, ClatM_field.referenceUnit )
+
+	locations.inverseReferenceUnitConvert()
+	ClatC_field.inverseReferenceUnitConvert()
+	SOatM_field.inverseReferenceUnitConvert()
+	ClatM_field.inverseReferenceUnitConvert()
+	Inc_field.inverseReferenceUnitConvert()
 
 
 
