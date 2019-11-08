@@ -22,14 +22,17 @@ array = lambda L: np.array(L)
 
 
 def get_decimalPointPattern():
+	
 	return '(([\-\+]?\d*\.?\d+)|([\-\+]?\d+\.?\d*))'
 
 
 def get_decimalPointWithThousandsCommaPattern():
+	
 	return '(([\-\+]?\d{1,3}(\,\d{3})*\.\d*)|([\-\+]?\d*\.?\d+)|([\-\+]?\d+\.?\d*))'
 
 
 def get_decimalCommaPattern():
+	
 	return '(([\-\+]?\d{1,3}(\.\d{3})*\,\d*)|([\-\+]?\d*\,?\d+)|([\-\+]?\d+\,?\d*))'
 
 
@@ -53,9 +56,11 @@ def get_decimalFloatCommaFunction():
 
 
 def np_dot( u,v ):
+	
 	return np.sum(u*v,axis=1,keepdims=True)
 
 def np_cross( u,v ):
+	
 	return np.cross(u,v,axis=1)
 
 def np_norm( v ):
@@ -168,10 +173,12 @@ def make_cleanAverage( X ):
 
 
 def isNoneEntry( entry ):
+	
 	return entry=='' and hasattr(entry,'unit')
 
 
 def isSomething( value ):
+	
 	return value!='' and value!=None and value!=False
 
 
@@ -458,7 +465,7 @@ class Field( list ):
 			else:
 				if value.unit==self.unit:
 					newValue = physicalValue( self.factorToReferenceUnit*value + self.offsetToReferenceUnit, self.referenceUnit )
-				else:
+				else:	
 					raise(ValueError)
 				self[i] = newValue
 		return self

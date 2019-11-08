@@ -8,7 +8,6 @@ import CtrlUtilities as cu
 import copy
 
 import importlib
-import CaliperImport_Ctrl as caliper
 
 
 
@@ -674,10 +673,8 @@ def open_CDB_dialog(self, tab):
 @updateByBlock_currentWellboreOuterStageDataItem
 def open_caliper_dialog(self):
 
-	importlib.reload(caliper)
-
 	dialog = QtGui.QDialog(self.s3WellboreIntervals_tableWidget)
-	CI = caliper.Main_CaliperImport(dialog)
+	CI = Main_CaliperImport(dialog)
 	if 'data' not in dir(CI): return
 
 	row = self.s3WellboreIntervals_tableWidget.selectedRow

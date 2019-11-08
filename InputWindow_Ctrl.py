@@ -7,6 +7,7 @@ from OutputWindow_Ctrl import Main_OutputWindow
 import LocationSetup_Ctrl as lsctrl
 import InputWindow_Mdl as mdl
 import CtrlUtilities as cu
+import MdlUtilities as mu
 import SurveyFunctions as sf
 import WellboreFunctions as wf
 import importlib
@@ -106,12 +107,14 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s3RigidCentralizer_radioButton_C.clicked.connect(setEnabled_rigidToolkit_C)
 		self.s3NoneCentralizer_radioButton_C.clicked.connect(setDisabled_centralizerToolkit_C)
 
+
 	def about(self):
 
 		importlib.reload(tl)
 		importlib.reload(lsctrl)
 		importlib.reload(mdl)
 		importlib.reload(cu)
+		importlib.reload(mu)
 		importlib.reload(wf)
 		importlib.reload(sf)
 
@@ -199,7 +202,6 @@ class Main_InputWindow(Ui_InputWindow):
 		##window = QtGui.QMainWindow(self.iw_toolBar)
 		##Main_OutputWindow(window)
 		##window.show()
-
 
 		
 	def __init__s2DataSurvey_tableWidget(self):

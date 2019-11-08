@@ -6,6 +6,9 @@ from MdlUtilities import Field, FieldList
 import MdlUtilities as mdl
 import CtrlUtilities as cu
 import dbUtils
+import importlib
+
+importlib.reload(mdl)
 
 
 def get_lsCentralizerLocations_fields():
