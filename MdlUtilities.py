@@ -247,6 +247,7 @@ def xfloat( expression ):
 
 def physicalValue(value, unit):
 	
+	print('?????',value,type(value))
 	if isinstance(value, int) or isinstance(value, np.int32) or isinstance(value, np.int64):
 		entry = __int__(value)
 	elif isinstance(value, float) or isinstance(value, np.float32) or isinstance(value, np.float64):

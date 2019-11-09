@@ -134,7 +134,18 @@ def get_LASMDandCALID_intoInterval(self):
 	MD[0] = self.min_MD
 	MD[-1] = self.max_MD
 
-	return MD, ID, lim_ID
+	K = list(self.parent.wellboreOuterStageData.keys())
+	K.sort()
+	mean_ID = []
+	for md in MD:
+		for k in K:
+			stage = self.parent.wellboreOuterStageData[k]
+			if md>=stage['WellboreProps'].MDtop and md<=stage['WellboreProps'].MDbot:
+				mean_ID.append( stage['WellboreProps'].ID[0] )
+				break
+	mean_ID = np.array( mean_ID )
+
+	return MD, ID, mean_ID, lim_ID
 
 
 def calculate_axialForce_field(self):
@@ -240,6 +251,7 @@ def calculate_standOff_atCentralizers(self):
 	Inc, Azi = get_inclination_and_azimuth_from_locations(self, locations)
 	MDs = self.lsCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD
 	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
+	meanIDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.mean_ID
 
 	PD = self.stage['PipeProps'].OD[0]
 	Pd = self.stage['PipeProps'].ID[0]
@@ -312,15 +324,19 @@ def calculate_standOff_atCentralizers(self):
 			"""
 			MDi = MDs[0]
 			IDi = IDs[0]
-			for MDj,IDj in zip(MDs,IDs):
+			mIDi = meanIDs[0]
+			for MDj,IDj,mIDj in zip(MDs,IDs,meanIDs):
 				if MD1<MDj:
 					Hd = (MD1-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
+					mHd = (MD1-MDi)/(MDj-MDi)*(mIDj-mIDi)+mIDi
 					break
 				else:
 					MDi = MDj
 					IDi = IDj
+					mIDi = mIDj
 
 			Hr = Hd/2
+			mHr = mHd/2
 			R = D[label]/2
 			δ = Hr-PR
 
@@ -353,9 +369,9 @@ def calculate_standOff_atCentralizers(self):
 				R = (R-y) if (R<Hr) else (Hr-y)
 				R = Rmin if (R<Rmin) else R
 
-			Hc = Hr-PR
-			Cc = R-PR
-			SO = Cc/Hc
+			mHc = mHr-PR
+			Cc = R-PR-(Hr-mHr)
+			SO = Cc/mHc
 			
 			return SO, Cc
 
@@ -382,6 +398,7 @@ def calculate_standOff_atMidspan(self):
 	Inc, Azi = get_inclination_and_azimuth_from_locations(self, locations)
 	MDs = self.lsCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD
 	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
+	meanIDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.mean_ID
 
 	PD = self.stage['PipeProps'].OD[0]
 	Pd = self.stage['PipeProps'].ID[0]
@@ -448,13 +465,16 @@ def calculate_standOff_atMidspan(self):
 
 		MDi = MDs[0]
 		IDi = IDs[0]
-		for MDj,IDj in zip(MDs,IDs):
-			if MDm<MDj:
-				Hd = (MDm-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
+		mIDi = meanIDs[0]
+		for MDj,IDj,mIDj in zip(MDs,IDs,meanIDs):
+			if MD1<MDj:
+				Hd = (MD1-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
+				mHd = (MD1-MDi)/(MDj-MDi)*(mIDj-mIDi)+mIDi
 				break
 			else:
 				MDi = MDj
 				IDi = IDj
+				mIDi = mIDj
 
 		Ft = get_axialTension_below_MD(self, MD2, referenceUnit=True)
 		u = np.sqrt( Ft*L**2/4/PE/PI )
@@ -471,10 +491,12 @@ def calculate_standOff_atMidspan(self):
 		c2 = ClatC_field[j]
 
 		Hr = Hd/2
-		Hc = Hr-PR
+		mHr = mHd/2
+		mHc = mHr-PR
 		Mc = (c1+c2)/2-δ
-		Mc = Mc if (Mc>0) else 0
-		SO = Mc/Hc
+		xHc = mHr-Hr
+		Mc = Mc if (Mc>xHc) else xHc
+		SO = Mc/mHc
 
 		cu.create_physicalValue_and_appendTo_field( In2, Inc_field, Inc_field.referenceUnit )
 		cu.create_physicalValue_and_appendTo_field( SO, SOatM_field, SOatM_field.referenceUnit )

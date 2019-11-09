@@ -29,7 +29,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 		mdl.calculate_axialForce_field(self)	
 
 		self.__init__lsCentralizerLocations_tableWidget()
-		self.lsCalculate_pushButton.clicked.connect( self.calculate_SO )
+		#self.lsCalculate_pushButton.clicked.connect( self.calculate_SO )
 
 		self.stage = parent.currentWellboreInnerStageDataItem
 
@@ -40,9 +40,10 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.centralizers = copy.deepcopy(self.stage['Centralization'])
 		del self.centralizers['Mode']
 
-		MD, ID, lim_ID = mdl.get_LASMDandCALID_intoInterval(self)
+		MD, ID, mean_ID, lim_ID = mdl.get_LASMDandCALID_intoInterval(self)
 		self.MD = MD
 		self.ID = ID
+		self.mean_ID = mean_ID
 
 		#self.lsCaliperMap_graphicsView.axes.set_position([0.23,0.1,0.7,0.85])
 		self.lsCaliperMap_graphicsView_ylimits    = [None,None]
