@@ -111,8 +111,8 @@
    <widget class="QSpinBox" name="ciH1columnIndex_spinBox">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>60</y>
+      <x>190</x>
+      <y>70</y>
       <width>70</width>
       <height>27</height>
      </rect>
@@ -163,11 +163,11 @@ in order to show a congruet graph.</string>
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#00aa00;&quot;&gt;BS&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QSpinBox" name="ciODcolumnIndex_spinBox">
+   <widget class="QSpinBox" name="ciH2columnIndex_spinBox">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>130</y>
+      <x>190</x>
+      <y>120</y>
       <width>70</width>
       <height>27</height>
      </rect>
@@ -180,42 +180,32 @@ in order to show a congruet graph.</string>
     </property>
     <property name="value">
      <number>0</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>70</y>
+      <width>51</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>From:</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>105</y>
-      <width>61</width>
+      <y>120</y>
+      <width>31</width>
       <height>21</height>
      </rect>
     </property>
-    <property name="toolTip">
-     <string>OD unit must be the same as Hole ID unit,
-in order to show a congruet graph. (optional)</string>
-    </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#9467bd;&quot;&gt;IP OD&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="ciH2columnIndex_spinBox">
-    <property name="geometry">
-     <rect>
-      <x>210</x>
-      <y>60</y>
-      <width>70</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>0 means that any column is selected.</string>
-    </property>
-    <property name="minimum">
-     <number>0</number>
-    </property>
-    <property name="value">
-     <number>0</number>
+     <string>To:</string>
     </property>
    </widget>
   </widget>
@@ -243,7 +233,7 @@ in order to show a congruet graph. (optional)</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>40</y>
+      <y>80</y>
       <width>80</width>
       <height>27</height>
      </rect>
@@ -259,7 +249,7 @@ in order to show a congruet graph. (optional)</string>
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>40</y>
+      <y>80</y>
       <width>80</width>
       <height>27</height>
      </rect>
@@ -272,7 +262,7 @@ in order to show a congruet graph. (optional)</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>80</y>
+      <y>40</y>
       <width>80</width>
       <height>27</height>
      </rect>
@@ -288,7 +278,7 @@ in order to show a congruet graph. (optional)</string>
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>80</y>
+      <y>40</y>
       <width>80</width>
       <height>27</height>
      </rect>
@@ -316,7 +306,7 @@ in order to show a congruet graph. (optional)</string>
      </font>
     </property>
     <property name="text">
-     <string>&lt; ID &lt;</string>
+     <string>&lt; MD &lt;</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_4">
@@ -335,7 +325,7 @@ in order to show a congruet graph. (optional)</string>
      </font>
     </property>
     <property name="text">
-     <string>&lt; MD &lt;</string>
+     <string>&lt; ID &lt;</string>
     </property>
    </widget>
   </widget>

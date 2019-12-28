@@ -10,6 +10,8 @@ import re, os
 
 import importlib
 
+import time
+
 class Main_LocationSetup(Ui_LocationSetup):
 
 	def __init__(self, dialog, parent):
@@ -133,18 +135,16 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.lsCentralizerLocations_tableWidget.parent = self
 		self.lsCentralizerLocations_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
 		
-		C = cu.CopySelectedCells_action(self.lsCentralizerLocations_tableWidget)
-		self.lsCentralizerLocations_tableWidget.addAction(C)
+		#C = cu.CopySelectedCells_action(self.lsCentralizerLocations_tableWidget)
+		#self.lsCentralizerLocations_tableWidget.addAction(C)
 		
-		V = cu.PasteToCells_action(self.lsCentralizerLocations_tableWidget)
-		self.lsCentralizerLocations_tableWidget.addAction(V)
+		#V = cu.PasteToCells_action(self.lsCentralizerLocations_tableWidget)
+		#self.lsCentralizerLocations_tableWidget.addAction(V)
 
 		D = cu.FunctionToWidget_action(self.lsCentralizerLocations_tableWidget, self.remove_location, "Delete", 'Del')
 		self.lsCentralizerLocations_tableWidget.addAction(D)
 
 		#select_row = lambda r,c : cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,r)
-		self.lsCentralizerLocations_tableWidget.cellPressed.connect(self.select_row)
-		self.lsCentralizerLocations_tableWidget.itemChanged.connect(cu.update_fieldItem)
 
 		for field in self.lsCentralizerLocations_fields[:4]:
 			#
@@ -155,6 +155,13 @@ class Main_LocationSetup(Ui_LocationSetup):
 				item = cu.TableWidgetFieldItem( field, i%2==0 )
 				self.lsCentralizerLocations_tableWidget.setItem(i, field.pos, item)
 
+		
+		def update_through_itemChange(item):
+			call_function = lambda: self.choose_MDlocation(item.realValue)
+			cu.update_fieldItem(item, call_function)
+
+		self.lsCentralizerLocations_tableWidget.cellPressed.connect(self.select_row)
+		self.lsCentralizerLocations_tableWidget.itemChanged.connect(update_through_itemChange)
 		self.lsCentralizerLocations_tableWidget.resizeColumnsToContents()
 
 
@@ -204,8 +211,13 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 
 	def update_calculations(self):
+		tic = time.time()
 		mdl.calculate_standOff_atCentralizers(self)
+		tac = time.time()
 		mdl.calculate_standOff_atMidspan(self)
+		toc = time.time()
+
+		print('mid:',toc-tac,'cent:',tac-tic)
 
 		for i, inc in enumerate(self.lsCentralizerLocations_fields.Inc):
 

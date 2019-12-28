@@ -85,7 +85,7 @@ def select_tableWidgetRow(tableWidget, row):
 	tableWidget.selectedRow = row
 
 
-def update_fieldItem(item):
+def update_fieldItem(item, call=None):
 	
 	"""
 	print('?',type(item))
@@ -102,6 +102,8 @@ def update_fieldItem(item):
 	if 'text' in dir(item):
 		if item.currentChangebyVst:
 			item.set_text(item.text())
+			if call!=None:
+				call()
 		item.currentChangebyVst = True
 	
 

@@ -13,6 +13,8 @@ import WellboreFunctions as wf
 import importlib
 import testlib as tl
 import sys
+#from multiprocessing import Pool
+
 
 
 class Main_InputWindow(Ui_InputWindow):
@@ -20,7 +22,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def __init__(self, window):
 		Ui_InputWindow.__init__(self)
 		self.setupUi(window)
-		
+
 		self.wellboreInnerStageData = {}
 		self.wellboreOuterStageData = {}
 
@@ -503,7 +505,6 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s3CentralizerLocation_tableWidget_C.parent = self
 		wf.init_s3CentralizerLocation_tableWidget(self, 'C')
 		#wf.setup2_s3CentralizerLocation_tableWidget(self, 'C')
-
 
 
 def main():

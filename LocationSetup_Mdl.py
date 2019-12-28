@@ -7,6 +7,10 @@ import MdlUtilities as mdl
 import CtrlUtilities as cu
 import dbUtils
 import importlib
+import time
+
+#from pathos.multiprocessing import ProcessingPool as Pool
+from multiprocessing import Pool
 
 importlib.reload(mdl)
 
@@ -63,7 +67,7 @@ def get_ASCCoordinates_from_MD(self, MD, unit=None):
 		MD = mdl.unitConvert_value( MD, MD.unit, self.parent.s2DataSurvey_fields.MD.unit )
 
 	MD_array = np.array( self.parent.s2DataSurvey_fields.MD )
-	index = sum(MD_array[:-1]<=MD)-1
+	index = np.where(MD_array[:-1]<=MD)[0][-1]
 	del MD_array
 
 	MD = mdl.referenceUnitConvert_value( MD, MD.unit )
@@ -87,7 +91,7 @@ def get_ASCT_from_MD(self, MD, unit=None):
 		MD = mdl.unitConvert_value( MD, MD.unit, self.parent.s2DataSurvey_fields.MD.unit )
 
 	MD_array = np.array( self.parent.s2DataSurvey_fields.MD )
-	index = sum(MD_array[:-1]<=MD)-1
+	index = np.where(MD_array[:-1]<=MD)[0][-1]
 	del MD_array
 	
 	MD = mdl.referenceUnitConvert_value( MD, MD.unit )
@@ -103,7 +107,7 @@ def get_ASCDogleg_from_MD(self, MD, unit=None):
 		MD = mdl.unitConvert_value( MD, MD.unit, self.parent.s2DataSurvey_fields.MD.unit )
 
 	MD_array = np.array( self.parent.s2DataSurvey_fields.MD )
-	index = sum(MD_array[:-1]<=MD)-1
+	index = np.where(MD_array[:-1]<=MD)[0][-1]
 	del MD_array
 
 	MD = mdl.referenceUnitConvert_value( MD, MD.unit )
@@ -118,11 +122,8 @@ def get_LASMDandCALID_intoInterval(self):
 	MD = self.parent.workWellboreMD
 	ID = self.parent.workWellboreID
 
-	indexes = MD>self.min_MD
-	min_index = len(MD)-sum(indexes)-1
-	indexes = MD<self.max_MD
-	max_index = sum(indexes)+1
-	del indexes
+	min_index = np.where(MD<=self.min_MD)[0][-1]
+	max_index = np.where(MD>=self.max_MD)[0][0]+1
 
 	MD = MD[min_index:max_index]
 	ID = ID[min_index:max_index]
@@ -196,7 +197,7 @@ def get_axialTension_below_MD(self, MD, unit=None, referenceUnit=False):
 	cosInc = get_ASCT_from_MD(self, MD)[2]
 	MD_AxF = np.array( self.lsCentralizerLocations_fields.MD_AxF )
 	AxialF = np.array( self.lsCentralizerLocations_fields.AxialF )
-	index = sum(MD_AxF[:-1]<=MD)
+	index = np.where(MD_AxF[:-1]>MD)[0][0]
 
 	MD_AxF_i = MD_AxF[index]
 	AxialF_i = AxialF[index]
@@ -248,6 +249,8 @@ def calculate_standOff_atCentralizers(self):
 
 	locations = self.lsCentralizerLocations_fields.MD
 	locations.referenceUnitConvert()
+	numofLocations = len(locations)
+
 	Inc, Azi = get_inclination_and_azimuth_from_locations(self, locations)
 	MDs = self.lsCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD
 	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
@@ -304,7 +307,7 @@ def calculate_standOff_atCentralizers(self):
 
 	SOatC_field = self.lsCentralizerLocations_fields.SOatC
 	ClatC_field = self.lsCentralizerLocations_fields.ClatC
-	
+		
 	for j, (MD1,inc) in enumerate(zip(locations,Inc)):
 		i = j-1
 		k = j+1
@@ -312,7 +315,7 @@ def calculate_standOff_atCentralizers(self):
 			MD0 = None
 		else:
 			MD0 = locations[i]
-		if k==len(locations):
+		if k==numofLocations:
 			MD2 = None
 		else:
 			MD2 = locations[k]
@@ -374,8 +377,9 @@ def calculate_standOff_atCentralizers(self):
 			SO = Cc/mHc
 			
 			return SO, Cc
-
+		
 		SO, Cc = calculate_SO_per_centralizersEnsemble()
+
 		cu.create_physicalValue_and_appendTo_field( SO, SOatC_field, SOatC_field.referenceUnit )
 		cu.create_physicalValue_and_appendTo_field( Cc, ClatC_field, ClatC_field.referenceUnit )
 
@@ -386,6 +390,7 @@ def calculate_standOff_atCentralizers(self):
 
 def calculate_standOff_atMidspan(self):
 
+	t0 = time.time()
 	locations = self.lsCentralizerLocations_fields.MD
 	locations.referenceUnitConvert()
 	ClatC_field = self.lsCentralizerLocations_fields.ClatC
@@ -396,6 +401,8 @@ def calculate_standOff_atMidspan(self):
 	Inc_field   = self.lsCentralizerLocations_fields.Inc
 
 	Inc, Azi = get_inclination_and_azimuth_from_locations(self, locations)
+	t01 = time.time()
+
 	MDs = self.lsCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD
 	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
 	meanIDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.mean_ID
@@ -452,6 +459,8 @@ def calculate_standOff_atMidspan(self):
 	cu.create_physicalValue_and_appendTo_field( 0, ClatM_field, ClatM_field.referenceUnit )
 	cu.create_physicalValue_and_appendTo_field( Inc[0], Inc_field, Inc_field.referenceUnit )
 
+	t1 = time.time()
+	t12 = []
 	for i in range(len(locations)-1):
 		j = i+1
 		MD1 = locations[i]+CL
@@ -475,8 +484,11 @@ def calculate_standOff_atMidspan(self):
 				MDi = MDj
 				IDi = IDj
 				mIDi = mIDj
-
+		t120 = time.time()
 		Ft = get_axialTension_below_MD(self, MD2, referenceUnit=True)
+		t121 = time.time()
+		t12.append(t121-t120)
+
 		u = np.sqrt( Ft*L**2/4/PE/PI )
 		β = np.arccos( np.cos(In1)*np.cos(In2) + np.sin(In1)*np.sin(In2)*np.cos(Az2-Az1) )
 		cosγ0 = np.sin(In1)*np.sin(In2)*np.sin(Az2-Az1)/np.sin(β)
@@ -502,11 +514,17 @@ def calculate_standOff_atMidspan(self):
 		cu.create_physicalValue_and_appendTo_field( SO, SOatM_field, SOatM_field.referenceUnit )
 		cu.create_physicalValue_and_appendTo_field( Mc, ClatM_field, ClatM_field.referenceUnit )
 
+	t12 = np.mean(t12)
+
+	t2 = time.time()
 	locations.inverseReferenceUnitConvert()
 	ClatC_field.inverseReferenceUnitConvert()
 	SOatM_field.inverseReferenceUnitConvert()
 	ClatM_field.inverseReferenceUnitConvert()
 	Inc_field.inverseReferenceUnitConvert()
+	t3 = time.time()
+
+	print(t01-t0, t1-t01, t12, t3-t2)
 
 
 
