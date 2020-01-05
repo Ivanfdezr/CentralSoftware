@@ -1032,7 +1032,7 @@ class Ui_InputWindow(object):
 		self.menubar.addAction(self.menuHelp.menuAction())
 
 		self.retranslateUi(InputWindow)
-		self.Menu.setCurrentIndex(2)
+		self.Menu.setCurrentIndex(1)
 		self.tabWidget.setCurrentIndex(0)
 		self.s3InnerStageToolkit_tabWidget.setCurrentIndex(0)
 		self.ABC_tabWidget.setCurrentIndex(0)

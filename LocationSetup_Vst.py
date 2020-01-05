@@ -27,11 +27,6 @@ class Ui_LocationSetup(object):
 		LocationSetup.setObjectName(_fromUtf8("LocationSetup"))
 		LocationSetup.resize(1316, 567)
 		LocationSetup.setWindowOpacity(1.0)
-		self.lsDialog_buttonBox = QtGui.QDialogButtonBox(LocationSetup)
-		self.lsDialog_buttonBox.setGeometry(QtCore.QRect(1070, 505, 210, 40))
-		self.lsDialog_buttonBox.setOrientation(QtCore.Qt.Horizontal)
-		self.lsDialog_buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-		self.lsDialog_buttonBox.setObjectName(_fromUtf8("lsDialog_buttonBox"))
 		self.lsCaliperMap_graphicsView = MatplotlibWidget(LocationSetup)
 		self.lsCaliperMap_graphicsView.setGeometry(QtCore.QRect(40, 40, 350, 450))
 		self.lsCaliperMap_graphicsView.setObjectName(_fromUtf8("lsCaliperMap_graphicsView"))
@@ -53,13 +48,14 @@ class Ui_LocationSetup(object):
 		self.lsCentralizerLocations_tableWidget.setHorizontalHeaderItem(3, item)
 		self.lsCentralizerLocations_tableWidget.horizontalHeader().setDefaultSectionSize(110)
 		self.lsCentralizerLocations_tableWidget.horizontalHeader().setMinimumSectionSize(30)
-		self.lsCalculate_pushButton = QtGui.QPushButton(LocationSetup)
-		self.lsCalculate_pushButton.setGeometry(QtCore.QRect(880, 510, 100, 30))
-		self.lsCalculate_pushButton.setObjectName(_fromUtf8("lsCalculate_pushButton"))
+		self.lsAccept_pushButton = QtGui.QPushButton(LocationSetup)
+		self.lsAccept_pushButton.setGeometry(QtCore.QRect(1190, 510, 93, 30))
+		font = QtGui.QFont()
+		font.setPointSize(10)
+		self.lsAccept_pushButton.setFont(font)
+		self.lsAccept_pushButton.setObjectName(_fromUtf8("lsAccept_pushButton"))
 
 		self.retranslateUi(LocationSetup)
-		QtCore.QObject.connect(self.lsDialog_buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), LocationSetup.accept)
-		QtCore.QObject.connect(self.lsDialog_buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), LocationSetup.reject)
 		QtCore.QMetaObject.connectSlotsByName(LocationSetup)
 
 	def retranslateUi(self, LocationSetup):
@@ -72,6 +68,6 @@ class Ui_LocationSetup(object):
 		item.setText(_translate("LocationSetup", "SO at\\ncentralizer", None))
 		item = self.lsCentralizerLocations_tableWidget.horizontalHeaderItem(3)
 		item.setText(_translate("LocationSetup", "SO at\\nmidspan", None))
-		self.lsCalculate_pushButton.setText(_translate("LocationSetup", "Calculate", None))
+		self.lsAccept_pushButton.setText(_translate("LocationSetup", "Accept", None))
 
 from matplotlibwidget import Matplotlib3DWidget, MatplotlibWidget

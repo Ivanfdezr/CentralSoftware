@@ -28,6 +28,10 @@ def set_survey_to_table(self):
 				dsfield = getattr(self.s2DataSurvey_fields,sifield.abbreviation)
 				self.s2DataSurvey_tableWidget.item(i, dsfield.pos).set_text( sifield[i], sifield[i].unit )
 
+	self.FileLines = SI.FileLines
+	self.filename = SI.filename
+	del SI
+
 
 def get_tortuosity_data(self):
 

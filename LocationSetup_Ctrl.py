@@ -27,6 +27,8 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.parent = parent
 		self.centralizerCount = 0
 
+		self.lsAccept_pushButton.clicked.connect( self.makeResults_and_done )
+
 		self.lsCentralizerLocations_fields = mdl.get_lsCentralizerLocations_fields()
 		mdl.calculate_axialForce_field(self)	
 
@@ -41,6 +43,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 		self.centralizers = copy.deepcopy(self.stage['Centralization'])
 		del self.centralizers['Mode']
+		del self.centralizers['Fields']
 
 		MD, ID, mean_ID, lim_ID = mdl.get_LASMDandCALID_intoInterval(self)
 		self.MD = MD
@@ -126,6 +129,10 @@ class Main_LocationSetup(Ui_LocationSetup):
 		zp.zoom3D_factory( self.lsWellbore3D_graphicsView.axes, curve )
 		self.lsWellbore3D_graphicsView.draw()
 		
+		if self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields']!=None:
+			for MD in self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields'].MD:
+				self.choose_MDlocation(MD, dry=True)
+
 		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 		dialog.exec_()
 
@@ -163,6 +170,13 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.lsCentralizerLocations_tableWidget.cellPressed.connect(self.select_row)
 		self.lsCentralizerLocations_tableWidget.itemChanged.connect(update_through_itemChange)
 		self.lsCentralizerLocations_tableWidget.resizeColumnsToContents()
+		self.lsCentralizerLocations_tableWidget.selectedRow = None
+
+
+	def makeResults_and_done(self):
+
+		self.fields = self.lsCentralizerLocations_fields
+		self.dialog.done(0)
 
 
 	def remove_location(self):
@@ -232,9 +246,14 @@ class Main_LocationSetup(Ui_LocationSetup):
 			item.set_text( SOatMi )	
 
 
-	def choose_MDlocation(self, MD):
+	def choose_MDlocation(self, MD, dry=False):
 
 		if MD>=self.min_MD and MD<=self.max_MD:
+
+			if not dry:
+				r = self.lsCentralizerLocations_tableWidget.selectedRow
+				if r<len(self.lsCentralizerLocations_fields.MD):
+					del self.lsCentralizerLocations_fields.MD[r]
 
 			cu.create_physicalValue_and_appendTo_field( MD, self.lsCentralizerLocations_fields.MD )
 			MD = self.lsCentralizerLocations_fields.MD[-1]

@@ -181,7 +181,7 @@ def get_s3CentralizerRunningForce_fields():
 
 def get_s3CentralizerLocation_fields():
 
-	MD = Field(2001)
+	MD = Field(2001, altBg=True, altFg=True)
 	s3CentralizerLocation_fields = FieldList()
 	s3CentralizerLocation_fields.append( MD )
 	
@@ -441,7 +441,8 @@ class WellboreInnerStageDataItem( dict ):
 		self['PipeBase'] = None
 		self['Centralization'] = {	'A':{'CentralizerBase':None},
 									'B':{'CentralizerBase':None},
-									'C':{'CentralizerBase':None}	}
+									'C':{'CentralizerBase':None},
+									'Fields':None	}
 		self.setup()
 
 	def setup(self):
@@ -449,24 +450,23 @@ class WellboreInnerStageDataItem( dict ):
 		CentralizerA = self['Centralization']['A']['CentralizerBase']
 		CentralizerB = self['Centralization']['B']['CentralizerBase']
 		CentralizerC = self['Centralization']['C']['CentralizerBase']
+		CentralizationFields = self['Centralization']['Fields']
 
 		self['PipeProps'] = None 
 		self['Centralization'] = {	'Mode':None,
 									'A':{	'Type':None,
 											'CentralizerBase':CentralizerA,
 											'CentralizerProps':None,
-											'RunningForce':None,
-											'Location':None		},
+											'RunningForce':None},
 									'B':{	'Type':None,
 											'CentralizerBase':CentralizerB,
 											'CentralizerProps':None,
-											'RunningForce':None,
-											'Location':None		},
+											'RunningForce':None},
 									'C':{	'Type':None,
 											'CentralizerBase':CentralizerC,
 											'CentralizerProps':None,
-											'RunningForce':None,
-											'Location':None		}}
+											'RunningForce':None},
+									'Fields':CentralizationFields}
 
 
 class WellboreOuterStageDataItem( dict ):

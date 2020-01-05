@@ -3,8 +3,6 @@ from InputWindow_Vst import Ui_InputWindow
 from UnitSettings_Ctrl import Main_UnitSettings
 from OneSpanAnalysis_Ctrl import Main_OneSpanAnalysis
 from OutputWindow_Ctrl import Main_OutputWindow
-#from LocationSetup_Ctrl import Main_LocationSetup
-import LocationSetup_Ctrl as lsctrl
 import InputWindow_Mdl as mdl
 import CtrlUtilities as cu
 import MdlUtilities as mu
@@ -25,6 +23,8 @@ class Main_InputWindow(Ui_InputWindow):
 
 		self.wellboreInnerStageData = {}
 		self.wellboreOuterStageData = {}
+		self.FileLines = None
+		self.filename = None
 
 		self.wellboreOuterStageDataIsUpdatable = True
 		self.wellboreInnerStageDataIsUpdatable = True
@@ -71,7 +71,8 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s3ODID_pushButton.clicked.connect(adjust_Wt)
 		self.s3ODWt_pushButton.clicked.connect(adjust_ID)
 
-		self.s3SpecifyLocationCentralization_pushButton.clicked.connect(self.open_LocationSetupDialog)
+		open_LS_dialog = lambda: wf.open_LS_dialog(self)
+		self.s3SpecifyLocationCentralization_pushButton.clicked.connect(open_LS_dialog)
 
 		open_CDB_dialog_A = lambda: wf.open_CDB_dialog(self, 'A')
 		open_CDB_dialog_B = lambda: wf.open_CDB_dialog(self, 'B')
@@ -113,16 +114,16 @@ class Main_InputWindow(Ui_InputWindow):
 	def about(self):
 
 		importlib.reload(tl)
-		importlib.reload(lsctrl)
 		importlib.reload(mdl)
 		importlib.reload(cu)
 		importlib.reload(mu)
 		importlib.reload(wf)
 		importlib.reload(sf)
 
-		print('----------------------------------------')
+		print('---------------------------------------------------------')
+		"""
 		for i,attr in enumerate(dir(self)):
-			size = eval('sys.getsizeof(self.'+attr+')')
+			size = eval('cu.get_size(self.'+attr+')')
 			try:
 				if self.objectsSizes[attr]!=size:
 					try:
@@ -132,10 +133,21 @@ class Main_InputWindow(Ui_InputWindow):
 					self.objectsSizes[attr] = size
 			except KeyError:
 				try:
-					print( i,attr,'---',size,eval('len(self.'+attr+')') )
+					print( i,attr,'---B',size+'B',eval('len(self.'+attr+')') )
 				except TypeError:
-					print( i,attr,'---',size,'NA' )
+					print( i,attr,'---B',size+'B','NA' )
 				self.objectsSizes[attr] = size
+		"""
+		for i,attr in enumerate(dir(self)):
+			size = eval('cu.size_object(self.'+attr+')')
+			if attr in self.objectsSizes and attr!="objectsSizes":
+				if self.objectsSizes[attr]!=size:
+					eval('cu.count_nestedObjects(self.'+attr+',name="self.'+attr+'")')
+					print( '======================================' )
+			
+			self.objectsSizes[attr] = size
+
+
 
 
 	def set_workUnits_as(self, unitSystem):
@@ -175,11 +187,6 @@ class Main_InputWindow(Ui_InputWindow):
 	def open_unitSettingsDialog(self):
 		dialog = QtGui.QDialog(self.s1UnitSetting_pushButton)
 		Main_UnitSettings(dialog)
-
-
-	def open_LocationSetupDialog(self):
-		dialog = QtGui.QDialog(self.s3SpecifyLocationCentralization_pushButton)
-		lsctrl.Main_LocationSetup(dialog, self)
 		
 
 	def open_oneSpanAnalysisDialog(self):

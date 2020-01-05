@@ -6,6 +6,7 @@ import PlotUtilities as pu
 import MdlUtilities as mu
 import copy
 import re, os
+import time
 
 
 class Main_SurveyImport(Ui_SurveyImport):
@@ -106,39 +107,29 @@ class Main_SurveyImport(Ui_SurveyImport):
 	def open_file(self):
 		
 		filepath = QtGui.QFileDialog.getOpenFileName(self.dialog, 'Open file', 'c:\\',"SURVEY files (*.las *.txt)")
-		head,filename = os.path.split( filepath )
-		self.siFilename_label.setText( filename )
+		head,self.filename = os.path.split( filepath )
+		self.siFilename_label.setText( self.filename )
+
+		tic = time.time()
+
 		with open(filepath,'r') as file:
 			self.FileLines = file.readlines()
+		
+		toc = time.time(); print('ET: ',toc-tic); tic = time.time()
 
-		text = ''
+		self.numofRows = len(self.FileLines)
 		for row, line in enumerate(self.FileLines):
-			text += str(row+1)+'\t'+line
+			text = str(row+1)+'\t'+line
+			self.siFileText_textEdit.insertPlainText(text)
+			if row%int(self.numofRows/20)==0:
+				self.siStatus_label.setText( 'Loading ... {val}%'.format(val=int(row/self.numofRows*100)) )
+				cu.idleFunction()
 
-		self.siFileText_textEdit.setText(text)
+		toc = time.time(); print('ET: ',toc-tic); tic = time.time()
 
-		# hrt = mdl.HtmlRichText()
-		# text = "Esto es " + hrt.get_styledText('C0', pu.Colors['C0'], True) + "y esto es " +hrt.get_styledText('C1', pu.Colors['C1'])
-		# hrt.add_line(text)
-		# text = "Esto es " + hrt.get_styledText('C2', pu.Colors['C2'], True) + "y esto es " +hrt.get_styledText('C3', pu.Colors['C3'])
-		# hrt.add_line(text)
-		# text = "Esto es " + hrt.get_styledText('C4', pu.Colors['C4'], True) + "y esto es " +hrt.get_styledText('C5', pu.Colors['C5'])
-		# hrt.add_line(text)
-		# html = hrt.get_html()
-
-		# self.textEdit.setHtml(html)
-
-		"""
-		self.siFileText_tableWidget.setRowCount(len(self.FileLines))
-		for row, line in enumerate(self.FileLines):
-			items = re.split('[\r\n]+',line)
-			line = ''.join(items)
-			widget = QtGui.QLabel()
-			widget.setText(line)
-			widget.setEnabled(False)
-			self.siFileText_tableWidget.setCellWidget(row, 0, widget)
-		"""
+		self.siStatus_label.setText('')
 		self.setEnabled_parsingSurveyToolkit()
+		
 
 
 	def setEnabled_parsingSurveyToolkit(self, boolean=True):
@@ -157,8 +148,8 @@ class Main_SurveyImport(Ui_SurveyImport):
 		self.setEnabled_parsingSurveyToolkit(False)
 		cu.idleFunction()
 
-		fileTextStartingRow   = (self.siStartingRow_spinBox.value()-1)%len(self.FileLines)#self.siFileText_tableWidget.rowCount()
-		fileTextEndingRow     = (self.siEndingRow_spinBox.value() - 1)%len(self.FileLines)#self.siFileText_tableWidget.rowCount()
+		fileTextStartingRow   = (self.siStartingRow_spinBox.value()-1)%self.numofRows#self.siFileText_tableWidget.rowCount()
+		fileTextEndingRow     =   (self.siEndingRow_spinBox.value()-1)%self.numofRows#self.siFileText_tableWidget.rowCount()
 		fileTextMDcolumnIndex = (self.siMDcolumnIndex_spinBox.value()-1)%99
 		fileTextInccolumnIndex = (self.siInccolumnIndex_spinBox.value()-1)%99
 		fileTextAzicolumnIndex = (self.siAzicolumnIndex_spinBox.value()-1)%99

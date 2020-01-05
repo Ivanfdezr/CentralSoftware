@@ -1,7 +1,6 @@
 from PyQt4 import QtCore, QtGui
 import MdlUtilities as mdl
-import time
-import re
+import re, time, sys
 
 
 def sleep(seconds):
@@ -11,6 +10,70 @@ def sleep(seconds):
 
 
 idleFunction = lambda: sleep(0.01)
+
+
+
+def size_object(obj, seen=None):
+	"""Recursively finds size of objects and print lengths"""
+	size = sys.getsizeof(obj)
+	if seen is None:
+		seen = set()
+	obj_id = id(obj)
+	if obj_id in seen:
+		return 0
+	
+	seen.add(obj_id)
+	if isinstance(obj, list):
+		for i in obj:
+			si = size_object(i, seen)
+			size += si
+	elif isinstance(obj, dict):
+		for (k,v) in obj.items():
+			if k!="parent" and k!="objectsSizes":
+				sk = size_object(k, seen)
+				sv = size_object(v, seen)
+				size += sk+sv
+	if hasattr(obj, '__dict__'):
+		size += size_object(obj.__dict__, seen)
+	return size
+
+
+def count_nestedObjects(obj, seen=None, name=''):
+	"""Recursively counts the number of objects in obj"""
+	
+	if re.match('[\w\.]*\._[\w]+',name):
+		return 0
+
+	count = 0
+	if seen is None:
+		seen = set()
+	obj_id = id(obj)
+	if obj_id in seen:
+		return 0
+	
+	seen.add(obj_id)
+	try:
+		obj_len = len(obj)
+	except TypeError:
+		obj_len = 0
+
+	if isinstance(obj, list):
+		#print(name,'[] ',obj_len,'items')
+		count += obj_len
+		
+	elif isinstance(obj, dict):
+		#print(name,'{} ',obj_len,'items')
+		#count += obj_len
+		for (k,v) in obj.items():
+			if k!="parent" and k!="objectsSizes":
+				cv = count_nestedObjects(v, seen, name+'.'+str(k))
+				if cv>0: print( name+'.'+str(k),cv,'items' )
+				count += cv
+
+	if hasattr(obj, '__dict__'):
+		count += count_nestedObjects(obj.__dict__, seen, name)
+	
+	return count
 
 
 def extend_text(text, size, mode='left'):
@@ -269,7 +332,7 @@ class TableClipboard():
 			for item in self.selection:
 				self.selectionDict[(item.row(),item.column())] = item.data()
 			
-			rows    = [item.row()    for item in self.selection]
+			rows	= [item.row()	for item in self.selection]
 			columns = [item.column() for item in self.selection]
 		
 			self.text = ''
@@ -286,7 +349,7 @@ class TableClipboard():
 	
 		if self.selection:
 	
-			therow    = min(index.row()    for index in self.selection)
+			therow	= min(index.row()	for index in self.selection)
 			thecolumn = min(index.column() for index in self.selection)
 		
 			self.text = self.sys_clip.text()

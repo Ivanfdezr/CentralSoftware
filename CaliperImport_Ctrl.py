@@ -7,14 +7,15 @@ import MdlUtilities as mu
 import copy
 import re, os
 
-
+ 
 class Main_CaliperImport(Ui_CaliperImport):
 
-	def __init__(self, dialog):
+	def __init__(self, dialog, parent):
 		
 		Ui_CaliperImport.__init__(self)
 		self.setupUi(dialog)
-		self.dialog = dialog		
+		self.dialog = dialog
+		self.parent = parent		
 		
 		self.ciLASData_fields = mdl.get_ciLASData_fields()
 		self.ciCALData_fields = mdl.get_ciCALData_fields()
@@ -44,7 +45,7 @@ class Main_CaliperImport(Ui_CaliperImport):
 						  #self.ciHoleIDsmoothing_graphicsView_yselection, self.choose_MDlocation )
 
 		self.setup_valueDecimalPoint()
-		
+
 		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 		dialog.exec_()
 
@@ -91,17 +92,17 @@ class Main_CaliperImport(Ui_CaliperImport):
 	def open_file(self):
 		
 		filepath = QtGui.QFileDialog.getOpenFileName(self.dialog, 'Open file', 'c:\\',"DR-CAL files (*.las *.txt)")
-		head,filename = os.path.split( filepath )
-		self.ciFilename_label.setText( filename )
+		head,self.parent.filename = os.path.split( filepath )
+		self.ciFilename_label.setText( self.parent.filename )
 		with open(filepath,'r') as file:
-			self.FileLines = file.readlines()
+			self.parent.FileLines = file.readlines()
 
-		self.numofRows = len(self.FileLines)
-		for row, line in enumerate(self.FileLines):
+		self.numofRows = len(self.parent.FileLines)
+		for row, line in enumerate(self.parent.FileLines):
 			text = str(row+1)+'\t'+line
 			self.ciFileText_textEdit.insertPlainText(text)
 			self.ciStatus_label.setText( 'Loading ... {val}%'.format(val=int(row/self.numofRows*100)) )
-			if row%500==0:
+			if row%int(self.numofRows/20)==0:
 				cu.idleFunction()
 		
 		self.ciStatus_label.setText('')
@@ -136,13 +137,12 @@ class Main_CaliperImport(Ui_CaliperImport):
 		fileTextH1columnIndex = (self.ciH1columnIndex_spinBox.value()-1)%99
 		fileTextH2columnIndex = (self.ciH2columnIndex_spinBox.value()-1)%99
 		fileTextBScolumnIndex = (self.ciBScolumnIndex_spinBox.value()-1)%99
-		fileTextODcolumnIndex = (self.ciODcolumnIndex_spinBox.value()-1)%99
 		MDUnitRepresentation = self.ciMDvalueUnit_comboBox.currentText()
 		IDUnitRepresentation = self.ciIDvalueUnit_comboBox.currentText()
 		self.ciLASData_fields.MD.set_unit(  MDUnitRepresentation )
 		for field in self.ciCALData_fields:
 			field.set_unit(  IDUnitRepresentation )
-		self.ciLASData_fields.CD.set_unit(  IDUnitRepresentation )
+		#self.ciLASData_fields.CD.set_unit(  IDUnitRepresentation )
 		self.ciLASData_fields.BS.set_unit(  IDUnitRepresentation )
 		self.ciLASData_fields.selectedMD.set_unit( MDUnitRepresentation )
 		self.ciLASData_fields.clear_content()
@@ -187,7 +187,7 @@ class Main_CaliperImport(Ui_CaliperImport):
 			delimiterPattern += ','
 		columnPattern = '((?<=['+delimiterPattern+'])'+self.numberPattern+')|('+self.numberPattern+'(?=['+delimiterPattern+']))'
 
-		for row, beforeStylingText in enumerate(self.FileLines):
+		for row, beforeStylingText in enumerate(self.parent.FileLines):
 			
 			try:
 				assert( row>=fileTextStartingRow and row<=fileTextEndingRow )
@@ -226,11 +226,11 @@ class Main_CaliperImport(Ui_CaliperImport):
 				except IndexError:
 					self.feasibleDrawFlagBS = False
 
-				try:
-					ODvalue = self.text2float( matches[fileTextODcolumnIndex].group() )
-					cu.create_physicalValue_and_appendTo_field( ODvalue, self.ciLASData_fields.CD )
-				except IndexError:
-					self.feasibleDrawFlagOD = False
+				#try:
+				#	ODvalue = self.text2float( matches[fileTextODcolumnIndex].group() )
+				#	cu.create_physicalValue_and_appendTo_field( ODvalue, self.ciLASData_fields.CD )
+				#except IndexError:
+				#	self.feasibleDrawFlagOD = False
 
 			except AssertionError:
 				continue
@@ -243,8 +243,8 @@ class Main_CaliperImport(Ui_CaliperImport):
 
 		if self.feasibleDrawFlagBS:
 			self.BS = mu.array(self.ciLASData_fields.BS)
-		if self.feasibleDrawFlagOD:
-			self.OD = mu.array(self.ciLASData_fields.CD)
+		#if self.feasibleDrawFlagOD:
+		#	self.OD = mu.array(self.ciLASData_fields.CD)
 
 		if self.check_conditionsForDraw(): #True
 			self.wasPushedApplyAndDrawButton = True
@@ -301,9 +301,9 @@ class Main_CaliperImport(Ui_CaliperImport):
 		self.ciHoleIDsmoothing_graphicsView.axes.plot( -self.BS, self.ciLASData_fields.MD, 'C2--', lw=1.5 )
 		self.ciHoleIDsmoothing_graphicsView.axes.plot( +self.BS, self.ciLASData_fields.MD, 'C2--', lw=1.5 )
 
-		if self.feasibleDrawFlagOD:
-			self.ciHoleIDsmoothing_graphicsView.axes.plot( -self.OD, self.ciLASData_fields.MD, 'C4' )
-			self.ciHoleIDsmoothing_graphicsView.axes.plot( +self.OD, self.ciLASData_fields.MD, 'C4' )
+		#if self.feasibleDrawFlagOD:
+		#	self.ciHoleIDsmoothing_graphicsView.axes.plot( -self.OD, self.ciLASData_fields.MD, 'C4' )
+		#	self.ciHoleIDsmoothing_graphicsView.axes.plot( +self.OD, self.ciLASData_fields.MD, 'C4' )
 
 		self.ciHoleIDsmoothing_graphicsView.axes.set_xlabel( self.ciCALData_fields.CAL1.headerName )
 		self.ciHoleIDsmoothing_graphicsView.axes.set_ylabel( self.ciLASData_fields.MD.headerName )
