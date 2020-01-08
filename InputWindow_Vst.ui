@@ -2214,7 +2214,7 @@ p, li { white-space: pre-wrap; }
            <x>14</x>
            <y>21</y>
            <width>371</width>
-           <height>273</height>
+           <height>331</height>
           </rect>
          </property>
          <property name="font">
@@ -2291,6 +2291,16 @@ p, li { white-space: pre-wrap; }
          <row>
           <property name="text">
            <string>FF reduction</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Inner mud density</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Outer mud density</string>
           </property>
          </row>
          <column/>

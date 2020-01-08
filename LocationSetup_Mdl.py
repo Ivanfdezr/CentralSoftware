@@ -412,6 +412,9 @@ def calculate_standOff_atMidspan(self):
 	PE = self.stage['PipeProps'].E[0]
 	PW = self.stage['PipeProps'].PW[0]
 	PL = self.stage['PipeBase'].PL[0]
+	ρi = self.stage['PipeProps'].InnerMudDensity[0]
+	ρe = self.stage['PipeProps'].OuterMudDensity[0]
+	ρs = self.stage['PipeProps'].Density[0]
 
 	PD = mdl.referenceUnitConvert_value( PD, PD.unit )
 	Pd = mdl.referenceUnitConvert_value( Pd, Pd.unit )
@@ -450,7 +453,7 @@ def calculate_standOff_atMidspan(self):
 		print('SIZE ERROR in CENTRALIZERS ENSEMBLE')
 
 	doverDsq = (Pd/PD)**2
-	buoyancyFactor = 1 #( (1-ρe/ρs)-doverDsq*(1-ρi/ρs) )/( 1-doverDsq )
+	buoyancyFactor = ( (1-ρe/ρs)-doverDsq*(1-ρi/ρs) )/( 1-doverDsq )
 	PW *= buoyancyFactor
 	PI = np.pi/64*(PD**4-Pd**4)
 	PR = PD/2

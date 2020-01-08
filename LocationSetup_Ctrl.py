@@ -131,7 +131,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 		
 		if self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields']!=None:
 			for MD in self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields'].MD:
-				self.choose_MDlocation(MD, dry=True)
+				self.choose_MDlocation(MD)
 
 		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 		dialog.exec_()
@@ -164,7 +164,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 		
 		def update_through_itemChange(item):
-			call_function = lambda: self.choose_MDlocation(item.realValue)
+			call_function = lambda: self.choose_MDlocation(item.realValue, overwrite=True)
 			cu.update_fieldItem(item, call_function)
 
 		self.lsCentralizerLocations_tableWidget.cellPressed.connect(self.select_row)
@@ -246,11 +246,11 @@ class Main_LocationSetup(Ui_LocationSetup):
 			item.set_text( SOatMi )	
 
 
-	def choose_MDlocation(self, MD, dry=False):
+	def choose_MDlocation(self, MD, overwrite=False):
 
 		if MD>=self.min_MD and MD<=self.max_MD:
 
-			if not dry:
+			if overwrite:
 				r = self.lsCentralizerLocations_tableWidget.selectedRow
 				if r<len(self.lsCentralizerLocations_fields.MD):
 					del self.lsCentralizerLocations_fields.MD[r]
