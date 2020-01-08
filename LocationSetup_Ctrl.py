@@ -306,6 +306,9 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 		del self.lsCaliperMap_graphicsView.axes.lines[2:]
 		del self.lsWellbore3D_graphicsView.axes.lines[1:]
+		print(0,self.lsSOVisualization_graphicsView.axes.lines)
+		del self.lsSOVisualization_graphicsView.axes.lines[:]
+		print(1,self.lsSOVisualization_graphicsView.axes.lines)
 
 		if MD!=None:
 
@@ -319,7 +322,11 @@ class Main_LocationSetup(Ui_LocationSetup):
 														self.lsCentralizerLocations_fields.TVD, marker='o', color='C3', alpha=0.5, ls='' )
 			
 			self.lsWellbore3D_graphicsView.axes.plot( [EW],[NS],[VD], marker='o', mec='black', color='C3', ms='8' )
+
+			self.lsSOVisualization_graphicsView.axes.plot( self.lsCentralizerLocations_fields.MD, self.lsCentralizerLocations_fields.SOatC )
 		
 		self.lsCaliperMap_graphicsView.draw()
 		self.lsWellbore3D_graphicsView.draw()
+		self.lsSOVisualization_graphicsView.draw()
+		print(2,self.lsSOVisualization_graphicsView.axes.lines)
 
