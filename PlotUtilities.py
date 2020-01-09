@@ -128,7 +128,6 @@ class ZoomPan:
 			else:
 				# deal with something that should never happen
 				scale_factor = 1
-				##
 
 			new_width = (cur_xlim[1] - cur_xlim[0]) * scale_factor
 			new_height = (cur_ylim[1] - cur_ylim[0]) * scale_factor
@@ -191,10 +190,8 @@ class ZoomPan:
 		def zoomYD(event):
 			
 			for ax, ylims in zip(ax_,ylims_):
-				#cur_xlim = ax.get_xlim()
 				cur_ylim = ax.get_ylim()
 
-				#xdata = event.xdata # get event x location
 				ydata = event.ydata # get event y location
 
 				if event.button == 'up':
@@ -206,15 +203,11 @@ class ZoomPan:
 				else:
 					# deal with something that should never happen
 					scale_factor = 1
-					##
 
-				#new_width = (cur_xlim[1] - cur_xlim[0]) * scale_factor
 				new_height = (cur_ylim[1] - cur_ylim[0]) * scale_factor
 
-				#relx = (cur_xlim[1] - xdata)/(cur_xlim[1] - cur_xlim[0])
 				rely = (cur_ylim[1] - ydata)/(cur_ylim[1] - cur_ylim[0])
 
-				#ax.set_xlim([xdata - new_width * (1-relx), xdata + new_width * (relx)])
 				ax.set_ylim([ydata - new_height * (1-rely), ydata + new_height * (rely)])
 				ylims[0], ylims[1] = ax.get_ylim()
 
@@ -237,45 +230,41 @@ class ZoomPan:
 			yselection_ = (yselection_,)
 		#self.note = ax.annotate( '', [0,0] )
 
-		#self.cur_xlim = [None for i in ax_]
-		#self.cur_ylim = [None for i in ax_]
-		#self.ypress   = [None for i in ax_]
-
 		def onPress(event):
 			
 			for ax,yselection in zip(ax_,yselection_):
-				if event.inaxes != ax: continue
-				self.cur_xlim = ax.get_xlim()
-				
-				if event.button==1:
-					self.cur_ylim = ax.get_ylim()
-					self.ypress = event.ydata
-				
-				elif event.button==3:
-					if isinstance(yselection,list):
-						yselection.append(event.ydata)
-					if not isinstance(yselectionfunction,type(None)):
-						yselectionfunction(event.ydata)
-				break
+				if event.inaxes == ax:
+					self.cur_xlim = ax.get_xlim()
+					
+					if event.button==1:
+						self.cur_ylim = ax.get_ylim()
+						self.ypress = event.ydata
+					
+					elif event.button==3:
+						if isinstance(yselection,list):
+							yselection.append(event.ydata)
+						if not isinstance(yselectionfunction,type(None)):
+							yselectionfunction(event.ydata)
+					break
 
 		def onRelease(event):
 			
 			self.ypress = None
 
 			for ax in ax_:
-				if event.inaxes != ax: continue
-				ax.figure.canvas.draw()
-				break
+				if event.inaxes == ax:
+					ax.figure.canvas.draw()
+					break
 
 		def onMotion(event):
 			
 			if self.ypress is None: return
 
 			for ax in ax_:
-				if event.inaxes != ax: continue
-				dy = event.ydata - self.ypress
-				self.cur_ylim -= dy
-				break
+				if event.inaxes == ax:
+					dy = event.ydata - self.ypress
+					self.cur_ylim -= dy
+					break
 
 			for ax,ylims in zip(ax_,ylims_):
 				ax.set_ylim(self.cur_ylim)
