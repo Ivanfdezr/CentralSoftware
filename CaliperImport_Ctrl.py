@@ -18,7 +18,6 @@ class Main_CaliperImport(Ui_CaliperImport):
 		self.parent = parent		
 		
 		self.ciLASData_fields = mdl.get_ciLASData_fields()
-		self.ciCALData_fields = mdl.get_ciCALData_fields()
 		self.ciOpenFile_pushButton.clicked.connect(self.open_file)
 		self.ciValueDecimalPoint_radioButton.clicked.connect(self.setup_valueDecimalPoint)
 		self.ciValueDecimalComma_radioButton.clicked.connect(self.setup_valueDecimalComma)
@@ -27,7 +26,7 @@ class Main_CaliperImport(Ui_CaliperImport):
 		i = self.unitRepresentations.index( self.ciLASData_fields.MD.unit )
 		self.ciMDvalueUnit_comboBox.setCurrentIndex(i)
 		self.ciIDvalueUnit_comboBox.addItems( self.unitRepresentations )
-		i = self.unitRepresentations.index( self.ciCALData_fields.CAL1.unit )
+		i = self.unitRepresentations.index( self.ciLASData_fields.BS.unit )
 		self.ciIDvalueUnit_comboBox.setCurrentIndex(i)
 		self.ciApplyAndDraw_pushButton.clicked.connect( self.applyAndDraw_caliperData )
 		self.ciCommaDelimiter_checkBox.stateChanged.connect( self.setNumberPattern )
@@ -133,10 +132,12 @@ class Main_CaliperImport(Ui_CaliperImport):
 
 		fileTextStartingRow   = (self.ciStartingRow_spinBox.value()-1)%self.numofRows #self.ciFileText_tableWidget.rowCount()
 		fileTextEndingRow     = (self.ciEndingRow_spinBox.value() - 1)%self.numofRows #self.ciFileText_tableWidget.rowCount()
-		fileTextMDcolumnIndex = (self.ciMDcolumnIndex_spinBox.value()-1)%99
-		fileTextH1columnIndex = (self.ciH1columnIndex_spinBox.value()-1)%99
-		fileTextH2columnIndex = (self.ciH2columnIndex_spinBox.value()-1)%99
-		fileTextBScolumnIndex = (self.ciBScolumnIndex_spinBox.value()-1)%99
+		fileTextMDcolumnIndex = (self.ciMDcolumnIndex_spinBox.value()-1)#%99
+		fileTextH1columnIndex = (self.ciH1columnIndex_spinBox.value()-1)#%99
+		fileTextH2columnIndex = (self.ciH2columnIndex_spinBox.value()-1)#%99
+		fileTextBScolumnIndex = (self.ciBScolumnIndex_spinBox.value()-1)#%99
+
+		self.ciCALData_fields = mdl.get_ciCALData_fields(fileTextH2columnIndex-fileTextH1columnIndex+1)
 		MDUnitRepresentation = self.ciMDvalueUnit_comboBox.currentText()
 		IDUnitRepresentation = self.ciIDvalueUnit_comboBox.currentText()
 		self.ciLASData_fields.MD.set_unit(  MDUnitRepresentation )
@@ -211,13 +212,15 @@ class Main_CaliperImport(Ui_CaliperImport):
 				try:
 					MDvalue = self.text2float( matches[fileTextMDcolumnIndex].group() )
 					cu.create_physicalValue_and_appendTo_field( MDvalue, self.ciLASData_fields.MD )
-					for index in range(fileTextH1columnIndex,fileTextH2columnIndex+1):
-						IDvalue = self.text2float( matches[index].group() )
-						fieldIndex = index-fileTextH1columnIndex
-						cu.create_physicalValue_and_appendTo_field( IDvalue, self.ciCALData_fields[fieldIndex] )
+					if fileTextH1columnIndex<=fileTextH2columnIndex:
+						for index in range(fileTextH1columnIndex,fileTextH2columnIndex+1):
+							IDvalue = self.text2float( matches[index].group() )
+							fieldIndex = index-fileTextH1columnIndex
+							cu.create_physicalValue_and_appendTo_field( IDvalue, self.ciCALData_fields[fieldIndex] )
+					elif fileTextH1columnIndex>fileTextH2columnIndex and fileTextH2columnIndex==-1:
+						IDvalue = self.text2float( matches[fileTextH1columnIndex].group() )
+						cu.create_physicalValue_and_appendTo_field( IDvalue, self.ciCALData_fields[0] )
 				except IndexError:
-					##
-					#self.dialog.done(0)
 					self.feasibleDrawFlagMDID = False
 
 				try:

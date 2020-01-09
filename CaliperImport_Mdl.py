@@ -50,28 +50,14 @@ def get_ciLASData_fields():
 	return ciLASData_fields
 
 
-def get_ciCALData_fields():
+def get_ciCALData_fields( numofarms ):
 
-	CAL1  = Field(2031)
-	CAL2  = Field(2031)
-	CAL3  = Field(2031)
-	CAL4  = Field(2031)
-	CAL5  = Field(2031)
-	CAL6  = Field(2031)
-	CAL1.set_abbreviation('CAL1')
-	CAL2.set_abbreviation('CAL2')
-	CAL3.set_abbreviation('CAL3')
-	CAL4.set_abbreviation('CAL4')
-	CAL5.set_abbreviation('CAL5')
-	CAL6.set_abbreviation('CAL6')
 	ciCALData_fields = FieldList()
-	ciCALData_fields.append( CAL1 )
-	ciCALData_fields.append( CAL2 )
-	ciCALData_fields.append( CAL3 )
-	ciCALData_fields.append( CAL4 )
-	ciCALData_fields.append( CAL5 )
-	ciCALData_fields.append( CAL6 )
-	
+	for i in range(numofarms):
+		CAL = Field(2031)
+		CAL.set_abbreviation('CAL'+str(i+1))
+		ciCALData_fields.append( CAL )
+
 	return ciCALData_fields
 
 

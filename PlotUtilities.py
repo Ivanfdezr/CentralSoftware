@@ -19,10 +19,6 @@ class ZoomPan:
 		self.press = None
 		self.cur_xlim = None
 		self.cur_ylim = None
-		self.x0 = None
-		self.y0 = None
-		self.x1 = None
-		self.y1 = None
 		self.xpress = None
 		self.ypress = None
 
@@ -155,8 +151,8 @@ class ZoomPan:
 			if event.inaxes != ax: return
 			self.cur_xlim = ax.get_xlim()
 			self.cur_ylim = ax.get_ylim()
-			self.press = self.x0, self.y0, event.xdata, event.ydata
-			self.x0, self.y0, self.xpress, self.ypress = self.press
+			self.press = event.xdata, event.ydata
+			self.xpress, self.ypress = self.press
 
 		def onRelease(event):
 			self.press = None
@@ -185,91 +181,114 @@ class ZoomPan:
 		return onMotion
 
 
-	def zoomYD_factory(self, ax, ylims, base_scale=1.1):
+	def zoomYD_factory(self, ax_, ylims_, base_scale=1.1):
+		
+		if not isinstance(ax_,tuple):
+			ax_ = (ax_,)
+		if not isinstance(ylims_,tuple):
+			ylims_ = (ylims_,)
+
 		def zoomYD(event):
-			#cur_xlim = ax.get_xlim()
-			cur_ylim = ax.get_ylim()
+			
+			for ax, ylims in zip(ax_,ylims_):
+				#cur_xlim = ax.get_xlim()
+				cur_ylim = ax.get_ylim()
 
-			#xdata = event.xdata # get event x location
-			ydata = event.ydata # get event y location
+				#xdata = event.xdata # get event x location
+				ydata = event.ydata # get event y location
 
-			if event.button == 'up':
-				# deal with zoom in
-				scale_factor = 1 / base_scale
-			elif event.button == 'down':
-				# deal with zoom out
-				scale_factor = base_scale
-			else:
-				# deal with something that should never happen
-				scale_factor = 1
-				##
+				if event.button == 'up':
+					# deal with zoom in
+					scale_factor = 1 / base_scale
+				elif event.button == 'down':
+					# deal with zoom out
+					scale_factor = base_scale
+				else:
+					# deal with something that should never happen
+					scale_factor = 1
+					##
 
-			#new_width = (cur_xlim[1] - cur_xlim[0]) * scale_factor
-			new_height = (cur_ylim[1] - cur_ylim[0]) * scale_factor
+				#new_width = (cur_xlim[1] - cur_xlim[0]) * scale_factor
+				new_height = (cur_ylim[1] - cur_ylim[0]) * scale_factor
 
-			#relx = (cur_xlim[1] - xdata)/(cur_xlim[1] - cur_xlim[0])
-			rely = (cur_ylim[1] - ydata)/(cur_ylim[1] - cur_ylim[0])
+				#relx = (cur_xlim[1] - xdata)/(cur_xlim[1] - cur_xlim[0])
+				rely = (cur_ylim[1] - ydata)/(cur_ylim[1] - cur_ylim[0])
 
-			#ax.set_xlim([xdata - new_width * (1-relx), xdata + new_width * (relx)])
-			ax.set_ylim([ydata - new_height * (1-rely), ydata + new_height * (rely)])
-			ylims[0], ylims[1] = ax.get_ylim()
+				#ax.set_xlim([xdata - new_width * (1-relx), xdata + new_width * (relx)])
+				ax.set_ylim([ydata - new_height * (1-rely), ydata + new_height * (rely)])
+				ylims[0], ylims[1] = ax.get_ylim()
 
-			ax.figure.canvas.draw()
+				ax.figure.canvas.draw()
 
-		fig = ax.get_figure() # get the figure of interest
-		fig.canvas.mpl_connect('scroll_event', zoomYD)
+		for ax in ax_:
+			fig = ax.get_figure() # get the figure of interest
+			fig.canvas.mpl_connect('scroll_event', zoomYD)
 
 		return zoomYD
 
 	# ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
-	def panYD_factory(self, ax, ylims=None, yselection=None, yselectionfunction=None): 
+	def panYD_factory(self, ax_, ylims_=None, yselection_=None, yselectionfunction=None): 
 		
-		self.note = ax.annotate( '', [0,0] )
+		if not isinstance(ax_,tuple):
+			ax_ = (ax_,)
+		if not isinstance(ylims_,tuple):
+			ylims_ = (ylims_,)
+		if not isinstance(yselection_,tuple):
+			yselection_ = (yselection_,)
+		#self.note = ax.annotate( '', [0,0] )
+
+		#self.cur_xlim = [None for i in ax_]
+		#self.cur_ylim = [None for i in ax_]
+		#self.ypress   = [None for i in ax_]
 
 		def onPress(event):
-			if event.inaxes != ax: return
-			self.cur_xlim = ax.get_xlim()
-			if event.button==1:
-				self.cur_ylim = ax.get_ylim()
-				self.press = self.y0, event.ydata
-				self.y0, self.ypress = self.press
-			elif event.button==3:
-				if isinstance(yselection,list):
-					yselection.append(event.ydata)
-				if not isinstance(yselectionfunction,type(None)):
-					yselectionfunction(event.ydata)
+			
+			for ax,yselection in zip(ax_,yselection_):
+				if event.inaxes != ax: continue
+				self.cur_xlim = ax.get_xlim()
+				
+				if event.button==1:
+					self.cur_ylim = ax.get_ylim()
+					self.ypress = event.ydata
+				
+				elif event.button==3:
+					if isinstance(yselection,list):
+						yselection.append(event.ydata)
+					if not isinstance(yselectionfunction,type(None)):
+						yselectionfunction(event.ydata)
+				break
 
 		def onRelease(event):
-			self.press = None
-			ax.figure.canvas.draw()
+			
+			self.ypress = None
+
+			for ax in ax_:
+				if event.inaxes != ax: continue
+				ax.figure.canvas.draw()
+				break
 
 		def onMotion(event):
 			
-			#self.note.set_y( event.ydata )
-			#self.note.set_text( str(round(event.ydata,1)) )
-			#self.note.draw()
+			if self.ypress is None: return
 
-			if self.press is None: return
-			if event.inaxes != ax: return
-			#dx = event.xdata - self.xpress
-			dy = event.ydata - self.ypress
-			#self.cur_xlim -= dx
-			self.cur_ylim -= dy
-			#ax.set_xlim(self.cur_xlim)
-			ax.set_ylim(self.cur_ylim)
-			if isinstance(ylims,list):
-				ylims[0], ylims[1] = ax.get_ylim()
+			for ax in ax_:
+				if event.inaxes != ax: continue
+				dy = event.ydata - self.ypress
+				self.cur_ylim -= dy
+				break
 
-			ax.figure.canvas.draw()
+			for ax,ylims in zip(ax_,ylims_):
+				ax.set_ylim(self.cur_ylim)
+				if isinstance(ylims,list):
+					ylims[0], ylims[1] = ax.get_ylim()
+				ax.figure.canvas.draw()
 
-		fig = ax.get_figure() # get the figure of interest
+		for ax in ax_:
+			fig = ax.get_figure()
+			fig.canvas.mpl_connect('button_press_event',onPress)
+			fig.canvas.mpl_connect('button_release_event',onRelease)
+			fig.canvas.mpl_connect('motion_notify_event',onMotion)
 
-		# attach the call back
-		fig.canvas.mpl_connect('button_press_event',onPress)
-		fig.canvas.mpl_connect('button_release_event',onRelease)
-		fig.canvas.mpl_connect('motion_notify_event',onMotion)
-
-		#return the function
 		return onMotion
 
 

@@ -22,6 +22,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 		importlib.reload(mu)
 
 		Ui_LocationSetup.__init__(self)
+		zp = pu.ZoomPan()
 		self.setupUi(dialog)
 		self.dialog = dialog
 		self.parent = parent
@@ -50,17 +51,27 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.ID = ID
 		self.mean_ID = mean_ID
 
-		#self.lsCaliperMap_graphicsView.axes.set_position([0.23,0.1,0.7,0.85])
+		#-------------------------------------------------
+
+		self.lsCaliperMap_graphicsView.axes.set_position([0.2,0.15,0.75,0.8])
 		self.lsCaliperMap_graphicsView_ylimits    = [None,None]
 		self.lsCaliperMap_graphicsView_yselection = []
-		zp = pu.ZoomPan()
-		zp.zoomYD_factory(self.lsCaliperMap_graphicsView.axes, self.lsCaliperMap_graphicsView_ylimits)
-		zp.panYD_factory( self.lsCaliperMap_graphicsView.axes, self.lsCaliperMap_graphicsView_ylimits, 
-						  self.lsCaliperMap_graphicsView_yselection, self.choose_MDlocation )
+
+		self.lsSOVisualization_graphicsView.axes.set_position([0.2,0.15,0.75,0.8])
+		self.lsSOVisualization_graphicsView_ylimits    = [None,None]
+		self.lsSOVisualization_graphicsView_yselection = []
+		
+		zp.zoomYD_factory(	(self.lsCaliperMap_graphicsView.axes, self.lsSOVisualization_graphicsView.axes),
+							(self.lsCaliperMap_graphicsView_ylimits, self.lsSOVisualization_graphicsView_ylimits)  )
+		zp.panYD_factory(	(self.lsCaliperMap_graphicsView.axes, self.lsSOVisualization_graphicsView.axes), 
+							(self.lsCaliperMap_graphicsView_ylimits, self.lsSOVisualization_graphicsView_ylimits), 
+							(self.lsCaliperMap_graphicsView_yselection, self.lsSOVisualization_graphicsView_yselection),
+							self.choose_MDlocation )
 
 		self.lsCaliperMap_graphicsView.axes.clear()
-		#self.lsCaliperMap_graphicsView.axes.plot( +ID, MD, 'C0', alpha=0.6 )
-		#self.lsCaliperMap_graphicsView.axes.plot( -ID, MD, 'C0', alpha=0.6 )
+		self.lsSOVisualization_graphicsView.axes.clear()
+
+		#-------------------------------------------------
 
 		self.lsCaliperMap_graphicsView.axes.fill_betweenx( MD, -ID, +ID, alpha=0.5, color='C0')
 		factors = mu.np.linspace(1,2,11)
@@ -71,17 +82,35 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 		self.lsCaliperMap_graphicsView.axes.plot( [ -self.IPOD, -self.IPOD], [MD[0],MD[-1]], 'C1', lw=2 )
 		self.lsCaliperMap_graphicsView.axes.plot( [ +self.IPOD, +self.IPOD], [MD[0],MD[-1]], 'C1', lw=2 )
-		#self.lsCaliperMap_graphicsView.axes.plot( [ -self.COD,  -self.COD],  [MD[0],MD[-1]], 'C3--' )
-		#self.lsCaliperMap_graphicsView.axes.plot( [ +self.COD,  +self.COD],  [MD[0],MD[-1]], 'C3--' )
 
-		IDHeaderName = parent.currentWellboreOuterStageDataItem['WellboreProps'].MDtop.headerName
-		MDHeaderName = parent.currentWellboreOuterStageDataItem['WellboreProps'].DriftID.headerName
+		MDHeaderName = self.lsCentralizerLocations_fields.MD.headerName
+		IDHeaderName = parent.currentWellboreOuterStageDataItem['WellboreProps'].ID.headerName
 
 		self.lsCaliperMap_graphicsView.axes.set_xlabel( IDHeaderName )
 		self.lsCaliperMap_graphicsView.axes.set_ylabel( MDHeaderName )
 		self.lsCaliperMap_graphicsView.axes.set_xlim( -lim_ID, lim_ID )
 		self.lsCaliperMap_graphicsView.axes.set_ylim( self.max_MD, self.min_MD ) 
 		self.lsCaliperMap_graphicsView.draw()
+
+		#-------------------------------------------------
+
+		SOHeaderName = self.lsCentralizerLocations_fields.SOatC.headerName +'  &  '+ self.lsCentralizerLocations_fields.SOatM.headerName
+		if self.lsCentralizerLocations_fields.SOatC.unit=='%':
+			self.max_SO = 100
+			self.min_SO = 67
+		elif self.lsCentralizerLocations_fields.SOatC.unit=='1':
+			self.max_SO = 1
+			self.min_SO = 0.67
+
+		self.lsSOVisualization_graphicsView.axes.set_xlabel( SOHeaderName )
+		self.lsSOVisualization_graphicsView.axes.set_ylabel( MDHeaderName )
+		self.lsSOVisualization_graphicsView.axes.set_xlim( 0, self.max_SO )
+		self.lsSOVisualization_graphicsView.axes.set_ylim( self.max_MD, self.min_MD )
+		#self.lsSOVisualization_graphicsView.axes.grid()
+		self.lsSOVisualization_graphicsView.axes.plot( [self.min_SO, self.min_SO], [self.max_MD, self.min_MD], 'C3--', lw=2 ) 
+		self.lsSOVisualization_graphicsView.draw()
+
+		#-------------------------------------------------
 
 		min_EW,min_NS,min_VD,min_index = mdl.get_ASCCoordinates_from_MD(self, self.min_MD, unit=parent.s2DataSurvey_fields.MD.unit)
 		max_EW,max_NS,max_VD,max_index = mdl.get_ASCCoordinates_from_MD(self, self.max_MD, unit=parent.s2DataSurvey_fields.MD.unit)
@@ -124,11 +153,12 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 		self.lsWellbore3D_graphicsView.axes.set_zlim( max(VD), min(VD) )
 		self.lsWellbore3D_graphicsView.axes.mouse_init()
-		#zp = pu.ZoomPan()
 		#zp.point3D_factory(self.s2TriDView_graphicsView.axes, dot, curve)
 		zp.zoom3D_factory( self.lsWellbore3D_graphicsView.axes, curve )
 		self.lsWellbore3D_graphicsView.draw()
 		
+		#-------------------------------------------------
+
 		if self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields']!=None:
 			for MD in self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields'].MD:
 				self.choose_MDlocation(MD)
@@ -306,9 +336,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 		del self.lsCaliperMap_graphicsView.axes.lines[2:]
 		del self.lsWellbore3D_graphicsView.axes.lines[1:]
-		print(0,self.lsSOVisualization_graphicsView.axes.lines)
-		del self.lsSOVisualization_graphicsView.axes.lines[:]
-		print(1,self.lsSOVisualization_graphicsView.axes.lines)
+		del self.lsSOVisualization_graphicsView.axes.lines[1:]
 
 		if MD!=None:
 
@@ -323,10 +351,20 @@ class Main_LocationSetup(Ui_LocationSetup):
 			
 			self.lsWellbore3D_graphicsView.axes.plot( [EW],[NS],[VD], marker='o', mec='black', color='C3', ms='8' )
 
-			self.lsSOVisualization_graphicsView.axes.plot( self.lsCentralizerLocations_fields.MD, self.lsCentralizerLocations_fields.SOatC )
+			MD_alt = []
+			SO_alt = []
+			for k in range(2*len(self.lsCentralizerLocations_fields.MD)-1):
+				if k%2==0:
+					MD_alt.append( self.lsCentralizerLocations_fields.MD[k//2] )
+					SO_alt.append( self.lsCentralizerLocations_fields.SOatC[k//2] )
+				elif k%2==1:
+					MD_alt.append( (self.lsCentralizerLocations_fields.MD[(k+1)//2]+self.lsCentralizerLocations_fields.MD[(k-1)//2])/2 )
+					SO_alt.append( self.lsCentralizerLocations_fields.SOatM[(k+1)//2] )
+
+			#self.lsSOVisualization_graphicsView.axes.plot( self.lsCentralizerLocations_fields.MD, self.lsCentralizerLocations_fields.SOatC )
+			self.lsSOVisualization_graphicsView.axes.plot( SO_alt, MD_alt, 'C1', lw=2 )
 		
 		self.lsCaliperMap_graphicsView.draw()
 		self.lsWellbore3D_graphicsView.draw()
 		self.lsSOVisualization_graphicsView.draw()
-		print(2,self.lsSOVisualization_graphicsView.axes.lines)
 
