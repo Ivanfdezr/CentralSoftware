@@ -71,8 +71,8 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s3ODID_pushButton.clicked.connect(adjust_Wt)
 		self.s3ODWt_pushButton.clicked.connect(adjust_ID)
 
-		open_LS_dialog = lambda: wf.open_LS_dialog(self)
-		self.s3SpecifyLocationCentralization_pushButton.clicked.connect(open_LS_dialog)
+		open_specifyCentralization_dialog = lambda: open_specifyCentralization_dialog(self)
+		self.s3SpecifyCentralization_pushButton.clicked.connect(open_specifyCentralization_dialog)
 
 		open_CDB_dialog_A = lambda: wf.open_CDB_dialog(self, 'A')
 		open_CDB_dialog_B = lambda: wf.open_CDB_dialog(self, 'B')
@@ -146,8 +146,6 @@ class Main_InputWindow(Ui_InputWindow):
 					print( '======================================' )
 			
 			self.objectsSizes[attr] = size
-
-
 
 
 	def set_workUnits_as(self, unitSystem):

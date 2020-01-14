@@ -2367,7 +2367,7 @@ p, li { white-space: pre-wrap; }
            <string>Specify Spacing</string>
           </property>
          </widget>
-         <widget class="QPushButton" name="s3SpecifyLocationCentralization_pushButton">
+         <widget class="QPushButton" name="s3SpecifyCentralization_pushButton">
           <property name="geometry">
            <rect>
             <x>470</x>
@@ -3924,7 +3924,7 @@ p, li { white-space: pre-wrap; }
   <customwidget>
    <class>Matplotlib3DWidget</class>
    <extends>QGraphicsView</extends>
-   <header location="global">matplotlibwidget</header>
+   <header>matplotlibwidget</header>
   </customwidget>
  </customwidgets>
  <resources/>

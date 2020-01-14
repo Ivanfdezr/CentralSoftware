@@ -671,11 +671,18 @@ def open_CDB_dialog(self, tab):
 				break
 
 
+def open_specifyCentralization_dialog(self):
+		if self.s3SpecifySpacingCentralization_radioButton.isChecked():
+			open_SS_dialog(self)
+		elif self.s3SpecifyLocationCentralization_radioButton.isChecked():
+			open_LS_dialog(self)
+
+
 @updateByBlock_currentWellboreInnerStageDataItem
 def open_LS_dialog(self):
 
 	importlib.reload(ls)
-	dialog = QtGui.QDialog(self.s3SpecifyLocationCentralization_pushButton)
+	dialog = QtGui.QDialog(self.s3SpecifyCentralization_pushButton)
 	LS = ls.Main_LocationSetup(dialog, self)
 	self.currentWellboreInnerStageDataItem['Centralization']['Fields'] = LS.fields
 
@@ -693,6 +700,28 @@ def open_LS_dialog(self):
 				except IndexError:
 					item.set_text()
 
+
+@updateByBlock_currentWellboreInnerStageDataItem
+def open_SS_dialog(self):
+
+	importlib.reload(ls)
+	dialog = QtGui.QDialog(self.s3SpecifyCentralization_pushButton)
+	SS = ls.Main_SpacingSetup(dialog, self)
+	self.currentWellboreInnerStageDataItem['Centralization']['Fields'] = LS.fields
+
+	for tab in ['A','B','C']:
+		s3CentralizerLocation_tableWidget = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )	
+		s3CentralizerLocation_fields      = eval( 'self.s3CentralizerLocation_fields_{tab}'.format(tab=tab) )
+
+		field = s3CentralizerLocation_fields.MD
+		if self.currentWellboreInnerStageDataItem['Centralization'][tab]['Type']!=None:
+			for i in range(s3CentralizerLocation_tableWidget.rowCount()):
+				item = s3CentralizerLocation_tableWidget.item(i,field.pos)
+				try:
+					value = LS.fields.MD[i]
+					item.set_text( value, value.unit )
+				except IndexError:
+					item.set_text()
 
 
 @updateByBlock_currentWellboreOuterStageDataItem

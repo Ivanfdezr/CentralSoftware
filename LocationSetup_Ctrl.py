@@ -251,7 +251,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 			NS = self.lsCentralizerLocations_fields.NS[r]
 			VD = self.lsCentralizerLocations_fields.TVD[r]
 
-			self.draw_MDlocations(MD, EW, NS, VD)
+			self.draw_MDlocations(MD, EW, NS, VD, False)
 
 
 	def update_calculations(self):
@@ -330,7 +330,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 			#mdl.calculate_standOff_atMidspan(self)		
 
 
-	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None):
+	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None, created=True):
 
 		xlim = self.lsCaliperMap_graphicsView.axes.get_xlim()
 
@@ -361,10 +361,27 @@ class Main_LocationSetup(Ui_LocationSetup):
 					MD_alt.append( (self.lsCentralizerLocations_fields.MD[(k+1)//2]+self.lsCentralizerLocations_fields.MD[(k-1)//2])/2 )
 					SO_alt.append( self.lsCentralizerLocations_fields.SOatM[(k+1)//2] )
 
-			#self.lsSOVisualization_graphicsView.axes.plot( self.lsCentralizerLocations_fields.MD, self.lsCentralizerLocations_fields.SOatC )
-			self.lsSOVisualization_graphicsView.axes.plot( SO_alt, MD_alt, 'C1', lw=2 )
+			self.lsSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, 'C1', lw=2 )
+			self.lsSOVisualization_graphicsView.axes.plot(	self.lsCentralizerLocations_fields.SOatC, 
+															self.lsCentralizerLocations_fields.MD, marker='o', color='C3', alpha=0.5, ls='' )
+			
+			SOatC = self.lsCentralizerLocations_fields.SOatC[self.lsCentralizerLocations_fields.MD.index(MD)]
+			self.lsSOVisualization_graphicsView.axes.plot(	SOatC, MD, marker='o', mec='black', color='C3', ms='8' )
+			if created:
+				self.lsSOVisualization_graphicsView.axes.plot(	[0, self.max_SO], [MD, MD], color='C3', lw=4, alpha=0.4 )
+			
+			self.lsCaliperMap_graphicsView.draw()
+			self.lsWellbore3D_graphicsView.draw()
+			self.lsSOVisualization_graphicsView.draw()
+			
+			if created:
+				cu.sleep(0.2)
+				del self.lsSOVisualization_graphicsView.axes.lines[-1]
+				self.lsSOVisualization_graphicsView.draw()
+
 		
-		self.lsCaliperMap_graphicsView.draw()
-		self.lsWellbore3D_graphicsView.draw()
-		self.lsSOVisualization_graphicsView.draw()
+		else:
+			self.lsCaliperMap_graphicsView.draw()
+			self.lsWellbore3D_graphicsView.draw()
+			self.lsSOVisualization_graphicsView.draw()
 
