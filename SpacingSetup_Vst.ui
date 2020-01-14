@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>LocationSetup</class>
- <widget class="QDialog" name="LocationSetup">
+ <class>SpacingSetup</class>
+ <widget class="QDialog" name="SpacingSetup">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -1145,7 +1145,7 @@
     <attribute name="title">
      <string>SO Visualization</string>
     </attribute>
-    <widget class="MatplotlibWidget" name="lsSOVisualization_graphicsView">
+    <widget class="MatplotlibWidget" name="ssSOVisualization_graphicsView">
      <property name="geometry">
       <rect>
        <x>0</x>

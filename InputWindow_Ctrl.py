@@ -9,9 +9,7 @@ import MdlUtilities as mu
 import SurveyFunctions as sf
 import WellboreFunctions as wf
 import importlib
-import testlib as tl
 import sys
-#from multiprocessing import Pool
 
 
 
@@ -71,7 +69,7 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s3ODID_pushButton.clicked.connect(adjust_Wt)
 		self.s3ODWt_pushButton.clicked.connect(adjust_ID)
 
-		open_specifyCentralization_dialog = lambda: open_specifyCentralization_dialog(self)
+		open_specifyCentralization_dialog = lambda: wf.open_specifyCentralization_dialog(self)
 		self.s3SpecifyCentralization_pushButton.clicked.connect(open_specifyCentralization_dialog)
 
 		open_CDB_dialog_A = lambda: wf.open_CDB_dialog(self, 'A')
@@ -113,7 +111,6 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def about(self):
 
-		importlib.reload(tl)
 		importlib.reload(mdl)
 		importlib.reload(cu)
 		importlib.reload(mu)

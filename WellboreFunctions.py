@@ -4,6 +4,7 @@ from CentralizerDatabase_Ctrl import Main_CentralizerDatabase
 from CaliperImport_Ctrl import Main_CaliperImport
 #from LocationSetup_Ctrl import Main_LocationSetup
 import LocationSetup_Ctrl as ls
+import SpacingSetup_Ctrl as ss
 from functools import wraps
 import InputWindow_Mdl as mdl
 import CtrlUtilities as cu
@@ -160,7 +161,6 @@ def update_fieldItem_and_wellboreInnerStageData(self, item):
 
 	cu.update_fieldItem(item)
 	update_wellboreInnerStageData(self)
-	#print_wellboreInnerStageData(self)
 
 
 def update_fieldItem_and_wellboreOuterStageData(self, item):
@@ -256,8 +256,6 @@ def update_wellboreInnerStageData(self):
 
 
 def update_wellboreOuterStageData(self):
-
-	importlib.reload(cu)
 
 	if self.wellboreOuterStageDataIsUpdatable:
 
@@ -704,10 +702,10 @@ def open_LS_dialog(self):
 @updateByBlock_currentWellboreInnerStageDataItem
 def open_SS_dialog(self):
 
-	importlib.reload(ls)
+	importlib.reload(ss)
 	dialog = QtGui.QDialog(self.s3SpecifyCentralization_pushButton)
-	SS = ls.Main_SpacingSetup(dialog, self)
-	self.currentWellboreInnerStageDataItem['Centralization']['Fields'] = LS.fields
+	SS = ss.Main_SpacingSetup(dialog, self)
+	self.currentWellboreInnerStageDataItem['Centralization']['Fields'] = SS.fields
 
 	for tab in ['A','B','C']:
 		s3CentralizerLocation_tableWidget = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )	
@@ -718,7 +716,7 @@ def open_SS_dialog(self):
 			for i in range(s3CentralizerLocation_tableWidget.rowCount()):
 				item = s3CentralizerLocation_tableWidget.item(i,field.pos)
 				try:
-					value = LS.fields.MD[i]
+					value = SS.fields.MD[i]
 					item.set_text( value, value.unit )
 				except IndexError:
 					item.set_text()

@@ -8,18 +8,11 @@ import MdlUtilities as mu
 import copy
 import re, os
 
-import importlib
-
 import time
 
 class Main_LocationSetup(Ui_LocationSetup):
 
 	def __init__(self, dialog, parent):
-		
-		importlib.reload(pu)
-		importlib.reload(mdl)
-		importlib.reload(vst)
-		importlib.reload(mu)
 
 		Ui_LocationSetup.__init__(self)
 		zp = pu.ZoomPan()
