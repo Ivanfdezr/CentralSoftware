@@ -195,7 +195,7 @@ def get_axialTension_below_MD(self, MD, unit=None, referenceUnit=False):
 	cosInc = get_ASCT_from_MD(self, MD)[2]
 	MD_AxF = np.array( self.lsCentralizerLocations_fields.MD_AxF )
 	AxialF = np.array( self.lsCentralizerLocations_fields.AxialF )
-	index = np.where(MD_AxF[:-1]>MD)[0][0]
+	index = np.where(MD_AxF>MD)[0][0]
 
 	MD_AxF_i = MD_AxF[index]
 	AxialF_i = AxialF[index]

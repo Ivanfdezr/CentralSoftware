@@ -170,7 +170,13 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		item = self.ssNextSpacing_tableWidget.verticalHeaderItem( field.pos )
 		item.setText( field.headerName )
 		item = cu.TableWidgetFieldItem( field, 0 )
-		self.ssCentralizerLocations_tableWidget.setItem(field.pos, 0, item)
+		self.ssNextSpacing_tableWidget.setItem(field.pos, 0, item)
+
+		#def update_through_itemChange(item):
+		#	call_function = lambda: self.choose_MDlocation(item.realValue, overwrite=True)
+		#	cu.update_fieldItem(item, call_function)
+
+		self.ssNextSpacing_tableWidget.itemChanged.connect(cu.update_fieldItem)
 
 
 	def __init__ssCentralizerLocations_tableWidget(self):
@@ -261,25 +267,42 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 
 
 	def update_calculations(self):
-		tic = time.time()
-		mdl.calculate_standOff_atCentralizers(self)
-		tac = time.time()
-		mdl.calculate_standOff_atMidspan(self)
-		toc = time.time()
 
-		print('mid:',toc-tac,'cent:',tac-tic)
+		locations = self.ssCentralizerLocations_fields.hsMD
+		SOatC_field = self.ssCentralizerLocations_fields.hsSOatC
+		ClatC_field = self.ssCentralizerLocations_fields.hsClatC
+		SOatM_field = self.ssCentralizerLocations_fields.hsSOatM
+		ClatM_field = self.ssCentralizerLocations_fields.hsClatM
 
-		for i, inc in enumerate(self.ssCentralizerLocations_fields.Inc):
+		mdl.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field)
+		mdl.calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field)
 
-			SOatCi = self.ssCentralizerLocations_fields.SOatC[i]
-			SOatMi = self.ssCentralizerLocations_fields.SOatM[i]
+		locations = self.ssCentralizerLocations_fields.dsMD
+		SOatC_field = self.ssCentralizerLocations_fields.dsSOatC
+		ClatC_field = self.ssCentralizerLocations_fields.dsClatC
+		SOatM_field = self.ssCentralizerLocations_fields.dsSOatM
+		ClatM_field = self.ssCentralizerLocations_fields.dsClatM
+
+		mdl.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field)
+		mdl.calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field)
+
+		locations = self.ssCentralizerLocations_fields.MD
+		SOatC_field = self.ssCentralizerLocations_fields.SOatC
+		ClatC_field = self.ssCentralizerLocations_fields.ClatC
+		SOatM_field = self.ssCentralizerLocations_fields.SOatM
+		ClatM_field = self.ssCentralizerLocations_fields.ClatM
+
+		mdl.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field)
+		mdl.calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field)
+
+		for i in range(len(locations)):
 
 			item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.Inc.pos )
-			item.set_text( inc )
+			item.set_text( self.ssCentralizerLocations_fields.Inc[i] )
 			item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.SOatC.pos )
-			item.set_text( SOatCi )
+			item.set_text( self.ssCentralizerLocations_fields.SOatC[i] )
 			item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.SOatM.pos )
-			item.set_text( SOatMi )	
+			item.set_text( self.ssCentralizerLocations_fields.SOatM[i] )
 
 
 	def choose_MDlocation(self, MD, overwrite=False):
@@ -291,9 +314,8 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 				if r<len(self.ssCentralizerLocations_fields.MD):
 					del self.ssCentralizerLocations_fields.MD[r]
 
-			cu.create_physicalValue_and_appendTo_field( MD, self.ssCentralizerLocations_fields.MD )
-			MD = self.ssCentralizerLocations_fields.MD[-1]
-			self.ssCentralizerLocations_fields.MD.sort()
+			MD = mdl.set_newSpacedLocations_under_MD_with_variations(self, MD)
+
 			self.ssCentralizerLocations_fields.EW.clear()
 			self.ssCentralizerLocations_fields.NS.clear()
 			self.ssCentralizerLocations_fields.TVD.clear()
@@ -307,33 +329,33 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 			#self.ssCentralizerLocations_fields.SideF.clear()
 			self.centralizerCount = len(self.ssCentralizerLocations_fields.MD)
 
-			for i, MDi in enumerate(self.ssCentralizerLocations_fields.MD):
+			#for i, MDi in enumerate(self.ssCentralizerLocations_fields.MD):
+			for i in range(self.ssCentralizerLocations_tableWidget.rowCount()):
 					
-				EWi,NSi,VDi,_ = mdl.get_ASCCoordinates_from_MD(self, MDi)
-				DLi = mdl.get_ASCDogleg_from_MD(self, MDi)
-				
-				cu.create_physicalValue_and_appendTo_field( EWi, self.ssCentralizerLocations_fields.EW )
-				cu.create_physicalValue_and_appendTo_field( NSi, self.ssCentralizerLocations_fields.NS )
-				cu.create_physicalValue_and_appendTo_field( VDi, self.ssCentralizerLocations_fields.TVD )
-				cu.create_physicalValue_and_appendTo_field( DLi, self.ssCentralizerLocations_fields.DL )
+				try:
+					MDi = self.ssCentralizerLocations_fields.MD[i]
+					EWi,NSi,VDi,_ = mdl.get_ASCCoordinates_from_MD(self, MDi)
+					DLi = mdl.get_ASCDogleg_from_MD(self, MDi)
+					
+					cu.create_physicalValue_and_appendTo_field( EWi, self.ssCentralizerLocations_fields.EW )
+					cu.create_physicalValue_and_appendTo_field( NSi, self.ssCentralizerLocations_fields.NS )
+					cu.create_physicalValue_and_appendTo_field( VDi, self.ssCentralizerLocations_fields.TVD )
+					cu.create_physicalValue_and_appendTo_field( DLi, self.ssCentralizerLocations_fields.DL )
 
-				item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.MD.pos )
-				item.set_text( MDi )
-				if MDi==MD:
-					EW = EWi
-					NS = NSi
-					VD = VDi
-					cu.select_tableWidgetRow(self.ssCentralizerLocations_tableWidget,i)
+					item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.MD.pos )
+					item.set_text( MDi )
+					if MDi==MD:
+						EW = EWi
+						NS = NSi
+						VD = VDi
+						cu.select_tableWidgetRow(self.ssCentralizerLocations_tableWidget,i)
+
+				except IndexError:
+					item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.MD.pos )
+					item.set_text()
 
 			self.update_calculations()
-			self.draw_MDlocations(MD, EW, NS, VD)
-
-
-			#F = mdl.get_axialTension_below_MD(self, MD)
-			##
-			
-			#mdl.calculate_standOff_atCentralizers(self)
-			#mdl.calculate_standOff_atMidspan(self)		
+			self.draw_MDlocations(MD, EW, NS, VD)	
 
 
 	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None, created=True):
@@ -368,10 +390,37 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 					SO_alt.append( self.ssCentralizerLocations_fields.SOatM[(k+1)//2] )
 
 			self.ssSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, 'C1', lw=2 )
+
+			MD_alt = []
+			SO_alt = []
+			for k in range(2*len(self.ssCentralizerLocations_fields.hsMD)-1):
+				if k%2==0:
+					MD_alt.append( self.ssCentralizerLocations_fields.hsMD[k//2] )
+					SO_alt.append( self.ssCentralizerLocations_fields.hsSOatC[k//2] )
+				elif k%2==1:
+					MD_alt.append( (self.ssCentralizerLocations_fields.hsMD[(k+1)//2]+self.ssCentralizerLocations_fields.hsMD[(k-1)//2])/2 )
+					SO_alt.append( self.ssCentralizerLocations_fields.hsSOatM[(k+1)//2] )
+
+			self.ssSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, 'C2', lw=1 )
+
+			MD_alt = []
+			SO_alt = []
+			for k in range(2*len(self.ssCentralizerLocations_fields.dsMD)-1):
+				if k%2==0:
+					MD_alt.append( self.ssCentralizerLocations_fields.dsMD[k//2] )
+					SO_alt.append( self.ssCentralizerLocations_fields.dsSOatC[k//2] )
+				elif k%2==1:
+					MD_alt.append( (self.ssCentralizerLocations_fields.dsMD[(k+1)//2]+self.ssCentralizerLocations_fields.dsMD[(k-1)//2])/2 )
+					SO_alt.append( self.ssCentralizerLocations_fields.dsSOatM[(k+1)//2] )
+
+			self.ssSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, 'C2', lw=1 )
+
+
 			self.ssSOVisualization_graphicsView.axes.plot(	self.ssCentralizerLocations_fields.SOatC, 
 															self.ssCentralizerLocations_fields.MD, marker='o', color='C3', alpha=0.5, ls='' )
 			
-			SOatC = self.ssCentralizerLocations_fields.SOatC[self.ssCentralizerLocations_fields.MD.index(MD)]
+			index = mu.np.where( mu.np.isclose(self.ssCentralizerLocations_fields.MD, MD) )[0][0]
+			SOatC = self.ssCentralizerLocations_fields.SOatC[index]
 			self.ssSOVisualization_graphicsView.axes.plot(	SOatC, MD, marker='o', mec='black', color='C3', ms='8' )
 			if created:
 				self.ssSOVisualization_graphicsView.axes.plot(	[0, self.max_SO], [MD, MD], color='C3', lw=4, alpha=0.4 )
@@ -384,7 +433,6 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 				cu.sleep(0.2)
 				del self.ssSOVisualization_graphicsView.axes.lines[-1]
 				self.ssSOVisualization_graphicsView.draw()
-
 		
 		else:
 			self.ssCaliperMap_graphicsView.draw()
