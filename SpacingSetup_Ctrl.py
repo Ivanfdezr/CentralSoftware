@@ -156,9 +156,9 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		
 		#-------------------------------------------------
 
-		if self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields']!=None:
-			for MD in self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields'].MD:
-				self.choose_MDlocation(MD)
+		#if self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields']!=None:
+		#	for MD in self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields'].MD:
+		#		self.choose_MDlocation(MD)
 
 		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 		dialog.exec_()
@@ -228,10 +228,38 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		self.ssCentralizerLocations_fields.SOatM.clear()
 		self.ssCentralizerLocations_fields.ClatC.clear()
 		self.ssCentralizerLocations_fields.ClatM.clear()
+
+		
+		self.ssCentralizerLocations_fields.hsInc.clear()
+		self.ssCentralizerLocations_fields.hsSOatC.clear()
+		self.ssCentralizerLocations_fields.hsSOatM.clear()
+		self.ssCentralizerLocations_fields.hsClatC.clear()
+		self.ssCentralizerLocations_fields.hsClatM.clear()
+
+		self.ssCentralizerLocations_fields.dsInc.clear()
+		self.ssCentralizerLocations_fields.dsSOatC.clear()
+		self.ssCentralizerLocations_fields.dsSOatM.clear()
+		self.ssCentralizerLocations_fields.dsClatC.clear()
+		self.ssCentralizerLocations_fields.dsClatM.clear()
+		
+
 		r = self.ssCentralizerLocations_tableWidget.selectedRow
 		self.ssCentralizerLocations_tableWidget.removeRow(r)
 		
 		if r<self.centralizerCount:
+			
+			rmMD = self.ssCentralizerLocations_fields.MD[r]
+			
+			where = mu.np.where( mu.np.isclose(self.ssCentralizerLocations_fields.hsMD, rmMD) )[0]
+			print('hs',where)
+			if len(where)>0:
+				del self.ssCentralizerLocations_fields.hsMD[ where[0] ]
+			
+			where = mu.np.where( mu.np.isclose(self.ssCentralizerLocations_fields.dsMD, rmMD) )[0]
+			print('ds',where)
+			if len(where)>0:
+				del self.ssCentralizerLocations_fields.dsMD[ where[0] ]
+
 			del self.ssCentralizerLocations_fields.MD[r]
 			del self.ssCentralizerLocations_fields.EW[r]
 			del self.ssCentralizerLocations_fields.NS[r]
@@ -239,13 +267,15 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 			del self.ssCentralizerLocations_fields.DL[r]
 			self.centralizerCount-=1
 
-			if self.centralizerCount>0:
-				MD = self.ssCentralizerLocations_fields.MD[0]
-				EW = self.ssCentralizerLocations_fields.EW[0]
-				NS = self.ssCentralizerLocations_fields.NS[0]
-				VD = self.ssCentralizerLocations_fields.TVD[0]
+			r = r-1 if (r>0) else 0
 
-				cu.select_tableWidgetRow(self.ssCentralizerLocations_tableWidget,0)
+			if self.centralizerCount>0:
+				MD = self.ssCentralizerLocations_fields.MD[r]
+				EW = self.ssCentralizerLocations_fields.EW[r]
+				NS = self.ssCentralizerLocations_fields.NS[r]
+				VD = self.ssCentralizerLocations_fields.TVD[r]
+
+				cu.select_tableWidgetRow(self.ssCentralizerLocations_tableWidget,r)
 				self.update_calculations()
 				self.draw_MDlocations(MD, EW, NS, VD)
 
@@ -365,6 +395,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		del self.ssCaliperMap_graphicsView.axes.lines[2:]
 		del self.ssWellbore3D_graphicsView.axes.lines[1:]
 		del self.ssSOVisualization_graphicsView.axes.lines[1:]
+		del self.ssSOVisualization_graphicsView.axes.collections[:]
 
 		if MD!=None:
 
@@ -391,29 +422,33 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 
 			self.ssSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, 'C1', lw=2 )
 
-			MD_alt = []
-			SO_alt = []
+			hsMD_alt = []
+			hsSO_alt = []
 			for k in range(2*len(self.ssCentralizerLocations_fields.hsMD)-1):
 				if k%2==0:
-					MD_alt.append( self.ssCentralizerLocations_fields.hsMD[k//2] )
-					SO_alt.append( self.ssCentralizerLocations_fields.hsSOatC[k//2] )
+					hsMD_alt.append( self.ssCentralizerLocations_fields.hsMD[k//2] )
+					hsSO_alt.append( self.ssCentralizerLocations_fields.hsSOatC[k//2] )
 				elif k%2==1:
-					MD_alt.append( (self.ssCentralizerLocations_fields.hsMD[(k+1)//2]+self.ssCentralizerLocations_fields.hsMD[(k-1)//2])/2 )
-					SO_alt.append( self.ssCentralizerLocations_fields.hsSOatM[(k+1)//2] )
+					hsMD_alt.append( (self.ssCentralizerLocations_fields.hsMD[(k+1)//2]+self.ssCentralizerLocations_fields.hsMD[(k-1)//2])/2 )
+					hsSO_alt.append( self.ssCentralizerLocations_fields.hsSOatM[(k+1)//2] )
 
-			self.ssSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, 'C2', lw=1 )
+			self.ssSOVisualization_graphicsView.axes.plot(	hsSO_alt, hsMD_alt, 'C2', lw=1 )
 
-			MD_alt = []
-			SO_alt = []
+			dsMD_alt = []
+			dsSO_alt = []
 			for k in range(2*len(self.ssCentralizerLocations_fields.dsMD)-1):
 				if k%2==0:
-					MD_alt.append( self.ssCentralizerLocations_fields.dsMD[k//2] )
-					SO_alt.append( self.ssCentralizerLocations_fields.dsSOatC[k//2] )
+					dsMD_alt.append( self.ssCentralizerLocations_fields.dsMD[k//2] )
+					dsSO_alt.append( self.ssCentralizerLocations_fields.dsSOatC[k//2] )
 				elif k%2==1:
-					MD_alt.append( (self.ssCentralizerLocations_fields.dsMD[(k+1)//2]+self.ssCentralizerLocations_fields.dsMD[(k-1)//2])/2 )
-					SO_alt.append( self.ssCentralizerLocations_fields.dsSOatM[(k+1)//2] )
+					dsMD_alt.append( (self.ssCentralizerLocations_fields.dsMD[(k+1)//2]+self.ssCentralizerLocations_fields.dsMD[(k-1)//2])/2 )
+					dsSO_alt.append( self.ssCentralizerLocations_fields.dsSOatM[(k+1)//2] )
 
-			self.ssSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, 'C2', lw=1 )
+			#self.ssSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, 'C0', lw=1 )
+
+			dsSO_int = mu.np.interp(hsMD_alt, dsMD_alt, dsSO_alt)
+
+			self.ssSOVisualization_graphicsView.axes.fill_betweenx( hsMD_alt, hsSO_alt, dsSO_int, alpha=0.5, color='C0')
 
 
 			self.ssSOVisualization_graphicsView.axes.plot(	self.ssCentralizerLocations_fields.SOatC, 
@@ -438,4 +473,9 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 			self.ssCaliperMap_graphicsView.draw()
 			self.ssWellbore3D_graphicsView.draw()
 			self.ssSOVisualization_graphicsView.draw()
+
+		#print(	self.ssSOVisualization_graphicsView.axes,
+		#		self.ssSOVisualization_graphicsView.axes.lines,
+		#		self.ssSOVisualization_graphicsView.axes.patch,
+		#		self.ssSOVisualization_graphicsView.axes.collections )
 

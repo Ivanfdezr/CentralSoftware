@@ -220,13 +220,15 @@ class Main_LocationSetup(Ui_LocationSetup):
 			del self.lsCentralizerLocations_fields.DL[r]
 			self.centralizerCount-=1
 
-			if self.centralizerCount>0:
-				MD = self.lsCentralizerLocations_fields.MD[0]
-				EW = self.lsCentralizerLocations_fields.EW[0]
-				NS = self.lsCentralizerLocations_fields.NS[0]
-				VD = self.lsCentralizerLocations_fields.TVD[0]
+			r = r-1 if (r>0) else 0
 
-				cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,0)
+			if self.centralizerCount>0:
+				MD = self.lsCentralizerLocations_fields.MD[r]
+				EW = self.lsCentralizerLocations_fields.EW[r]
+				NS = self.lsCentralizerLocations_fields.NS[r]
+				VD = self.lsCentralizerLocations_fields.TVD[r]
+
+				cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,r)
 				self.update_calculations()
 				self.draw_MDlocations(MD, EW, NS, VD)
 
