@@ -1,0 +1,40 @@
+@ IW: BEGIN
+
+C:\Program Files (x86)\Python36-32\lib\site-packages\mpl_toolkits\mplot3d\axes3d.py:1078: UserWarning: Axes3D.figure.canvas is 'None', mouse rotation disabled.  Set canvas then call Axes3D.mouse_init().
+  "Axes3D.figure.canvas is 'None', mouse rotation disabled.  "
+
+
+@ SS: SELECT FIRST LOCATION
+
+Traceback (most recent call last):
+  File "C:\Program Files (x86)\Python36-32\lib\site-packages\matplotlib\cbook\__init__.py", line 215, in process
+    func(*args, **kwargs)
+  File "C:\Users\arcad\Documents\Aztecatrol-Gicsa\CentralSoftware\PlotUtilities.py", line 247, in onPress
+    yselectionfunction(event.ydata)
+  File "C:\Users\arcad\Documents\Aztecatrol-Gicsa\CentralSoftware\SpacingSetup_Ctrl.py", line 387, in choose_MDlocation
+    self.update_calculations()
+  File "C:\Users\arcad\Documents\Aztecatrol-Gicsa\CentralSoftware\SpacingSetup_Ctrl.py", line 308, in update_calculations
+    mdl.calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field)
+  File "C:\Users\arcad\Documents\Aztecatrol-Gicsa\CentralSoftware\SpacingSetup_Mdl.py", line 504, in calculate_standOff_atMidspan
+    buoyancyFactor = ( (1-ρe/ρs)-doverDsq*(1-ρi/ρs) )/( 1-doverDsq )
+TypeError: unsupported operand type(s) for /: '__str__' and '__float__'
+
+
+@ LS: SELECT FIRST LOCATION
+
+Traceback (most recent call last):
+  File "C:\Program Files (x86)\Python36-32\lib\site-packages\matplotlib\cbook\__init__.py", line 215, in process
+    func(*args, **kwargs)
+  File "C:\Users\arcad\Documents\Aztecatrol-Gicsa\CentralSoftware\PlotUtilities.py", line 247, in onPress
+    yselectionfunction(event.ydata)
+  File "C:\Users\arcad\Documents\Aztecatrol-Gicsa\CentralSoftware\LocationSetup_Ctrl.py", line 318, in choose_MDlocation
+    self.draw_MDlocations(MD, EW, NS, VD)
+  File "C:\Users\arcad\Documents\Aztecatrol-Gicsa\CentralSoftware\LocationSetup_Ctrl.py", line 363, in draw_MDlocations
+    SOatC = self.lsCentralizerLocations_fields.SOatC[self.lsCentralizerLocations_fields.MD.index(MD)]
+ValueError: 983.9583333333336 is not in list
+
+
+
+
+
+
