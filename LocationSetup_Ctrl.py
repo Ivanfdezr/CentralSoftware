@@ -359,8 +359,10 @@ class Main_LocationSetup(Ui_LocationSetup):
 			self.lsSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, 'C1', lw=2 )
 			self.lsSOVisualization_graphicsView.axes.plot(	self.lsCentralizerLocations_fields.SOatC, 
 															self.lsCentralizerLocations_fields.MD, marker='o', color='C3', alpha=0.5, ls='' )
-			
-			SOatC = self.lsCentralizerLocations_fields.SOatC[self.lsCentralizerLocations_fields.MD.index(MD)]
+				
+			index = mu.np.where( mu.np.isclose(self.lsCentralizerLocations_fields.MD, MD) )[0][0]
+			SOatC = self.lsCentralizerLocations_fields.SOatC[index]
+			#SOatC = self.lsCentralizerLocations_fields.SOatC[self.lsCentralizerLocations_fields.MD.index(MD) ]
 			self.lsSOVisualization_graphicsView.axes.plot(	SOatC, MD, marker='o', mec='black', color='C3', ms='8' )
 			if created:
 				self.lsSOVisualization_graphicsView.axes.plot(	[0, self.max_SO], [MD, MD], color='C3', lw=4, alpha=0.4 )

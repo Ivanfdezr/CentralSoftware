@@ -196,6 +196,38 @@ def get_s3CentralizerLocation_fields():
 	return s3CentralizerLocation_fields
 
 
+def get_s4Settings_fields():
+
+	WOB = Field(2081)
+	TOB = Field(2082)
+	TAW = Field(2083)
+	s4Settings_fields = FieldList()
+	s4Settings_fields.append( WOB )
+	s4Settings_fields.append( TOB )
+	s4Settings_fields.append( TAW )
+	
+	return s4Settings_fields
+
+
+def get_s4DragTorqueSideforce_fields():
+
+	MD     = Field(2001, altBg=True, altFg=True)
+	Inc    = Field(2002, altBg=True, altFg=True)
+	Drag   = Field(2075, altBg=True, altFg=True)
+	Torque = Field(2082, altBg=True, altFg=True)
+	SideF  = Field(2074, altBg=True, altFg=True)
+	Drag.set_representation('Drag')
+	Torque.set_representation('Torque')
+	s4DragTorqueSideforce_fields = FieldList()
+	s4DragTorqueSideforce_fields.append( MD )
+	s4DragTorqueSideforce_fields.append( Inc )
+	s4DragTorqueSideforce_fields.append( Drag )
+	s4DragTorqueSideforce_fields.append( Torque )
+	s4DragTorqueSideforce_fields.append( SideF )
+	
+	return s4DragTorqueSideforce_fields
+
+
 def calculate_ASCComplements( fields, tortuosity=None ):
 
 	# Algorithm Reference:

@@ -869,8 +869,7 @@ def adjust_ID(self):
 	Wt = self.s3PipeProperties_tableWidget.item(self.s3PipeProperties_fields.PipeW.pos,0).realValue
 	ID = mdl.adjust_ID( OD, ID, Wt )
 	self.s3PipeProperties_tableWidget.item(self.s3PipeProperties_fields.ID.pos,0).set_text(ID)
-
-
+	
 
 
 def print_wellboreInnerStageData(self):
