@@ -2,6 +2,7 @@ from PyQt4 import QtCore, QtGui
 from LocationSetup_Vst import Ui_LocationSetup
 import LocationSetup_Vst as vst
 import LocationSetup_Mdl as mdl
+import InputWindow_Mdl as mdl2
 import CtrlUtilities as cu
 import PlotUtilities as pu
 import MdlUtilities as mu
@@ -105,8 +106,8 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 		#-------------------------------------------------
 
-		min_EW,min_NS,min_VD,min_index = mdl.get_ASCCoordinates_from_MD(self, self.min_MD, unit=parent.s2DataSurvey_fields.MD.unit)
-		max_EW,max_NS,max_VD,max_index = mdl.get_ASCCoordinates_from_MD(self, self.max_MD, unit=parent.s2DataSurvey_fields.MD.unit)
+		min_EW,min_NS,min_VD,min_index = mdl2.get_ASCCoordinates_from_MD(parent, self.min_MD, unit=parent.s2DataSurvey_fields.MD.unit)
+		max_EW,max_NS,max_VD,max_index = mdl2.get_ASCCoordinates_from_MD(parent, self.max_MD, unit=parent.s2DataSurvey_fields.MD.unit)
 		EW = parent.s2DataSurvey_fields.EW[min_index:max_index+1]
 		NS = parent.s2DataSurvey_fields.NS[min_index:max_index+1]
 		VD = parent.s2DataSurvey_fields.TVD[min_index:max_index+1]
@@ -298,8 +299,8 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 			for i, MDi in enumerate(self.lsCentralizerLocations_fields.MD):
 					
-				EWi,NSi,VDi,_ = mdl.get_ASCCoordinates_from_MD(self, MDi)
-				DLi = mdl.get_ASCDogleg_from_MD(self, MDi)
+				EWi,NSi,VDi,_ = mdl2.get_ASCCoordinates_from_MD(self.parent, MDi)
+				DLi = mdl2.get_ASCDogleg_from_MD(self.parent, MDi)
 				
 				cu.create_physicalValue_and_appendTo_field( EWi, self.lsCentralizerLocations_fields.EW )
 				cu.create_physicalValue_and_appendTo_field( NSi, self.lsCentralizerLocations_fields.NS )

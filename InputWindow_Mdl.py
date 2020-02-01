@@ -3,7 +3,7 @@ import numpy as np
 import numpy.linalg as la
 import codecs
 from MdlUtilities import Field, FieldList
-import MdlUtilities as mdl
+import MdlUtilities as mu
 import dbUtils
 
 		 
@@ -234,15 +234,6 @@ def calculate_ASCComplements( fields, tortuosity=None ):
 	# 	Mahmoud F. Abughaban et al. Advanced Trajectory Computational Model Improves Calculated Borehole Positioning, Tortuosity and Rugosity.
 	# 	IADC/SPE-178796-MS (2016).
 
-	# if not tortuosity:
-	# 	max_MD = max(fields.MD)
-	# 	tortuosity = [{	'FromMD':mdl.physicalValue(0, fields.MD.unit ),
-	# 					'ToMD'  :mdl.physicalValue(max_MD, fields.MD.unit ),
-	# 					'Amplitude':mdl.physicalValue(0, fields.MD.unit ),
-	# 					'Period':mdl.physicalValue(max_MD, fields.MD.unit ),
-	# 					'Interval':mdl.physicalValue(max_MD/500, fields.MD.unit )  }]
-
-
 	x  = np.array( fields.MD.referenceUnitConvert() )
 	In = np.array( fields.Inc.referenceUnitConvert() )
 	Az = np.array( fields.Azi.referenceUnitConvert() )
@@ -281,8 +272,6 @@ def calculate_ASCComplements( fields, tortuosity=None ):
 	Mc = np.array(Mc)
 
 	w = Ma[1:,None]/Mb[:-1,None]
-
-	#
 
 	Mb[1:,None] = Mb[1:,None]-w*Mc[:-1,None]
 	v[1:] = v[1:]-w*v[:-1]
@@ -329,10 +318,10 @@ def calculate_ASCComplements( fields, tortuosity=None ):
 	sT = lambda i,X: (X-x[i])*A[i] + (X-x[i])**2/2*B[i] + (X-x[i])**3/3*C[i] + (X-x[i])**4/4*D[i]
 
 	for Ei,Ni,Vi,Hi in Y:
-		fields.EW.append( mdl.physicalValue(Ei, fields.EW.referenceUnit ) )
-		fields.NS.append( mdl.physicalValue(Ni, fields.NS.referenceUnit ) )
-		fields.TVD.append( mdl.physicalValue(Vi, fields.TVD.referenceUnit ) )
-		fields.HD.append( mdl.physicalValue(Hi, fields.HD.referenceUnit ) )
+		fields.EW.append( mu.physicalValue(Ei, fields.EW.referenceUnit ) )
+		fields.NS.append( mu.physicalValue(Ni, fields.NS.referenceUnit ) )
+		fields.TVD.append( mu.physicalValue(Vi, fields.TVD.referenceUnit ) )
+		fields.HD.append( mu.physicalValue(Hi, fields.HD.referenceUnit ) )
 
 	fields.MD.inverseReferenceUnitConvert()
 	fields.Inc.inverseReferenceUnitConvert()
@@ -365,19 +354,19 @@ def calculate_ASCComplements( fields, tortuosity=None ):
 
 		for item in tortuosity:
 			value = item['FromMD']
-			item['FromMD'] = mdl.referenceUnitConvert_value( value, value.unit )
+			item['FromMD'] = mu.referenceUnitConvert_value( value, value.unit )
 			value = item['ToMD']
-			item['ToMD'] = mdl.referenceUnitConvert_value( value, value.unit )
+			item['ToMD'] = mu.referenceUnitConvert_value( value, value.unit )
 			value = item['Amplitude']
-			item['Amplitude'] = mdl.referenceUnitConvert_value( value, value.unit )
+			item['Amplitude'] = mu.referenceUnitConvert_value( value, value.unit )
 			value = item['Period']
-			item['Period'] = mdl.referenceUnitConvert_value( value, value.unit )
+			item['Period'] = mu.referenceUnitConvert_value( value, value.unit )
 			value = item['Interval']
-			item['Interval'] = mdl.referenceUnitConvert_value( value, value.unit )
+			item['Interval'] = mu.referenceUnitConvert_value( value, value.unit )
 		dx = tortuosity[0]['Interval']
 
 		for i,Yi in enumerate(Y[:-1]):
-			value = mdl.physicalValue( la.norm(dT(i,x[i])[:-1]), fields.DL.referenceUnit )
+			value = mu.physicalValue( la.norm(dT(i,x[i])[:-1]), fields.DL.referenceUnit )
 			fields.DL.append( value )
 			X_ = np.linspace( x[i], x[i+1], np.floor(x[i+1]-x[i])/dx )[:-1]
 			if len(X_)==0:
@@ -402,20 +391,20 @@ def calculate_ASCComplements( fields, tortuosity=None ):
 						YX += enVector*a*np.sin(w*X)
 						D2YX -= enVector*a*w**2*np.sin(w*X)
 			
-				value = mdl.physicalValue( X, MD.referenceUnit )
+				value = mu.physicalValue( X, MD.referenceUnit )
 				MD.append( value )
-				value = mdl.physicalValue( YX[0], EW.referenceUnit )
+				value = mu.physicalValue( YX[0], EW.referenceUnit )
 				EW.append( value )
-				value = mdl.physicalValue( YX[1], NS.referenceUnit )
+				value = mu.physicalValue( YX[1], NS.referenceUnit )
 				NS.append( value )
-				value = mdl.physicalValue( YX[2], TVD.referenceUnit )
+				value = mu.physicalValue( YX[2], TVD.referenceUnit )
 				TVD.append( value )
-				value = mdl.physicalValue( YX[3], HD.referenceUnit )
+				value = mu.physicalValue( YX[3], HD.referenceUnit )
 				HD.append( value )
-				value = mdl.physicalValue( la.norm(D2YX[:-1]), DL.referenceUnit )
+				value = mu.physicalValue( la.norm(D2YX[:-1]), DL.referenceUnit )
 				DL.append( value )
 
-		value = mdl.physicalValue( la.norm(dT(i,x[i+1])[:-1]), fields.DL.referenceUnit )
+		value = mu.physicalValue( la.norm(dT(i,x[i+1])[:-1]), fields.DL.referenceUnit )
 		fields.DL.append( value )
 		fields.DL.inverseReferenceUnitConvert()
 		MD.inverseReferenceUnitConvert()
@@ -429,9 +418,9 @@ def calculate_ASCComplements( fields, tortuosity=None ):
 
 	else:
 		for i,xi in enumerate(x[:-1]):
-			value = mdl.physicalValue( la.norm(dT(i,xi)[:-1]), fields.DL.referenceUnit )
+			value = mu.physicalValue( la.norm(dT(i,xi)[:-1]), fields.DL.referenceUnit )
 			fields.DL.append( value )
-		value = mdl.physicalValue( la.norm(dT(i,x[i+1])[:-1]), fields.DL.referenceUnit )
+		value = mu.physicalValue( la.norm(dT(i,x[i+1])[:-1]), fields.DL.referenceUnit )
 		fields.DL.append( value )
 		fields.DL.inverseReferenceUnitConvert()
 
@@ -443,15 +432,15 @@ def adjust_Wt( OD, ID, Wt ):
 	# Equation Reference:
 	# 	Tenaris Tamsa. Prontuario. p12.
 
-	D = mdl.referenceUnitConvert_value( OD, OD.unit )
-	d = mdl.referenceUnitConvert_value( ID, ID.unit )
+	D = mu.referenceUnitConvert_value( OD, OD.unit )
+	d = mu.referenceUnitConvert_value( ID, ID.unit )
 	a = 10.68/12
 	b = 0.00722/12
 
 	t = (D-d)/2
 	W = a*(D-t)*t +b*D**2
 
-	return mdl.inverseReferenceUnitConvert_value( W, Wt.unit )
+	return mu.inverseReferenceUnitConvert_value( W, Wt.unit )
 
 
 def adjust_ID( OD, ID, Wt ):
@@ -459,14 +448,105 @@ def adjust_ID( OD, ID, Wt ):
 	# Equation Reference:
 	# 	Tenaris Tamsa. Prontuario. p12.
 
-	D = mdl.referenceUnitConvert_value( OD, OD.unit )
-	W = mdl.referenceUnitConvert_value( Wt, Wt.unit )
+	D = mu.referenceUnitConvert_value( OD, OD.unit )
+	W = mu.referenceUnitConvert_value( Wt, Wt.unit )
 	a = 10.68/12
 	b = 0.00722/12
 
 	d = np.sqrt( D**2 +4*b/a*D**2 -4*W/a )
 
-	return mdl.inverseReferenceUnitConvert_value( d, ID.unit )
+	return mu.inverseReferenceUnitConvert_value( d, ID.unit )
+
+
+def get_ASCCoordinates_from_MD(self, MD, unit=None):
+	"""
+	self must to point to Main_InputWindow
+	"""
+	if unit:
+		MD = mu.unitConvert_value( MD, unit, self.s2DataSurvey_fields.MD.unit )
+	else:
+		MD = mu.unitConvert_value( MD, MD.unit, self.s2DataSurvey_fields.MD.unit )
+
+	MD_array = np.array( self.s2DataSurvey_fields.MD )
+	index = np.where(MD_array[:-1]<=MD)[0][-1]
+	del MD_array
+
+	MD = mu.referenceUnitConvert_value( MD, MD.unit )
+	sT_value = self.sT( index, MD)
+	EW_rest = mu.inverseReferenceUnitConvert_value( sT_value[0], self.s2DataSurvey_fields.EW.unit  )
+	NS_rest = mu.inverseReferenceUnitConvert_value( sT_value[1], self.s2DataSurvey_fields.NS.unit  )
+	VD_rest = mu.inverseReferenceUnitConvert_value( sT_value[2], self.s2DataSurvey_fields.TVD.unit )
+
+	EW = self.s2DataSurvey_fields.EW[index] + EW_rest
+	NS = self.s2DataSurvey_fields.NS[index] + NS_rest
+	VD = self.s2DataSurvey_fields.TVD[index] + VD_rest
+
+	return EW,NS,VD,index
+
+
+def get_ASCT_from_MD(self, MD, unit=None):
+	"""
+	self must to point to Main_InputWindow
+	"""
+	if unit:
+		MD = mu.unitConvert_value( MD, unit, self.s2DataSurvey_fields.MD.unit )
+	else:
+		MD = mu.unitConvert_value( MD, MD.unit, self.s2DataSurvey_fields.MD.unit )
+
+	MD_array = np.array( self.s2DataSurvey_fields.MD )
+	index = np.where(MD_array[:-1]<=MD)[0][-1]
+	del MD_array
+	
+	MD = mu.referenceUnitConvert_value( MD, MD.unit )
+	T_value = self.T( index, MD)
+	return T_value
+
+
+def get_ASCDogleg_from_MD(self, MD, unit=None):
+	"""
+	self must to point to Main_InputWindow
+	"""
+	if unit:
+		MD = mu.unitConvert_value( MD, unit, self.s2DataSurvey_fields.MD.unit )
+	else:
+		MD = mu.unitConvert_value( MD, MD.unit, self.s2DataSurvey_fields.MD.unit )
+
+	MD_array = np.array( self.s2DataSurvey_fields.MD )
+	index = np.where(MD_array[:-1]<=MD)[0][-1]
+	del MD_array
+
+	MD = mu.referenceUnitConvert_value( MD, MD.unit )
+	DL = la.norm( self.dT( index, MD )[:-1] )
+	DL = mu.inverseReferenceUnitConvert_value( DL, self.s2DataSurvey_fields.DL.unit  )
+
+	return DL
+
+
+def get_inclination_and_azimuth_from_locations(self, locations):
+	"""
+	self must to point to Main_InputWindow
+	"""
+	"""
+	Field "locations" must be in reference units.
+	Return "Inc" and "Azi" array objects in reference units.
+	"""
+	Inc = []
+	Azi = []
+	for MD in locations:
+		T_values = get_ASCT_from_MD(self, MD)
+		inc = np.arccos( T_values[2] )
+		sinazi = T_values[0]/np.sin(inc)
+		cosazi = T_values[1]/np.sin(inc)
+
+		if sinazi>=0:
+			azi = np.arccos( cosazi )
+		elif sinazi<0:
+			azi = 2*np.pi-np.arccos( cosazi )
+
+		Inc.append(inc)
+		Azi.append(azi)
+
+	return np.array(Inc), np.array(Azi)
 
 
 class WellboreInnerStageDataItem( dict ):

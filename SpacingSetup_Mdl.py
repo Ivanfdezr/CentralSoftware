@@ -2,6 +2,7 @@ import re
 import numpy as np
 import numpy.linalg as la
 import codecs
+import InputWindow_Mdl as mdl
 from MdlUtilities import Field, FieldList
 import MdlUtilities as mu
 import CtrlUtilities as cu
@@ -110,64 +111,6 @@ def get_ssCentralizerLocations_fields():
 	return ssCentralizerLocations_fields
 
 
-def get_ASCCoordinates_from_MD(self, MD, unit=None):
-	
-	if unit:
-		MD = mu.unitConvert_value( MD, unit, self.parent.s2DataSurvey_fields.MD.unit )
-	else:
-		MD = mu.unitConvert_value( MD, MD.unit, self.parent.s2DataSurvey_fields.MD.unit )
-
-	MD_array = np.array( self.parent.s2DataSurvey_fields.MD )
-	index = np.where(MD_array[:-1]<=MD)[0][-1]
-	del MD_array
-
-	MD = mu.referenceUnitConvert_value( MD, MD.unit )
-	sT_value = self.parent.sT( index, MD)
-	EW_rest = mu.inverseReferenceUnitConvert_value( sT_value[0], self.parent.s2DataSurvey_fields.EW.unit  )
-	NS_rest = mu.inverseReferenceUnitConvert_value( sT_value[1], self.parent.s2DataSurvey_fields.NS.unit  )
-	VD_rest = mu.inverseReferenceUnitConvert_value( sT_value[2], self.parent.s2DataSurvey_fields.TVD.unit )
-
-	EW = self.parent.s2DataSurvey_fields.EW[index] + EW_rest
-	NS = self.parent.s2DataSurvey_fields.NS[index] + NS_rest
-	VD = self.parent.s2DataSurvey_fields.TVD[index] + VD_rest
-
-	return EW,NS,VD,index
-
-
-def get_ASCT_from_MD(self, MD, unit=None):
-
-	if unit:
-		MD = mu.unitConvert_value( MD, unit, self.parent.s2DataSurvey_fields.MD.unit )
-	else:
-		MD = mu.unitConvert_value( MD, MD.unit, self.parent.s2DataSurvey_fields.MD.unit )
-
-	MD_array = np.array( self.parent.s2DataSurvey_fields.MD )
-	index = np.where(MD_array[:-1]<=MD)[0][-1]
-	del MD_array
-	
-	MD = mu.referenceUnitConvert_value( MD, MD.unit )
-	T_value = self.parent.T( index, MD)
-	return T_value
-
-
-def get_ASCDogleg_from_MD(self, MD, unit=None):
-
-	if unit:
-		MD = mu.unitConvert_value( MD, unit, self.parent.s2DataSurvey_fields.MD.unit )
-	else:
-		MD = mu.unitConvert_value( MD, MD.unit, self.parent.s2DataSurvey_fields.MD.unit )
-
-	MD_array = np.array( self.parent.s2DataSurvey_fields.MD )
-	index = np.where(MD_array[:-1]<=MD)[0][-1]
-	del MD_array
-
-	MD = mu.referenceUnitConvert_value( MD, MD.unit )
-	DL = la.norm( self.parent.dT( index, MD )[:-1] )
-	DL = mu.inverseReferenceUnitConvert_value( DL, self.parent.s2DataSurvey_fields.DL.unit  )
-
-	return DL
-
-
 def get_LASMDandCALID_intoInterval(self):
 
 	MD = self.parent.workWellboreMD
@@ -213,7 +156,7 @@ def calculate_axialForce_field(self):
 	for MD in MDs:
 		MD = mu.physicalValue(MD, self.ssCentralizerLocations_fields.MD_AxF.referenceUnit )
 		self.ssCentralizerLocations_fields.MD_AxF.append( MD )
-		cosIncs.append( get_ASCT_from_MD(self, MD, MD.unit)[2] )
+		cosIncs.append( mdl.get_ASCT_from_MD(self.parent, MD, MD.unit)[2] )
 
 	value = mu.physicalValue(0, self.ssCentralizerLocations_fields.AxialF.referenceUnit )
 	self.ssCentralizerLocations_fields.AxialF.append( value )
@@ -245,7 +188,7 @@ def get_axialTension_below_MD(self, MD, unit=None, referenceUnit=False):
 	else:
 		MD = mu.unitConvert_value( MD, MD.unit, self.ssCentralizerLocations_fields.MD_AxF.unit )
 	
-	cosInc = get_ASCT_from_MD(self, MD)[2]
+	cosInc = mdl.get_ASCT_from_MD(self.parent, MD)[2]
 	MD_AxF = np.array( self.ssCentralizerLocations_fields.MD_AxF )
 	AxialF = np.array( self.ssCentralizerLocations_fields.AxialF )
 	index = np.where(MD_AxF>MD)[0][0]
@@ -270,32 +213,6 @@ def get_axialTension_below_MD(self, MD, unit=None, referenceUnit=False):
 	return AxialTension
 
 
-def get_inclination_and_azimuth_from_locations(self, locations):
-
-	"""
-	Field "locations" must be in reference units.
-	Return "Inc" and "Azi" array objects in reference units.
-	"""
-
-	Inc = []
-	Azi = []
-	for MD in locations:
-		T_values = get_ASCT_from_MD(self, MD)
-		inc = np.arccos( T_values[2] )
-		sinazi = T_values[0]/np.sin(inc)
-		cosazi = T_values[1]/np.sin(inc)
-
-		if sinazi>=0:
-			azi = np.arccos( cosazi )
-		elif sinazi<0:
-			azi = 2*np.pi-np.arccos( cosazi )
-
-		Inc.append(inc)
-		Azi.append(azi)
-
-	return np.array(Inc), np.array(Azi)
-
-
 def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field):
 
 	locations.referenceUnitConvert()
@@ -303,7 +220,7 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field)
 	ClatC_field.referenceUnitConvert()
 	numofLocations = len(locations)
 
-	Inc, Azi = get_inclination_and_azimuth_from_locations(self, locations)
+	Inc, Azi = mdl.get_inclination_and_azimuth_from_locations(self.parent, locations)
 	MDs = self.ssCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD
 	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
 	meanIDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.mean_ID
@@ -448,7 +365,7 @@ def calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, Clat
 	Inc_field = self.ssCentralizerLocations_fields.Inc
 	Inc_field.clear()
 
-	Inc, Azi = get_inclination_and_azimuth_from_locations(self, locations)
+	Inc, Azi = mdl.get_inclination_and_azimuth_from_locations(self.parent, locations)
 	t01 = time.time()
 
 	MDs = self.ssCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD

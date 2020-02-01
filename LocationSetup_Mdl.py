@@ -2,15 +2,13 @@ import re
 import numpy as np
 import numpy.linalg as la
 import codecs
+import InputWindow_Mdl as mdl
 from MdlUtilities import Field, FieldList
-import MdlUtilities as mdl
+import MdlUtilities as mu
 import CtrlUtilities as cu
 import dbUtils
 
 import time
-
-#from pathos.multiprocessing import ProcessingPool as Pool
-from multiprocessing import Pool
 
 
 def get_lsCentralizerLocations_fields():
@@ -57,64 +55,6 @@ def get_lsCentralizerLocations_fields():
 	return lsCentralizerLocations_fields
 
 
-def get_ASCCoordinates_from_MD(self, MD, unit=None):
-	
-	if unit:
-		MD = mdl.unitConvert_value( MD, unit, self.parent.s2DataSurvey_fields.MD.unit )
-	else:
-		MD = mdl.unitConvert_value( MD, MD.unit, self.parent.s2DataSurvey_fields.MD.unit )
-
-	MD_array = np.array( self.parent.s2DataSurvey_fields.MD )
-	index = np.where(MD_array[:-1]<=MD)[0][-1]
-	del MD_array
-
-	MD = mdl.referenceUnitConvert_value( MD, MD.unit )
-	sT_value = self.parent.sT( index, MD)
-	EW_rest = mdl.inverseReferenceUnitConvert_value( sT_value[0], self.parent.s2DataSurvey_fields.EW.unit  )
-	NS_rest = mdl.inverseReferenceUnitConvert_value( sT_value[1], self.parent.s2DataSurvey_fields.NS.unit  )
-	VD_rest = mdl.inverseReferenceUnitConvert_value( sT_value[2], self.parent.s2DataSurvey_fields.TVD.unit )
-
-	EW = self.parent.s2DataSurvey_fields.EW[index] + EW_rest
-	NS = self.parent.s2DataSurvey_fields.NS[index] + NS_rest
-	VD = self.parent.s2DataSurvey_fields.TVD[index] + VD_rest
-
-	return EW,NS,VD,index
-
-
-def get_ASCT_from_MD(self, MD, unit=None):
-
-	if unit:
-		MD = mdl.unitConvert_value( MD, unit, self.parent.s2DataSurvey_fields.MD.unit )
-	else:
-		MD = mdl.unitConvert_value( MD, MD.unit, self.parent.s2DataSurvey_fields.MD.unit )
-
-	MD_array = np.array( self.parent.s2DataSurvey_fields.MD )
-	index = np.where(MD_array[:-1]<=MD)[0][-1]
-	del MD_array
-	
-	MD = mdl.referenceUnitConvert_value( MD, MD.unit )
-	T_value = self.parent.T( index, MD)
-	return T_value
-
-
-def get_ASCDogleg_from_MD(self, MD, unit=None):
-
-	if unit:
-		MD = mdl.unitConvert_value( MD, unit, self.parent.s2DataSurvey_fields.MD.unit )
-	else:
-		MD = mdl.unitConvert_value( MD, MD.unit, self.parent.s2DataSurvey_fields.MD.unit )
-
-	MD_array = np.array( self.parent.s2DataSurvey_fields.MD )
-	index = np.where(MD_array[:-1]<=MD)[0][-1]
-	del MD_array
-
-	MD = mdl.referenceUnitConvert_value( MD, MD.unit )
-	DL = la.norm( self.parent.dT( index, MD )[:-1] )
-	DL = mdl.inverseReferenceUnitConvert_value( DL, self.parent.s2DataSurvey_fields.DL.unit  )
-
-	return DL
-
-
 def get_LASMDandCALID_intoInterval(self):
 
 	MD = self.parent.workWellboreMD
@@ -150,19 +90,19 @@ def get_LASMDandCALID_intoInterval(self):
 def calculate_axialForce_field(self):
 
 	MD_array = np.array( self.parent.s2DataSurvey_fields.MD )
-	MD_min = mdl.referenceUnitConvert_value( MD_array[ 0], self.parent.s2DataSurvey_fields.MD.unit )
-	MD_max = mdl.referenceUnitConvert_value( MD_array[-1], self.parent.s2DataSurvey_fields.MD.unit )
+	MD_min = mu.referenceUnitConvert_value( MD_array[ 0], self.parent.s2DataSurvey_fields.MD.unit )
+	MD_max = mu.referenceUnitConvert_value( MD_array[-1], self.parent.s2DataSurvey_fields.MD.unit )
 	del MD_array
 
 	MDs = np.linspace(MD_min, MD_max, 100)
 	cosIncs = []
 
 	for MD in MDs:
-		MD = mdl.physicalValue(MD, self.lsCentralizerLocations_fields.MD_AxF.referenceUnit )
+		MD = mu.physicalValue(MD, self.lsCentralizerLocations_fields.MD_AxF.referenceUnit )
 		self.lsCentralizerLocations_fields.MD_AxF.append( MD )
-		cosIncs.append( get_ASCT_from_MD(self, MD, MD.unit)[2] )
+		cosIncs.append( mdl.get_ASCT_from_MD(self.parent, MD, MD.unit)[2] )
 
-	value = mdl.physicalValue(0, self.lsCentralizerLocations_fields.AxialF.referenceUnit )
+	value = mu.physicalValue(0, self.lsCentralizerLocations_fields.AxialF.referenceUnit )
 	self.lsCentralizerLocations_fields.AxialF.append( value )
 	AxialTension = 0
 	L = MDs[1]-MDs[0]
@@ -172,12 +112,12 @@ def calculate_axialForce_field(self):
 		K.sort()
 		for k in K:
 			stage = self.parent.wellboreInnerStageData[k]
-			stageTopMD = mdl.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
-			W = mdl.referenceUnitConvert_value( stage['PipeProps'].PW[0], stage['PipeProps'].PW[0].unit )
+			stageTopMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
+			W = mu.referenceUnitConvert_value( stage['PipeProps'].PW[0], stage['PipeProps'].PW[0].unit )
 			
 			if MDs[-i-2]<stageTopMD: 
 				AxialTension = AxialTension + W*L*cosIncs[-i-1]
-				value = mdl.physicalValue(AxialTension, self.lsCentralizerLocations_fields.AxialF.referenceUnit )
+				value = mu.physicalValue(AxialTension, self.lsCentralizerLocations_fields.AxialF.referenceUnit )
 				self.lsCentralizerLocations_fields.AxialF.insert(0, value )
 				break
 
@@ -188,11 +128,11 @@ def calculate_axialForce_field(self):
 def get_axialTension_below_MD(self, MD, unit=None, referenceUnit=False):
 
 	if unit:
-		MD = mdl.unitConvert_value( MD, unit, self.lsCentralizerLocations_fields.MD_AxF.unit )
+		MD = mu.unitConvert_value( MD, unit, self.lsCentralizerLocations_fields.MD_AxF.unit )
 	else:
-		MD = mdl.unitConvert_value( MD, MD.unit, self.lsCentralizerLocations_fields.MD_AxF.unit )
+		MD = mu.unitConvert_value( MD, MD.unit, self.lsCentralizerLocations_fields.MD_AxF.unit )
 	
-	cosInc = get_ASCT_from_MD(self, MD)[2]
+	cosInc = mdl.get_ASCT_from_MD(self.parent, MD)[2]
 	MD_AxF = np.array( self.lsCentralizerLocations_fields.MD_AxF )
 	AxialF = np.array( self.lsCentralizerLocations_fields.AxialF )
 	index = np.where(MD_AxF>MD)[0][0]
@@ -203,44 +143,18 @@ def get_axialTension_below_MD(self, MD, unit=None, referenceUnit=False):
 	del AxialF
 
 	stage = self.parent.currentWellboreInnerStageDataItem
-	stageTopMD = mdl.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
+	stageTopMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
 	assert( MD<stageTopMD )
-	W = mdl.referenceUnitConvert_value( stage['PipeProps'].PW[0], stage['PipeProps'].PW[0].unit )
+	W = mu.referenceUnitConvert_value( stage['PipeProps'].PW[0], stage['PipeProps'].PW[0].unit )
 	L = MD_AxF_i-MD
 
 	AxialTension = AxialF_i + W*L*cosInc
 	if referenceUnit:
-		AxialTension = mdl.physicalValue( AxialTension, self.lsCentralizerLocations_fields.AxialF.referenceUnit )
+		AxialTension = mu.physicalValue( AxialTension, self.lsCentralizerLocations_fields.AxialF.referenceUnit )
 	else:
-		AxialTension = mdl.inverseReferenceUnitConvert_value( AxialTension, self.lsCentralizerLocations_fields.AxialF.unit )
+		AxialTension = mu.inverseReferenceUnitConvert_value( AxialTension, self.lsCentralizerLocations_fields.AxialF.unit )
 
 	return AxialTension
-
-
-def get_inclination_and_azimuth_from_locations(self, locations):
-
-	"""
-	Field "locations" must be in reference units.
-	Return "Inc" and "Azi" array objects in reference units.
-	"""
-
-	Inc = []
-	Azi = []
-	for MD in locations:
-		T_values = get_ASCT_from_MD(self, MD)
-		inc = np.arccos( T_values[2] )
-		sinazi = T_values[0]/np.sin(inc)
-		cosazi = T_values[1]/np.sin(inc)
-
-		if sinazi>=0:
-			azi = np.arccos( cosazi )
-		elif sinazi<0:
-			azi = 2*np.pi-np.arccos( cosazi )
-
-		Inc.append(inc)
-		Azi.append(azi)
-
-	return np.array(Inc), np.array(Azi)
 
 
 def calculate_standOff_atCentralizers(self):
@@ -249,7 +163,7 @@ def calculate_standOff_atCentralizers(self):
 	locations.referenceUnitConvert()
 	numofLocations = len(locations)
 
-	Inc, Azi = get_inclination_and_azimuth_from_locations(self, locations)
+	Inc, Azi = mdl.get_inclination_and_azimuth_from_locations(self.parent, locations)
 	MDs = self.lsCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD
 	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
 	meanIDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.mean_ID
@@ -260,11 +174,11 @@ def calculate_standOff_atCentralizers(self):
 	PW = self.stage['PipeProps'].PW[0]
 	PL = self.stage['PipeBase'].PL[0]
 
-	PD = mdl.referenceUnitConvert_value( PD, PD.unit )
-	Pd = mdl.referenceUnitConvert_value( Pd, Pd.unit )
-	PE = mdl.referenceUnitConvert_value( PE, PE.unit )
-	PW = mdl.referenceUnitConvert_value( PW, PW.unit )
-	PL = mdl.referenceUnitConvert_value( PL, PL.unit )
+	PD = mu.referenceUnitConvert_value( PD, PD.unit )
+	Pd = mu.referenceUnitConvert_value( Pd, Pd.unit )
+	PE = mu.referenceUnitConvert_value( PE, PE.unit )
+	PW = mu.referenceUnitConvert_value( PW, PW.unit )
+	PL = mu.referenceUnitConvert_value( PL, PL.unit )
 
 	ResF = {}
 	D = {}
@@ -273,14 +187,14 @@ def calculate_standOff_atCentralizers(self):
 	for x, c in self.centralizers.items():
 		if c['Type']=='Bow Spring':
 			ResF[x] = c['CentralizerProps'].ResF_CH[0]
-			ResF[x] = mdl.referenceUnitConvert_value( ResF[x], ResF[x].unit )
+			ResF[x] = mu.referenceUnitConvert_value( ResF[x], ResF[x].unit )
 			D[x] = c['CentralizerProps'].COD[0]
-			D[x] = mdl.referenceUnitConvert_value( D[x], D[x].unit )
+			D[x] = mu.referenceUnitConvert_value( D[x], D[x].unit )
 			supports+=1
 
 		elif c['Type']=='Rigid':
 			D[x] = c['CentralizerProps'].COD[0]
-			D[x] = mdl.referenceUnitConvert_value( D[x], D[x].unit )
+			D[x] = mu.referenceUnitConvert_value( D[x], D[x].unit )
 			supports+=c['CentralizerBase'].Blades[0]
 
 	doverDsq = (Pd/PD)**2
@@ -398,7 +312,7 @@ def calculate_standOff_atMidspan(self):
 	ClatM_field = self.lsCentralizerLocations_fields.ClatM
 	Inc_field   = self.lsCentralizerLocations_fields.Inc
 
-	Inc, Azi = get_inclination_and_azimuth_from_locations(self, locations)
+	Inc, Azi = mdl.get_inclination_and_azimuth_from_locations(self.parent, locations)
 	t01 = time.time()
 
 	MDs = self.lsCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD
@@ -414,12 +328,12 @@ def calculate_standOff_atMidspan(self):
 	ρe = self.stage['PipeProps'].OuterMudDensity[0]
 	ρs = self.stage['PipeProps'].Density[0]
 
-	PD = mdl.referenceUnitConvert_value( PD, PD.unit )
-	Pd = mdl.referenceUnitConvert_value( Pd, Pd.unit )
-	PE = mdl.referenceUnitConvert_value( PE, PE.unit )
-	PW = mdl.referenceUnitConvert_value( PW, PW.unit )
-	PL = mdl.referenceUnitConvert_value( PL, PL.unit )
-	gap = mdl.referenceUnitConvert_value( 2.0, 'm' )
+	PD = mu.referenceUnitConvert_value( PD, PD.unit )
+	Pd = mu.referenceUnitConvert_value( Pd, Pd.unit )
+	PE = mu.referenceUnitConvert_value( PE, PE.unit )
+	PW = mu.referenceUnitConvert_value( PW, PW.unit )
+	PL = mu.referenceUnitConvert_value( PL, PL.unit )
+	gap = mu.referenceUnitConvert_value( 2.0, 'm' )
 
 	firstCent = None
 	lastCent  = None

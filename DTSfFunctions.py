@@ -6,4 +6,5 @@ import copy
 
 def calculate_DragTorqueSideforce(self):
 
-	pass
+	MD = self.workWellboreMD
+	Inc,Azi = mdl.get_inclination_and_azimuth_from_locations()
