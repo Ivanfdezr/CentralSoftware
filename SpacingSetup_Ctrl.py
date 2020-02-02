@@ -29,7 +29,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 
 		self.ssNextSpacing_fields = mdl.get_ssNextSpacing_fields()
 		self.ssCentralizerLocations_fields = mdl.get_ssCentralizerLocations_fields()
-		mdl.calculate_axialForce_field(self)	
+		#mdl.calculate_axialForce_field(self)	
 
 		self.__init__ssCentralizerLocations_tableWidget()
 		self.__init__ssNextSpacing_tableWidget()
@@ -356,11 +356,8 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 			self.ssCentralizerLocations_fields.SOatM.clear()
 			self.ssCentralizerLocations_fields.ClatC.clear()
 			self.ssCentralizerLocations_fields.ClatM.clear()
-			#self.ssCentralizerLocations_fields.AxialF.clear()
-			#self.ssCentralizerLocations_fields.SideF.clear()
 			self.centralizerCount = len(self.ssCentralizerLocations_fields.MD)
 
-			#for i, MDi in enumerate(self.ssCentralizerLocations_fields.MD):
 			for i in range(self.ssCentralizerLocations_tableWidget.rowCount()):
 					
 				try:

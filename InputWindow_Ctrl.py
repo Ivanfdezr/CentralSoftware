@@ -34,7 +34,7 @@ class Main_InputWindow(Ui_InputWindow):
 		self.__init__s2TortuosityInterval_tableWidget()
 		self.__init__s3WellboreIntervals_tableWidget()
 		self.__init__s3PipeCentralizationStage_tableWidget()
-		self.__init__s3CentralizerSpacing_tableWidget()
+		#self.__init__s3CentralizerSpacing_tableWidget()
 		self.__init__s3PipeProperties_tableWidget()
 		self.__init__s3CentralizerProperties_tableWidgets()
 		self.__init__s3CentralizerRunningForce_tableWidgets()
@@ -63,9 +63,12 @@ class Main_InputWindow(Ui_InputWindow):
 		activate_SurveyTortuosity = lambda: self.s2SurveyTortuosity_groupBox.setDisabled( self.s2SurveyTortuosity_groupBox.isEnabled() )
 		self.s2SurveyTortuosity_checkBox.clicked.connect(activate_SurveyTortuosity)
 		
-		open_TDB_dialog_for_innerStages = lambda: wf.open_TDB_dialog_for_innerStages(self)
-		self.s3PipeDB_pushButton.clicked.connect(open_TDB_dialog_for_innerStages)
+		#open_TDB_dialog_for_innerStages = lambda: wf.open_TDB_dialog_for_innerStages(self)
+		#self.s3PipeDB_pushButton.clicked.connect(open_TDB_dialog_for_innerStages)
 		
+		calculate_axialForce_field = lambda: mdl.calculate_axialForce_field(self)
+		self.s3UpdateAxialF_pushButton.clicked.connect(calculate_axialForce_field)
+
 		adjust_Wt = lambda: wf.adjust_Wt(self)
 		adjust_ID = lambda: wf.adjust_ID(self)
 		self.s3ODID_pushButton.clicked.connect(adjust_Wt)
@@ -168,7 +171,7 @@ class Main_InputWindow(Ui_InputWindow):
 		self.setup_s2TortuosityInterval_tableWidget()
 		self.setup_s3WellboreIntervals_tableWidget()
 		self.setup_s3PipeCentralizationStage_tableWidget()
-		self.setup_s3CentralizerSpacing_tableWidget()
+		#self.setup_s3CentralizerSpacing_tableWidget()
 		self.setup_s3PipeProperties_tableWidget()
 		wf.setup_s3CentralizerProperties_tableWidget(self,'A')
 		wf.setup_s3CentralizerProperties_tableWidget(self,'B')
@@ -189,6 +192,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def open_unitSettingsDialog(self):
 		dialog = QtGui.QDialog(self.s1UnitSetting_pushButton)
 		Main_UnitSettings(dialog)
+		self.s1Customized_radioButton.click()
 		
 
 	def open_oneSpanAnalysisDialog(self):
@@ -242,6 +246,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def setup_s2DataSurvey_tableWidget(self):
 
 		self.s2DataSurvey_fields = mdl.get_s2DataSurvey_fields()
+		self.s3Forces_fields = mdl.get_s3Forces_fields()
 		for field in self.s2DataSurvey_fields:
 			item = self.s2DataSurvey_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( field.headerName )
@@ -373,6 +378,10 @@ class Main_InputWindow(Ui_InputWindow):
 		
 		#V = cu.PasteToCells_action(self.s3PipeCentralizationStage_tableWidget)
 		#self.s3PipeCentralizationStage_tableWidget.addAction(V)
+
+		open_TDB_dialog_for_innerStages = lambda: wf.open_TDB_dialog_for_innerStages(self)
+		P = cu.FunctionToWidget_action(self.s3PipeCentralizationStage_tableWidget, open_TDB_dialog_for_innerStages, "Import Pipe ...", '')
+		self.s3PipeCentralizationStage_tableWidget.addAction(P)
 
 		adjust_MD_to_wellboreDeep = lambda: wf.adjust_MD_to_wellboreDeep(self)
 		A = cu.FunctionToWidget_action(self.s3PipeCentralizationStage_tableWidget, adjust_MD_to_wellboreDeep, "Adjust stage to depth", '')

@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>1321</width>
-    <height>872</height>
+    <height>878</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Central Software - Input Window</string>
+   <string>Central Software - Main Window</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTabWidget" name="Menu">
@@ -45,7 +45,7 @@ p, li { white-space: pre-wrap; }
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <property name="iconSize">
      <size>
@@ -2078,7 +2078,7 @@ p, li { white-space: pre-wrap; }
          <x>10</x>
          <y>30</y>
          <width>561</width>
-         <height>321</height>
+         <height>521</height>
         </rect>
        </property>
        <property name="frameShape">
@@ -2093,7 +2093,7 @@ p, li { white-space: pre-wrap; }
           <x>9</x>
           <y>10</y>
           <width>542</width>
-          <height>284</height>
+          <height>371</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -2143,6 +2143,19 @@ p, li { white-space: pre-wrap; }
          </property>
         </column>
        </widget>
+       <widget class="QPushButton" name="s3UpdateAxialF_pushButton">
+        <property name="geometry">
+         <rect>
+          <x>380</x>
+          <y>400</y>
+          <width>171</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Update Axial Force</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QTabWidget" name="s3InnerStageToolkit_tabWidget">
        <property name="enabled">
@@ -2169,19 +2182,6 @@ p, li { white-space: pre-wrap; }
         <attribute name="title">
          <string>Pipe</string>
         </attribute>
-        <widget class="QPushButton" name="s3PipeDB_pushButton">
-         <property name="geometry">
-          <rect>
-           <x>390</x>
-           <y>20</y>
-           <width>141</width>
-           <height>30</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Pipe DB...</string>
-         </property>
-        </widget>
         <widget class="QPushButton" name="s3ODID_pushButton">
          <property name="geometry">
           <rect>
@@ -2414,7 +2414,7 @@ p, li { white-space: pre-wrap; }
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="iconSize">
           <size>
@@ -6122,100 +6122,6 @@ p, li { white-space: pre-wrap; }
          </widget>
         </widget>
        </widget>
-      </widget>
-      <widget class="QLabel" name="s3CentralizerSpacing_limits_label">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>370</y>
-         <width>201</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Centralizer spacing limits:</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="s3BowspringEffectsOnDrag_checkBox">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>490</y>
-         <width>431</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Include the effects of bow spring centralizers on drag</string>
-       </property>
-      </widget>
-      <widget class="QTableWidget" name="s3CentralizerSpacing_tableWidget">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>410</y>
-         <width>438</width>
-         <height>62</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
-       </property>
-       <property name="sortingEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="columnCount">
-        <number>1</number>
-       </property>
-       <attribute name="horizontalHeaderVisible">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="horizontalHeaderCascadingSectionResizes">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="horizontalHeaderDefaultSectionSize">
-        <number>130</number>
-       </attribute>
-       <attribute name="horizontalHeaderHighlightSections">
-        <bool>true</bool>
-       </attribute>
-       <attribute name="horizontalHeaderMinimumSectionSize">
-        <number>55</number>
-       </attribute>
-       <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="horizontalHeaderStretchLastSection">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="verticalHeaderDefaultSectionSize">
-        <number>30</number>
-       </attribute>
-       <attribute name="verticalHeaderMinimumSectionSize">
-        <number>28</number>
-       </attribute>
-       <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-        <bool>false</bool>
-       </attribute>
-       <row>
-        <property name="text">
-         <string>Min. centralizer spacing                      </string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>Max. centralizer spacing                     </string>
-        </property>
-       </row>
-       <column/>
       </widget>
      </widget>
     </widget>

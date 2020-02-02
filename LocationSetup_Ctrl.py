@@ -25,7 +25,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.lsAccept_pushButton.clicked.connect( self.makeResults_and_done )
 
 		self.lsCentralizerLocations_fields = mdl.get_lsCentralizerLocations_fields()
-		mdl.calculate_axialForce_field(self)	
+		#mdl.calculate_axialForce_field(self)	
 
 		self.__init__lsCentralizerLocations_tableWidget()
 		#self.lsCalculate_pushButton.clicked.connect( self.calculate_SO )
@@ -293,8 +293,6 @@ class Main_LocationSetup(Ui_LocationSetup):
 			self.lsCentralizerLocations_fields.SOatM.clear()
 			self.lsCentralizerLocations_fields.ClatC.clear()
 			self.lsCentralizerLocations_fields.ClatM.clear()
-			#self.lsCentralizerLocations_fields.AxialF.clear()
-			#self.lsCentralizerLocations_fields.SideF.clear()
 			self.centralizerCount = len(self.lsCentralizerLocations_fields.MD)
 
 			for i, MDi in enumerate(self.lsCentralizerLocations_fields.MD):

@@ -14,7 +14,6 @@ def set_workUnits_as(unitSystem):
 	query = """ update work_units,{defaultUnitTable} set work_units.unitID={defaultUnitTable}.unitID 
 				where work_units.parameterID={defaultUnitTable}.parameterID """.format(defaultUnitTable=defaultUnitTable)
 	dbUtils.execute_query(query)
-	#
 
 
 def get_s2DataSurvey_fields():
@@ -27,6 +26,7 @@ def get_s2DataSurvey_fields():
 	NS   = Field(2006, altBg=True, altFg=True)
 	EW   = Field(2007, altBg=True, altFg=True)
 	DL   = Field(2008, altBg=True, altFg=True)
+
 	s2DataSurvey_fields = FieldList()
 	s2DataSurvey_fields.append( MD  )
 	s2DataSurvey_fields.append( Inc )
@@ -38,6 +38,21 @@ def get_s2DataSurvey_fields():
 	s2DataSurvey_fields.append( DL  )
 	
 	return s2DataSurvey_fields
+
+
+def get_s3Forces_fields():
+
+	AxF  = Field(2075, altBg=True, altFg=True)
+	SiF  = Field(2074, altBg=True, altFg=True)
+	MD_  = Field(2001, altBg=True, altFg=True)
+	MD_.set_abbreviation('MD_AxF')
+
+	s3Forces_fields = FieldList()
+	s3Forces_fields.append( AxF )
+	s3Forces_fields.append( SiF )
+	s3Forces_fields.append( MD_ )
+
+	return s3Forces_fields
 
 
 def get_s2SurveyTortuosity_fields():
@@ -425,6 +440,80 @@ def calculate_ASCComplements( fields, tortuosity=None ):
 		fields.DL.inverseReferenceUnitConvert()
 
 		return None, dT, T, sT
+
+
+def calculate_axialForce_field(self):
+	"""
+	self must to point to Main_InputWindow
+	"""
+	print('Calculating Axial Forces...')
+	MD_array = np.array( self.s2DataSurvey_fields.MD )
+	MD_min = mu.referenceUnitConvert_value( MD_array[ 0], self.s2DataSurvey_fields.MD.unit )
+	MD_max = mu.referenceUnitConvert_value( MD_array[-1], self.s2DataSurvey_fields.MD.unit )
+	del MD_array
+
+	MDs = np.linspace(MD_min, MD_max, 1000)
+	cosIncs = []
+
+	for MD in MDs:
+		MD = mu.physicalValue(MD, self.s3Forces_fields.MD_AxF.referenceUnit )
+		self.s3Forces_fields.MD_AxF.append( MD )
+		cosIncs.append( get_ASCT_from_MD(self, MD, MD.unit)[2] )
+
+	value = mu.physicalValue(0, self.s3Forces_fields.AxialF.referenceUnit )
+	self.s3Forces_fields.AxialF.append( value )
+	AxialTension = 0
+	L = MDs[1]-MDs[0]
+
+	for i in range(len(MDs)-1):
+		K = list(self.wellboreInnerStageData.keys())
+		K.sort()
+		for k in K:
+			stage = self.wellboreInnerStageData[k]
+			stageTopMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
+			W = mu.referenceUnitConvert_value( stage['PipeProps'].PW[0], stage['PipeProps'].PW[0].unit )
+			
+			if MDs[-i-2]<stageTopMD: 
+				AxialTension = AxialTension + W*L*cosIncs[-i-1]
+				value = mu.physicalValue(AxialTension, self.s3Forces_fields.AxialF.referenceUnit )
+				self.s3Forces_fields.AxialF.insert(0, value )
+				break
+
+	self.s3Forces_fields.AxialF.inverseReferenceUnitConvert()
+	self.s3Forces_fields.MD_AxF.inverseReferenceUnitConvert()
+	print('Finish')
+
+
+def get_axialTension_below_MD(self, MD, unit=None, referenceUnit=False):
+
+	if unit:
+		MD = mu.unitConvert_value( MD, unit, self.s3Forces_fields.MD_AxF.unit )
+	else:
+		MD = mu.unitConvert_value( MD, MD.unit, self.s3Forces_fields.MD_AxF.unit )
+	
+	cosInc = get_ASCT_from_MD(self, MD)[2]
+	MD_AxF = np.array( self.s3Forces_fields.MD_AxF )
+	AxialF = np.array( self.s3Forces_fields.AxialF )
+	index = np.where(MD_AxF>MD)[0][0]
+
+	MD_AxF_i = MD_AxF[index]
+	AxialF_i = AxialF[index]
+	del MD_AxF
+	del AxialF
+
+	stage = self.currentWellboreInnerStageDataItem
+	stageTopMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
+	assert( MD<stageTopMD )
+	W = mu.referenceUnitConvert_value( stage['PipeProps'].PW[0], stage['PipeProps'].PW[0].unit )
+	L = MD_AxF_i-MD
+
+	AxialTension = AxialF_i + W*L*cosInc
+	if referenceUnit:
+		AxialTension = mu.physicalValue( AxialTension, self.s3Forces_fields.AxialF.referenceUnit )
+	else:
+		AxialTension = mu.inverseReferenceUnitConvert_value( AxialTension, self.s3Forces_fields.AxialF.unit )
+
+	return AxialTension
 
 
 def adjust_Wt( OD, ID, Wt ):

@@ -91,12 +91,8 @@ class Main_UnitSettings(Ui_UnitSettings):
 
 	def print_parameterunitid(self, row, column):
 
-		#
-
 		parameterName = self.usParameterUnits_tableWidget.item(row,0).text()
 		parameterID = mdl.get_parameterID(parameterName)
 
 		unitName = self.usParameterUnits_tableWidget.cellWidget(row,1).currentText()
 		unitID = mdl.get_unitID(unitName)
-
-		#

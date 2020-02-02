@@ -23,9 +23,6 @@ def get_lsCentralizerLocations_fields():
 	NS  = Field(2006, altBg=True, altFg=True)
 	TVD = Field(2004, altBg=True, altFg=True)
 	DL  = Field(2008, altBg=True, altFg=True)
-	AxF = Field(2075, altBg=True, altFg=True)
-	SiF = Field(2074, altBg=True, altFg=True)
-	MD_ = Field(2001, altBg=True, altFg=True)
 
 	SOatC.set_abbreviation('SOatC')
 	SOatM.set_abbreviation('SOatM')
@@ -35,7 +32,6 @@ def get_lsCentralizerLocations_fields():
 	SOatM.set_representation('SO @ mid span')
 	ClatC.set_representation('<Cl> @ centr.')
 	ClatM.set_representation('Cl @ mid span')
-	MD_.set_abbreviation('MD_AxF')
 
 	lsCentralizerLocations_fields = FieldList()
 	lsCentralizerLocations_fields.append( MD )
@@ -48,9 +44,6 @@ def get_lsCentralizerLocations_fields():
 	lsCentralizerLocations_fields.append( NS )
 	lsCentralizerLocations_fields.append( TVD )
 	lsCentralizerLocations_fields.append( DL )
-	lsCentralizerLocations_fields.append( AxF )
-	lsCentralizerLocations_fields.append( SiF )
-	lsCentralizerLocations_fields.append( MD_ )
 
 	return lsCentralizerLocations_fields
 
@@ -85,76 +78,6 @@ def get_LASMDandCALID_intoInterval(self):
 	mean_ID = np.array( mean_ID )
 
 	return MD, ID, mean_ID, lim_ID
-
-
-def calculate_axialForce_field(self):
-
-	MD_array = np.array( self.parent.s2DataSurvey_fields.MD )
-	MD_min = mu.referenceUnitConvert_value( MD_array[ 0], self.parent.s2DataSurvey_fields.MD.unit )
-	MD_max = mu.referenceUnitConvert_value( MD_array[-1], self.parent.s2DataSurvey_fields.MD.unit )
-	del MD_array
-
-	MDs = np.linspace(MD_min, MD_max, 100)
-	cosIncs = []
-
-	for MD in MDs:
-		MD = mu.physicalValue(MD, self.lsCentralizerLocations_fields.MD_AxF.referenceUnit )
-		self.lsCentralizerLocations_fields.MD_AxF.append( MD )
-		cosIncs.append( mdl.get_ASCT_from_MD(self.parent, MD, MD.unit)[2] )
-
-	value = mu.physicalValue(0, self.lsCentralizerLocations_fields.AxialF.referenceUnit )
-	self.lsCentralizerLocations_fields.AxialF.append( value )
-	AxialTension = 0
-	L = MDs[1]-MDs[0]
-
-	for i in range(len(MDs)-1):
-		K = list(self.parent.wellboreInnerStageData.keys())
-		K.sort()
-		for k in K:
-			stage = self.parent.wellboreInnerStageData[k]
-			stageTopMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
-			W = mu.referenceUnitConvert_value( stage['PipeProps'].PW[0], stage['PipeProps'].PW[0].unit )
-			
-			if MDs[-i-2]<stageTopMD: 
-				AxialTension = AxialTension + W*L*cosIncs[-i-1]
-				value = mu.physicalValue(AxialTension, self.lsCentralizerLocations_fields.AxialF.referenceUnit )
-				self.lsCentralizerLocations_fields.AxialF.insert(0, value )
-				break
-
-	self.lsCentralizerLocations_fields.AxialF.inverseReferenceUnitConvert()
-	self.lsCentralizerLocations_fields.MD_AxF.inverseReferenceUnitConvert()
-
-
-def get_axialTension_below_MD(self, MD, unit=None, referenceUnit=False):
-
-	if unit:
-		MD = mu.unitConvert_value( MD, unit, self.lsCentralizerLocations_fields.MD_AxF.unit )
-	else:
-		MD = mu.unitConvert_value( MD, MD.unit, self.lsCentralizerLocations_fields.MD_AxF.unit )
-	
-	cosInc = mdl.get_ASCT_from_MD(self.parent, MD)[2]
-	MD_AxF = np.array( self.lsCentralizerLocations_fields.MD_AxF )
-	AxialF = np.array( self.lsCentralizerLocations_fields.AxialF )
-	index = np.where(MD_AxF>MD)[0][0]
-
-	MD_AxF_i = MD_AxF[index]
-	AxialF_i = AxialF[index]
-	del MD_AxF
-	del AxialF
-
-	stage = self.parent.currentWellboreInnerStageDataItem
-	stageTopMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
-	assert( MD<stageTopMD )
-	W = mu.referenceUnitConvert_value( stage['PipeProps'].PW[0], stage['PipeProps'].PW[0].unit )
-	L = MD_AxF_i-MD
-
-	AxialTension = AxialF_i + W*L*cosInc
-	if referenceUnit:
-		AxialTension = mu.physicalValue( AxialTension, self.lsCentralizerLocations_fields.AxialF.referenceUnit )
-	else:
-		AxialTension = mu.inverseReferenceUnitConvert_value( AxialTension, self.lsCentralizerLocations_fields.AxialF.unit )
-
-	return AxialTension
 
 
 def calculate_standOff_atCentralizers(self):
@@ -400,7 +323,7 @@ def calculate_standOff_atMidspan(self):
 				IDi = IDj
 				mIDi = mIDj
 		t120 = time.time()
-		Ft = get_axialTension_below_MD(self, MD2, referenceUnit=True)
+		Ft = mdl.get_axialTension_below_MD(self.parent, MD2, referenceUnit=True)
 		t121 = time.time()
 		t12.append(t121-t120)
 
