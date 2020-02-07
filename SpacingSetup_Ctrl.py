@@ -326,14 +326,23 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		mdl.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field)
 		mdl.calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field)
 
-		for i in range(len(locations)):
+		for i in range(self.ssCentralizerLocations_tableWidget.rowCount()):
 
-			item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.Inc.pos )
-			item.set_text( self.ssCentralizerLocations_fields.Inc[i] )
-			item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.SOatC.pos )
-			item.set_text( self.ssCentralizerLocations_fields.SOatC[i] )
-			item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.SOatM.pos )
-			item.set_text( self.ssCentralizerLocations_fields.SOatM[i] )
+			try:
+				item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.Inc.pos )
+				item.set_text( self.ssCentralizerLocations_fields.Inc[i] )
+				item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.SOatC.pos )
+				item.set_text( self.ssCentralizerLocations_fields.SOatC[i] )
+				item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.SOatM.pos )
+				item.set_text( self.ssCentralizerLocations_fields.SOatM[i] )
+
+			except IndexError:
+				item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.Inc.pos )
+				item.set_text()
+				item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.SOatC.pos )
+				item.set_text()
+				item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.SOatM.pos )
+				item.set_text()
 
 
 	def choose_MDlocation(self, MD, overwrite=False):
@@ -428,7 +437,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 					hsSO_alt.append( self.ssCentralizerLocations_fields.hsSOatC[k//2] )
 				elif k%2==1:
 					hsMD_alt.append( (self.ssCentralizerLocations_fields.hsMD[(k+1)//2]+self.ssCentralizerLocations_fields.hsMD[(k-1)//2])/2 )
-					hsSO_alt.append( self.ssCentralizerLocations_fields.hsSOatM[(k+1)//2] )
+					hsSO_alt.append( self.ssCentralizerLocations_fields.hsSOatM[k//2] )
 
 			self.ssSOVisualization_graphicsView.axes.plot(	hsSO_alt, hsMD_alt, 'C2', lw=1 )
 

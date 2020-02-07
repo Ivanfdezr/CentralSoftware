@@ -293,8 +293,6 @@ def calculate_standOff_atMidspan(self):
 	PI = np.pi/64*(PD**4-Pd**4)
 	PR = PD/2
 
-	cu.create_physicalValue_and_appendTo_field( 0, SOatM_field, SOatM_field.referenceUnit )
-	cu.create_physicalValue_and_appendTo_field( 0, ClatM_field, ClatM_field.referenceUnit )
 	cu.create_physicalValue_and_appendTo_field( Inc[0], Inc_field, Inc_field.referenceUnit )
 
 	t1 = time.time()
@@ -353,6 +351,9 @@ def calculate_standOff_atMidspan(self):
 		cu.create_physicalValue_and_appendTo_field( Mc, ClatM_field, ClatM_field.referenceUnit )
 
 	t12 = np.mean(t12)
+
+	cu.create_physicalValue_and_appendTo_field( 0, SOatM_field, SOatM_field.referenceUnit )
+	cu.create_physicalValue_and_appendTo_field( 0, ClatM_field, ClatM_field.referenceUnit )
 
 	t2 = time.time()
 	locations.inverseReferenceUnitConvert()

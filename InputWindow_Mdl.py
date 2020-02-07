@@ -213,32 +213,72 @@ def get_s3CentralizerLocation_fields():
 
 def get_s4Settings_fields():
 
+	TAW = Field(2083)
 	WOB = Field(2081)
 	TOB = Field(2082)
-	TAW = Field(2083)
+	TrV = Field(2084)
+	RoR = Field(2085)
 	s4Settings_fields = FieldList()
+	s4Settings_fields.append( TAW )
 	s4Settings_fields.append( WOB )
 	s4Settings_fields.append( TOB )
-	s4Settings_fields.append( TAW )
+	s4Settings_fields.append( TrV )
+	s4Settings_fields.append( RoR )
 	
 	return s4Settings_fields
 
 
 def get_s4DragTorqueSideforce_fields():
 
-	MD     = Field(2001, altBg=True, altFg=True)
-	Inc    = Field(2002, altBg=True, altFg=True)
-	Drag   = Field(2075, altBg=True, altFg=True)
-	Torque = Field(2082, altBg=True, altFg=True)
-	SideF  = Field(2074, altBg=True, altFg=True)
-	Drag.set_representation('Drag')
-	Torque.set_representation('Torque')
+	MD       = Field(2001, altBg=True, altFg=True)
+	Inc      = Field(2002, altBg=True, altFg=True)
+	Torque_u = Field(2082, altBg=True, altFg=True)
+	Torque_s = Field(2082, altBg=True, altFg=True)
+	Torque_d = Field(2082, altBg=True, altFg=True)
+	Drag_u   = Field(2075, altBg=True, altFg=True)
+	Drag_s   = Field(2075, altBg=True, altFg=True)
+	Drag_d   = Field(2075, altBg=True, altFg=True)
+	SideF    = Field(2074, altBg=True, altFg=True)
+	nocTorque_u = Field(2082, altBg=True, altFg=True)
+	nocTorque_s = Field(2082, altBg=True, altFg=True)
+	nocTorque_d = Field(2082, altBg=True, altFg=True)
+	nocDrag_u   = Field(2075, altBg=True, altFg=True)
+	nocDrag_s   = Field(2075, altBg=True, altFg=True)
+	nocDrag_d   = Field(2075, altBg=True, altFg=True)
+	Torque_u.set_representation('Torque raising')
+	Torque_s.set_representation('Torque static')
+	Torque_d.set_representation('Torque lowering')
+	Drag_u.set_representation('Drag raising')
+	Drag_s.set_representation('Drag static')
+	Drag_d.set_representation('Drag lowering')
+	Torque_u.set_abbreviation('Torque_u')
+	Torque_s.set_abbreviation('Torque_s')
+	Torque_d.set_abbreviation('Torque_d')
+	Drag_u.set_abbreviation('Drag_u')
+	Drag_s.set_abbreviation('Drag_s')
+	Drag_d.set_abbreviation('Drag_d')
+	nocTorque_u.set_abbreviation('nocTorque_u')
+	nocTorque_s.set_abbreviation('nocTorque_s')
+	nocTorque_d.set_abbreviation('nocTorque_d')
+	nocDrag_u.set_abbreviation('nocDrag_u')
+	nocDrag_s.set_abbreviation('nocDrag_s')
+	nocDrag_d.set_abbreviation('nocDrag_d')
 	s4DragTorqueSideforce_fields = FieldList()
 	s4DragTorqueSideforce_fields.append( MD )
 	s4DragTorqueSideforce_fields.append( Inc )
-	s4DragTorqueSideforce_fields.append( Drag )
-	s4DragTorqueSideforce_fields.append( Torque )
+	s4DragTorqueSideforce_fields.append( Torque_u )
+	s4DragTorqueSideforce_fields.append( Torque_s )
+	s4DragTorqueSideforce_fields.append( Torque_d )
+	s4DragTorqueSideforce_fields.append( Drag_u )
+	s4DragTorqueSideforce_fields.append( Drag_s )
+	s4DragTorqueSideforce_fields.append( Drag_d )
 	s4DragTorqueSideforce_fields.append( SideF )
+	s4DragTorqueSideforce_fields.append( nocTorque_u )
+	s4DragTorqueSideforce_fields.append( nocTorque_s )
+	s4DragTorqueSideforce_fields.append( nocTorque_d )
+	s4DragTorqueSideforce_fields.append( nocDrag_u )
+	s4DragTorqueSideforce_fields.append( nocDrag_s )
+	s4DragTorqueSideforce_fields.append( nocDrag_d )
 	
 	return s4DragTorqueSideforce_fields
 
@@ -465,15 +505,15 @@ def calculate_axialForce_field(self):
 	AxialTension = 0
 	L = MDs[1]-MDs[0]
 
-	for i in range(len(MDs)-1):
-		K = list(self.wellboreInnerStageData.keys())
-		K.sort()
+	K = list(self.wellboreInnerStageData.keys())
+	K.sort()
+	for i in range(len(MDs)-1):	
 		for k in K:
 			stage = self.wellboreInnerStageData[k]
-			stageTopMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
+			stageBottomMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
 			W = mu.referenceUnitConvert_value( stage['PipeProps'].PW[0], stage['PipeProps'].PW[0].unit )
 			
-			if MDs[-i-2]<stageTopMD: 
+			if MDs[-i-2]<stageBottomMD: 
 				AxialTension = AxialTension + W*L*cosIncs[-i-1]
 				value = mu.physicalValue(AxialTension, self.s3Forces_fields.AxialF.referenceUnit )
 				self.s3Forces_fields.AxialF.insert(0, value )
@@ -502,8 +542,8 @@ def get_axialTension_below_MD(self, MD, unit=None, referenceUnit=False):
 	del AxialF
 
 	stage = self.currentWellboreInnerStageDataItem
-	stageTopMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
-	assert( MD<stageTopMD )
+	stageBottomMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
+	assert( MD<stageBottomMD )
 	W = mu.referenceUnitConvert_value( stage['PipeProps'].PW[0], stage['PipeProps'].PW[0].unit )
 	L = MD_AxF_i-MD
 
@@ -616,7 +656,6 @@ def get_inclination_and_azimuth_from_locations(self, locations):
 	self must to point to Main_InputWindow
 	"""
 	"""
-	Field "locations" must be in reference units.
 	Return "Inc" and "Azi" array objects in reference units.
 	"""
 	Inc = []
@@ -636,6 +675,35 @@ def get_inclination_and_azimuth_from_locations(self, locations):
 		Azi.append(azi)
 
 	return np.array(Inc), np.array(Azi)
+
+
+# ---------!!
+
+
+def calculate_TDS_for_uncentralizedStage(self, stage):
+
+"""
+	MD     = Field(2001, altBg=True, altFg=True)
+	Inc    = Field(2002, altBg=True, altFg=True)
+	Drag   = Field(2075, altBg=True, altFg=True)
+	Torque = Field(2082, altBg=True, altFg=True)
+	SideF  = Field(2074, altBg=True, altFg=True)
+	Drag.set_representation('Drag')
+	Torque.set_representation('Torque')
+	s4DragTorqueSideforce_fields = FieldList()
+	s4DragTorqueSideforce_fields.append( MD )
+	s4DragTorqueSideforce_fields.append( Inc )
+	s4DragTorqueSideforce_fields.append( Drag )
+	s4DragTorqueSideforce_fields.append( Torque )
+	s4DragTorqueSideforce_fields.append( SideF )
+	"""
+Inc, Azi = get_inclination_and_azimuth_from_locations(self, MD)
+	
+	DL = np.arccos( np.sin(Inc[:-1])*np.sin(Inc[1:])*cos(Inc[1:]-Inc[:-1]) + np.cos(Inc[:-1])*np.cos(Inc[1:]) )
+		stageBottomMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
+		stageTopMD = stageBottomMD - mu.referenceUnitConvert_value( stage['Length'], stage['Length'].unit )
+
+	
 
 
 class WellboreInnerStageDataItem( dict ):

@@ -165,7 +165,7 @@ def get_casingDeflectionCurve(self):
 	kB = ResFB/(DB/2-0.335*(DB-D))
 
 	θ = np.pi*self.osaInclination_slider.sliderPosition()/180
-	I = np.pi/64*(D**4-d**4) # [Ref.3]
+	I = np.pi/64*(D**4-d**4) # [Ref.3] Momento de inercia diferente a momento de inercia polar.
 	F = 30000 # [Ref.1]
 	Radio = L*1e6
 	aspr = L*0.02

@@ -259,17 +259,23 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 		print('mid:',toc-tac,'cent:',tac-tic)
 
-		for i, inc in enumerate(self.lsCentralizerLocations_fields.Inc):
+		for i in range(self.lsCentralizerLocations_tableWidget.rowCount()):
 
-			SOatCi = self.lsCentralizerLocations_fields.SOatC[i]
-			SOatMi = self.lsCentralizerLocations_fields.SOatM[i]
+			try:
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.Inc.pos )
+				item.set_text( self.lsCentralizerLocations_fields.Inc[i] )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatC.pos )
+				item.set_text( self.lsCentralizerLocations_fields.SOatC[i] )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatM.pos )
+				item.set_text( self.lsCentralizerLocations_fields.SOatM[i] )
 
-			item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.Inc.pos )
-			item.set_text( inc )
-			item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatC.pos )
-			item.set_text( SOatCi )
-			item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatM.pos )
-			item.set_text( SOatMi )	
+			except IndexError:
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.Inc.pos )
+				item.set_text()
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatC.pos )
+				item.set_text()
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatM.pos )
+				item.set_text()
 
 
 	def choose_MDlocation(self, MD, overwrite=False):
@@ -353,7 +359,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 					SO_alt.append( self.lsCentralizerLocations_fields.SOatC[k//2] )
 				elif k%2==1:
 					MD_alt.append( (self.lsCentralizerLocations_fields.MD[(k+1)//2]+self.lsCentralizerLocations_fields.MD[(k-1)//2])/2 )
-					SO_alt.append( self.lsCentralizerLocations_fields.SOatM[(k+1)//2] )
+					SO_alt.append( self.lsCentralizerLocations_fields.SOatM[k//2] )
 
 			self.lsSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, 'C1', lw=2 )
 			self.lsSOVisualization_graphicsView.axes.plot(	self.lsCentralizerLocations_fields.SOatC, 

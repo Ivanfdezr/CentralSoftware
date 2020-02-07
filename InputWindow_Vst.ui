@@ -45,7 +45,7 @@ p, li { white-space: pre-wrap; }
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <property name="iconSize">
      <size>
@@ -6127,14 +6127,14 @@ p, li { white-space: pre-wrap; }
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
-      <string>D + T + SF</string>
+      <string>T + D + SF</string>
      </attribute>
      <widget class="QGroupBox" name="groupBox_7">
       <property name="geometry">
        <rect>
         <x>20</x>
         <y>20</y>
-        <width>611</width>
+        <width>591</width>
         <height>731</height>
        </rect>
       </property>
@@ -6154,7 +6154,7 @@ p, li { white-space: pre-wrap; }
          <x>10</x>
          <y>40</y>
          <width>401</width>
-         <height>92</height>
+         <height>152</height>
         </rect>
        </property>
        <property name="font">
@@ -6219,15 +6219,25 @@ p, li { white-space: pre-wrap; }
          <string>Pipe end torque or TOB</string>
         </property>
        </row>
+       <row>
+        <property name="text">
+         <string>Tripping speed</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Rotational speed</string>
+        </property>
+       </row>
        <column/>
       </widget>
       <widget class="QTableWidget" name="s4DragTorqueSideforce_tableWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>150</y>
-         <width>581</width>
-         <height>551</height>
+         <y>220</y>
+         <width>561</width>
+         <height>481</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -16260,12 +16270,32 @@ p, li { white-space: pre-wrap; }
        </column>
        <column>
         <property name="text">
-         <string>Drag</string>
+         <string>Torque hoisting</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Torque</string>
+         <string>Torque static</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Torque lowering</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Drag hoisting</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Drag static</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Drag lowering</string>
         </property>
        </column>
        <column>
@@ -16278,7 +16308,7 @@ p, li { white-space: pre-wrap; }
        <property name="geometry">
         <rect>
          <x>440</x>
-         <y>70</y>
+         <y>100</y>
          <width>121</width>
          <height>41</height>
         </rect>
@@ -16291,9 +16321,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTabWidget" name="tabWidget_2">
       <property name="geometry">
        <rect>
-        <x>640</x>
+        <x>620</x>
         <y>30</y>
-        <width>601</width>
+        <width>621</width>
         <height>721</height>
        </rect>
       </property>
@@ -16305,7 +16335,7 @@ p, li { white-space: pre-wrap; }
        </font>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_12">
        <attribute name="title">
@@ -16316,7 +16346,7 @@ p, li { white-space: pre-wrap; }
          <rect>
           <x>30</x>
           <y>60</y>
-          <width>500</width>
+          <width>551</width>
           <height>600</height>
          </rect>
         </property>
@@ -16331,7 +16361,7 @@ p, li { white-space: pre-wrap; }
          <rect>
           <x>30</x>
           <y>60</y>
-          <width>500</width>
+          <width>551</width>
           <height>600</height>
          </rect>
         </property>
@@ -16346,7 +16376,7 @@ p, li { white-space: pre-wrap; }
          <rect>
           <x>30</x>
           <y>60</y>
-          <width>500</width>
+          <width>551</width>
           <height>600</height>
          </rect>
         </property>
