@@ -228,7 +228,7 @@ def get_s4Settings_fields():
 	return s4Settings_fields
 
 
-def get_s4DragTorqueSideforce_fields():
+def get_s4TorqueDragSideforce_fields():
 
 	MD       = Field(2001, altBg=True, altFg=True)
 	Inc      = Field(2002, altBg=True, altFg=True)
@@ -263,24 +263,24 @@ def get_s4DragTorqueSideforce_fields():
 	nocDrag_u.set_abbreviation('nocDrag_u')
 	nocDrag_s.set_abbreviation('nocDrag_s')
 	nocDrag_d.set_abbreviation('nocDrag_d')
-	s4DragTorqueSideforce_fields = FieldList()
-	s4DragTorqueSideforce_fields.append( MD )
-	s4DragTorqueSideforce_fields.append( Inc )
-	s4DragTorqueSideforce_fields.append( Torque_u )
-	s4DragTorqueSideforce_fields.append( Torque_s )
-	s4DragTorqueSideforce_fields.append( Torque_d )
-	s4DragTorqueSideforce_fields.append( Drag_u )
-	s4DragTorqueSideforce_fields.append( Drag_s )
-	s4DragTorqueSideforce_fields.append( Drag_d )
-	s4DragTorqueSideforce_fields.append( SideF )
-	s4DragTorqueSideforce_fields.append( nocTorque_u )
-	s4DragTorqueSideforce_fields.append( nocTorque_s )
-	s4DragTorqueSideforce_fields.append( nocTorque_d )
-	s4DragTorqueSideforce_fields.append( nocDrag_u )
-	s4DragTorqueSideforce_fields.append( nocDrag_s )
-	s4DragTorqueSideforce_fields.append( nocDrag_d )
+	s4TorqueDragSideforce_fields = FieldList()
+	s4TorqueDragSideforce_fields.append( MD )
+	s4TorqueDragSideforce_fields.append( Inc )
+	s4TorqueDragSideforce_fields.append( Torque_u )
+	s4TorqueDragSideforce_fields.append( Torque_s )
+	s4TorqueDragSideforce_fields.append( Torque_d )
+	s4TorqueDragSideforce_fields.append( Drag_u )
+	s4TorqueDragSideforce_fields.append( Drag_s )
+	s4TorqueDragSideforce_fields.append( Drag_d )
+	s4TorqueDragSideforce_fields.append( SideF )
+	s4TorqueDragSideforce_fields.append( nocTorque_u )
+	s4TorqueDragSideforce_fields.append( nocTorque_s )
+	s4TorqueDragSideforce_fields.append( nocTorque_d )
+	s4TorqueDragSideforce_fields.append( nocDrag_u )
+	s4TorqueDragSideforce_fields.append( nocDrag_s )
+	s4TorqueDragSideforce_fields.append( nocDrag_d )
 	
-	return s4DragTorqueSideforce_fields
+	return s4TorqueDragSideforce_fields
 
 
 def calculate_ASCComplements( fields, tortuosity=None ):
@@ -690,12 +690,12 @@ def calculate_TDS_for_uncentralizedStage(self, stage):
 	SideF  = Field(2074, altBg=True, altFg=True)
 	Drag.set_representation('Drag')
 	Torque.set_representation('Torque')
-	s4DragTorqueSideforce_fields = FieldList()
-	s4DragTorqueSideforce_fields.append( MD )
-	s4DragTorqueSideforce_fields.append( Inc )
-	s4DragTorqueSideforce_fields.append( Drag )
-	s4DragTorqueSideforce_fields.append( Torque )
-	s4DragTorqueSideforce_fields.append( SideF )
+	s4TorqueDragSideforce_fields = FieldList()
+	s4TorqueDragSideforce_fields.append( MD )
+	s4TorqueDragSideforce_fields.append( Inc )
+	s4TorqueDragSideforce_fields.append( Drag )
+	s4TorqueDragSideforce_fields.append( Torque )
+	s4TorqueDragSideforce_fields.append( SideF )
 	"""
 Inc, Azi = get_inclination_and_azimuth_from_locations(self, MD)
 	

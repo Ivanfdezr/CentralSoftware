@@ -40,7 +40,7 @@ class Main_InputWindow(Ui_InputWindow):
 		self.__init__s3CentralizerRunningForce_tableWidgets()
 		self.__init__s3CentralizerLocation_tableWidgets()
 		self.__init__s4Settings_tableWidget()
-		self.__init__s4DragTorqueSideforce_tableWidget()
+		self.__init__s4TorqueDragSideforce_tableWidget()
 
 		self.actionAbout.triggered.connect(self.about)
 		self.objectsSizes = {}
@@ -113,8 +113,8 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s3RigidCentralizer_radioButton_C.clicked.connect(setEnabled_rigidToolkit_C)
 		self.s3NoneCentralizer_radioButton_C.clicked.connect(setDisabled_centralizerToolkit_C)
 
-		calculate_DragTorqueSideforce = lambda: wf.calculate_DragTorqueSideforce(self)
-		self.s4Calculate_pushButton.clicked.connect(calculate_DragTorqueSideforce)
+		calculateAndDraw_torque_drag_sideforce = lambda: tdsf.calculateAndDraw_torque_drag_sideforce(self)
+		self.s4Calculate_pushButton.clicked.connect(calculateAndDraw_torque_drag_sideforce)
 
 
 	def about(self):
@@ -547,27 +547,27 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s4Settings_tableWidget.itemChanged.connect(cu.update_fieldItem)
 
 
-	def __init__s4DragTorqueSideforce_tableWidget(self):
+	def __init__s4TorqueDragSideforce_tableWidget(self):
 		
-		self.s4DragTorqueSideforce_tableWidget.parent = self
-		self.s4DragTorqueSideforce_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.s4TorqueDragSideforce_tableWidget.parent = self
+		self.s4TorqueDragSideforce_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
 
-		C = cu.CopySelectedCells_action(self.s4DragTorqueSideforce_tableWidget)
-		self.s4DragTorqueSideforce_tableWidget.addAction(C)
+		C = cu.CopySelectedCells_action(self.s4TorqueDragSideforce_tableWidget)
+		self.s4TorqueDragSideforce_tableWidget.addAction(C)
 		
-		self.s4DragTorqueSideforce_fields = mdl.get_s4DragTorqueSideforce_fields()
-		for size,field in zip([20,20,20,20,20], self.s4DragTorqueSideforce_fields):
-			item = self.s4DragTorqueSideforce_tableWidget.horizontalHeaderItem( field.pos )
+		self.s4TorqueDragSideforce_fields = mdl.get_s4TorqueDragSideforce_fields()
+		for size,field in zip([20,20,20,20,20], self.s4TorqueDragSideforce_fields):
+			item = self.s4TorqueDragSideforce_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( cu.extend_text( field.headerName, size, mode='center' ) )
 			
-			for i in range(self.s4DragTorqueSideforce_tableWidget.rowCount()):
+			for i in range(self.s4TorqueDragSideforce_tableWidget.rowCount()):
 				item = cu.TableWidgetFieldItem( field, i%2==0 )
-				self.s4DragTorqueSideforce_tableWidget.setItem(i, field.pos, item)
+				self.s4TorqueDragSideforce_tableWidget.setItem(i, field.pos, item)
 
-		select_row = lambda r,c : cu.select_tableWidgetRow(self.s4DragTorqueSideforce_tableWidget,r)
-		self.s4DragTorqueSideforce_tableWidget.cellPressed.connect(select_row)
+		select_row = lambda r,c : cu.select_tableWidgetRow(self.s4TorqueDragSideforce_tableWidget,r)
+		self.s4TorqueDragSideforce_tableWidget.cellPressed.connect(select_row)
 
-		self.s4DragTorqueSideforce_tableWidget.resizeColumnsToContents()
+		self.s4TorqueDragSideforce_tableWidget.resizeColumnsToContents()
 
 
 def main():

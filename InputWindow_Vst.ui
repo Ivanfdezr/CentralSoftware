@@ -6231,7 +6231,7 @@ p, li { white-space: pre-wrap; }
        </row>
        <column/>
       </widget>
-      <widget class="QTableWidget" name="s4DragTorqueSideforce_tableWidget">
+      <widget class="QTableWidget" name="s4TorqueDragSideforce_tableWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
