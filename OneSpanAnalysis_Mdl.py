@@ -170,8 +170,7 @@ def get_casingDeflectionCurve(self):
 	Radio = L*1e6
 	aspr = L*0.02
 
-	doverDsq = (d/D)**2
-	buoyancyFactor = ( (1-ρe/ρs)-doverDsq*(1-ρi/ρs) )/( 1-doverDsq ) # [Ref.2]
+	buoyancyFactor = mdl.calculate_buoyancyFactor( OD=D, ID=d, ρs=ρs, ρe=ρe, ρi=ρi ) # [Ref.2]
 	w *= buoyancyFactor
 
 	fC = w*L*np.sin(θ)/2

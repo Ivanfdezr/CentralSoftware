@@ -69,6 +69,12 @@ def np_norm( v ):
 	return v/norm
 
 
+def calculate_buoyancyFactor( OD, ID, ρs, ρe, ρi ):
+
+	doverDsq = (ID/OD)**2
+	return ( (1-ρe/ρs)-doverDsq*(1-ρi/ρs) )/( 1-doverDsq )
+
+
 def render_circle( center, radius, n=120, mode='all', xscale=1, yscale=1 ):
 
 	if mode=='all':

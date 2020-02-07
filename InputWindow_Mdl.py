@@ -218,12 +218,17 @@ def get_s4Settings_fields():
 	TOB = Field(2082)
 	TrV = Field(2084)
 	RoR = Field(2085)
+	Psi = Field(2086)
+	dMD = Field(2045)
+	dMD.set_abbreviation('dMD')
 	s4Settings_fields = FieldList()
 	s4Settings_fields.append( TAW )
 	s4Settings_fields.append( WOB )
 	s4Settings_fields.append( TOB )
 	s4Settings_fields.append( TrV )
 	s4Settings_fields.append( RoR )
+	s4Settings_fields.append( Psi )
+	s4Settings_fields.append( dMD )
 	
 	return s4Settings_fields
 
@@ -677,33 +682,117 @@ def get_inclination_and_azimuth_from_locations(self, locations):
 	return np.array(Inc), np.array(Azi)
 
 
-# ---------!!
+def calculate_psiAngle( self, radius ):
+
+	self.s4Settings_fields.TrV.referenceUnitConvert()
+	self.s4Settings_fields.RoR.referenceUnitConvert()
+	radius = mu.referenceUnitConvert_value( radius, radius.unit )
+
+	Psi = np.arctan( self.s4Settings_fields.TrV[0]/self.s4Settings_fields.RoR[0]/radius )
+	Psi = mu.physicalValue( Psi, self.s4Settings_fields.Psi.referenceUnit )
+	self.s4Settings_fields.Psi.append( Psi )
 
 
-def calculate_TDS_for_uncentralizedStage(self, stage):
+def set_stepMD( self ):
 
-"""
-	MD     = Field(2001, altBg=True, altFg=True)
-	Inc    = Field(2002, altBg=True, altFg=True)
-	Drag   = Field(2075, altBg=True, altFg=True)
-	Torque = Field(2082, altBg=True, altFg=True)
-	SideF  = Field(2074, altBg=True, altFg=True)
-	Drag.set_representation('Drag')
-	Torque.set_representation('Torque')
-	s4TorqueDragSideforce_fields = FieldList()
-	s4TorqueDragSideforce_fields.append( MD )
-	s4TorqueDragSideforce_fields.append( Inc )
-	s4TorqueDragSideforce_fields.append( Drag )
-	s4TorqueDragSideforce_fields.append( Torque )
-	s4TorqueDragSideforce_fields.append( SideF )
-	"""
-Inc, Azi = get_inclination_and_azimuth_from_locations(self, MD)
-	
-	DL = np.arccos( np.sin(Inc[:-1])*np.sin(Inc[1:])*cos(Inc[1:]-Inc[:-1]) + np.cos(Inc[:-1])*np.cos(Inc[1:]) )
+	step = self.wellboreInnerStageData[0]['PipeBase'].PL[0]
+	step = mu.referenceUnitConvert_value( step*3, step.unit )
+	self.s4Settings_fields.dMD.append( step )
+
+
+def calculate_TDS_for_uncentralizedStage(self, stage, stageBottomMD=None, stageTopMD=None):
+
+	PD = stage['PipeProps'].OD[0]
+	Pd = stage['PipeProps'].ID[0]
+	PE = stage['PipeProps'].E[0]
+	PW = stage['PipeProps'].PW[0]
+	PL = stage['PipeBase'].PL[0]
+	ρi = stage['PipeProps'].InnerMudDensity[0]
+	ρe = stage['PipeProps'].OuterMudDensity[0]
+	ρs = stage['PipeProps'].Density[0]
+	ff = stage['PipeBase'].FF[0]
+
+	PD = mu.referenceUnitConvert_value( PD, PD.unit )
+	Pd = mu.referenceUnitConvert_value( Pd, Pd.unit )
+	PE = mu.referenceUnitConvert_value( PE, PE.unit )
+	PW = mu.referenceUnitConvert_value( PW, PW.unit )
+	PL = mu.referenceUnitConvert_value( PL, PL.unit )
+
+	if stageBottomMD==None or stageTopMD==None:
 		stageBottomMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
 		stageTopMD = stageBottomMD - mu.referenceUnitConvert_value( stage['Length'], stage['Length'].unit )
+		
+	buoyancyFactor = mu.calculate_buoyancyFactor( OD=PD, ID=Pd, ρs=ρs, ρe=ρe, ρi=ρi )
+	ffReduction = mu.referenceUnitConvert_value( 	stage['PipeProps'].FFReduction[0], 
+													stage['PipeProps'].FFReduction[0].unit )
+	ff = ff*(1-ffReduction)
 
-	
+	L = np.ceil( (stageBottomMD-stageTopMD)/self.s4Settings_fields.dMD[0] )
+	MD = np.arange( stageTopMD, stageBottomMD, L )
+	MD = list(MD)
+	MD.reverse()
+	Inc, Azi = get_inclination_and_azimuth_from_locations(self, MD)
+	DL = np.arccos( np.sin(Inc[:-1])*np.sin(Inc[1:])*cos(Azi[1:]-Azi[:-1]) + np.cos(Inc[:-1])*np.cos(Inc[1:]) )
+
+	self.s4Settings_fields.WOB.referenceUnitConvert()
+	self.s4Settings_fields.TOB.referenceUnitConvert()
+	self.s4Settings_fields.TAW.referenceUnitConvert()
+
+	F1 = -self.s4Settings_fields.WOB[0] -self.s4Settings_fields.TAW[0]
+	T1 = self.s4Settings_fields.TOB[0]
+	Fu = [F1]
+	Fs = [F1]
+	Fd = [F1]
+	Tu = [T1]
+	Ts = [T1]
+	Td = [T1]
+
+	dlThreshold = 1.5/180*np.pi
+	floatedW = buoyancyFactor*L*PW
+	sinPsi = np.sin(self.s4Settings_fields.Psi[0])
+	cosPsi = np.cos(self.s4Settings_fields.Psi[0])
+	r = PD/2
+
+	i = 1
+	for DLi in DL:
+		
+		absDLi = abs(DLi)
+		
+		if absDLi>dlThreshold:
+			
+			axialForce = floatedW*( np.sin(Inc[i])-np.sin(Inc[i-1]) )/(Inc[i]-Inc[i-1])
+			unForcedCurveTorque = ff*r*absDLi*cosPsi
+			
+			Tu.append( Tu[-1] + Fu[-1]*unForcedCurveTorque )
+			Ts.append( Ts[-1] + Fs[-1]*unForcedCurveTorque )
+			Td.append( Td[-1] + Fd[-1]*unForcedCurveTorque )
+
+			Fu.append( Fu[-1] + Fu[-1]*( np.exp(ff*absDLi) -1)*sinPsi + axialForce )
+			Fs.append( Fs[-1] + axialForce )
+			Fd.append( Fd[-1] + Fd[-1]*( np.exp(-ff*absDLi) -1)*sinPsi + axialForce )
+			
+		else:	
+			axialForce = floatedW*np.cos( Inc[i] )
+			tangentialForce = floatedW*np.sin( Inc[i] )*ff*sinPsi
+			straightTorque = ff*r*floatedW*np.sin( Inc[i] )*cosPsi
+			
+			Tu.append( Tu[-1] + straightTorque )
+			Ts.append( Ts[-1] + straightTorque )
+			Td.append( Td[-1] + straightTorque )
+
+			Fu.append( Fu[-1] + tangentialForce + axialForce)
+			Fs.append( Fs[-1] + axialForce)
+			Fd.append( Fd[-1] - tangentialForce + axialForce)
+
+		i+=1
+
+
+
+
+	self.s4TorqueDragSideforce_fields.nocDrag_u.append( F1 )
+
+
+
 
 
 class WellboreInnerStageDataItem( dict ):
