@@ -211,27 +211,27 @@ class Main_CaliperImport(Ui_CaliperImport):
 
 				try:
 					MDvalue = self.text2float( matches[fileTextMDcolumnIndex].group() )
-					cu.create_physicalValue_and_appendTo_field( MDvalue, self.ciLASData_fields.MD )
+					mu.create_physicalValue_and_appendTo_field( MDvalue, self.ciLASData_fields.MD )
 					if fileTextH1columnIndex<=fileTextH2columnIndex:
 						for index in range(fileTextH1columnIndex,fileTextH2columnIndex+1):
 							IDvalue = self.text2float( matches[index].group() )
 							fieldIndex = index-fileTextH1columnIndex
-							cu.create_physicalValue_and_appendTo_field( IDvalue, self.ciCALData_fields[fieldIndex] )
+							mu.create_physicalValue_and_appendTo_field( IDvalue, self.ciCALData_fields[fieldIndex] )
 					elif fileTextH1columnIndex>fileTextH2columnIndex and fileTextH2columnIndex==-1:
 						IDvalue = self.text2float( matches[fileTextH1columnIndex].group() )
-						cu.create_physicalValue_and_appendTo_field( IDvalue, self.ciCALData_fields[0] )
+						mu.create_physicalValue_and_appendTo_field( IDvalue, self.ciCALData_fields[0] )
 				except IndexError:
 					self.feasibleDrawFlagMDID = False
 
 				try:
 					BSvalue = self.text2float( matches[fileTextBScolumnIndex].group() )
-					cu.create_physicalValue_and_appendTo_field( BSvalue, self.ciLASData_fields.BS )
+					mu.create_physicalValue_and_appendTo_field( BSvalue, self.ciLASData_fields.BS )
 				except IndexError:
 					self.feasibleDrawFlagBS = False
 
 				#try:
 				#	ODvalue = self.text2float( matches[fileTextODcolumnIndex].group() )
-				#	cu.create_physicalValue_and_appendTo_field( ODvalue, self.ciLASData_fields.CD )
+				#	mu.create_physicalValue_and_appendTo_field( ODvalue, self.ciLASData_fields.CD )
 				#except IndexError:
 				#	self.feasibleDrawFlagOD = False
 
@@ -331,32 +331,32 @@ class Main_CaliperImport(Ui_CaliperImport):
 
 		self.ciLASData_fields.selectedMD.clear()
 		for MDvalue in self.ciHoleIDsmoothing_graphicsView_yselection:
-			cu.create_physicalValue_and_appendTo_field( MDvalue, self.ciLASData_fields.selectedMD )
+			mu.create_physicalValue_and_appendTo_field( MDvalue, self.ciLASData_fields.selectedMD )
 
 		for arm,ID in enumerate(self.DLM.ID):
 			ID = mdl.reduce_ID( ID )
 			field = self.ciCALData_fields[arm]
 			field.clear()
 			for IDvalue in ID:
-				cu.create_physicalValue_and_appendTo_field( IDvalue, field )
+				mu.create_physicalValue_and_appendTo_field( IDvalue, field )
 		
 		id_mean = mu.make_cleanAverage( self.DLM.IDmax )
 		self.CALID_max, self.MD = mdl.reduce_IDandMD( self.DLM.IDmax, self.ciLASData_fields.MD )
 
 		self.ciLASData_fields.MD.clear()
 		for MDvalue in self.MD:
-			cu.create_physicalValue_and_appendTo_field( MDvalue, self.ciLASData_fields.MD )
+			mu.create_physicalValue_and_appendTo_field( MDvalue, self.ciLASData_fields.MD )
 
 		self.ciCaliperReport_fields = mdl.get_ciCaliperReport_fields()
 		max_MD = max(self.ciLASData_fields.MD)
 		min_MD = min(self.ciLASData_fields.MD)
 
 		bs_mean = mu.make_cleanAverage( self.BS )
-		cu.create_physicalValue_and_appendTo_field( 'DR-CAL', self.ciCaliperReport_fields.Desc    )
-		cu.create_physicalValue_and_appendTo_field( id_mean,  self.ciCaliperReport_fields.ID      )
-		cu.create_physicalValue_and_appendTo_field( bs_mean,  self.ciCaliperReport_fields.DriftID )
-		cu.create_physicalValue_and_appendTo_field( min_MD,   self.ciCaliperReport_fields.MDtop   )
-		cu.create_physicalValue_and_appendTo_field( max_MD,   self.ciCaliperReport_fields.MDbot   )
+		mu.create_physicalValue_and_appendTo_field( 'DR-CAL', self.ciCaliperReport_fields.Desc    )
+		mu.create_physicalValue_and_appendTo_field( id_mean,  self.ciCaliperReport_fields.ID      )
+		mu.create_physicalValue_and_appendTo_field( bs_mean,  self.ciCaliperReport_fields.DriftID )
+		mu.create_physicalValue_and_appendTo_field( min_MD,   self.ciCaliperReport_fields.MDtop   )
+		mu.create_physicalValue_and_appendTo_field( max_MD,   self.ciCaliperReport_fields.MDbot   )
 
 		##
 		self.data = self.ciCaliperReport_fields.extract_data_from_row( 0 )

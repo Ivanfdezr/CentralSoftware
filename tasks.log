@@ -17,15 +17,14 @@
 -	Put: Min Spacing, Max Spacing, Min SOmidspan, Max SOmidspan
 -	Check calculations for SO: PL, midspan into caves.
 -	Include @ wellbore: PL named as "Max assambly length"
--	Set the locations per ABC centralizer 
 -	Set default Restoring force value for rigid centralizers @ Span Analysis
 -	Seek for improvements in scrolling controls response
--	Calculator, conversion and notes functionalities (no important)
+-	Conversion functionality (no important)
 -x	Increase number of rows in location tables @ wellbore
 -	Unlock location table for "by spacing"
 -	Implementation of main.
 -	Save/Open functionality (very important)
 -	Installation stuffs / DB installation (very important)
--	FF reduction calculation
+-x	FF reduction calculation
 -	@ABC: dont accept B or C without A
 -	Insert tip to dbs headers

@@ -251,9 +251,9 @@ class Main_SurveyImport(Ui_SurveyImport):
 					MDvalue = self.text2float( matches[fileTextMDcolumnIndex].group() )
 					Incvalue = self.text2float( matches[fileTextInccolumnIndex].group() )
 					Azivalue = self.text2float( matches[fileTextAzicolumnIndex].group() )
-					cu.create_physicalValue_and_appendTo_field( MDvalue, self.siSurveyData_fields.MD, unit=MDUnitRepresentation )
-					cu.create_physicalValue_and_appendTo_field( Incvalue, self.siSurveyData_fields.Inc, unit=IncUnitRepresentation )
-					cu.create_physicalValue_and_appendTo_field( Azivalue, self.siSurveyData_fields.Azi, unit=IncUnitRepresentation )
+					mu.create_physicalValue_and_appendTo_field( MDvalue, self.siSurveyData_fields.MD, unit=MDUnitRepresentation )
+					mu.create_physicalValue_and_appendTo_field( Incvalue, self.siSurveyData_fields.Inc, unit=IncUnitRepresentation )
+					mu.create_physicalValue_and_appendTo_field( Azivalue, self.siSurveyData_fields.Azi, unit=IncUnitRepresentation )
 				except IndexError:
 					self.feasibleFlagMDIncAzi = False
 

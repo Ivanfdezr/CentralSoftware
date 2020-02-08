@@ -68,6 +68,7 @@ class Main_InputWindow(Ui_InputWindow):
 		
 		calculate_axialForce_field = lambda: mdl.calculate_axialForce_field(self)
 		self.s3UpdateAxialF_pushButton.clicked.connect(calculate_axialForce_field)
+		self.s3UpdateAxialF_pushButton.setEnabled(False)
 
 		adjust_Wt = lambda: wf.adjust_Wt(self)
 		adjust_ID = lambda: wf.adjust_ID(self)

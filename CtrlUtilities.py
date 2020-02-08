@@ -168,15 +168,6 @@ def update_fieldItem(item, call=None):
 			if call!=None:
 				call()
 		item.currentChangebyVst = True
-	
-
-def create_physicalValue_and_appendTo_field(value, field, unit=None ):
-
-	if unit:
-		value = mdl.physicalValue( value, unit )
-	else:
-		value = mdl.physicalValue( value, field.unit )
-	field.append( value )
 
 
 class MandatoryError( Exception ): pass

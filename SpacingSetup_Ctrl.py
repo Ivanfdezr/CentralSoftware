@@ -229,8 +229,8 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		self.ssCentralizerLocations_fields.SOatM.clear()
 		self.ssCentralizerLocations_fields.ClatC.clear()
 		self.ssCentralizerLocations_fields.ClatM.clear()
+		self.ssCentralizerLocations_fields.LatC.clear()
 
-		
 		self.ssCentralizerLocations_fields.hsInc.clear()
 		self.ssCentralizerLocations_fields.hsSOatC.clear()
 		self.ssCentralizerLocations_fields.hsSOatM.clear()
@@ -322,8 +322,9 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		ClatC_field = self.ssCentralizerLocations_fields.ClatC
 		SOatM_field = self.ssCentralizerLocations_fields.SOatM
 		ClatM_field = self.ssCentralizerLocations_fields.ClatM
+		LatC_field = self.ssCentralizerLocations_fields.LatC
 
-		mdl.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field)
+		mdl.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field, LatC_field)
 		mdl.calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field)
 
 		for i in range(self.ssCentralizerLocations_tableWidget.rowCount()):
@@ -365,6 +366,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 			self.ssCentralizerLocations_fields.SOatM.clear()
 			self.ssCentralizerLocations_fields.ClatC.clear()
 			self.ssCentralizerLocations_fields.ClatM.clear()
+			self.ssCentralizerLocations_fields.LatC.clear()
 			self.centralizerCount = len(self.ssCentralizerLocations_fields.MD)
 
 			for i in range(self.ssCentralizerLocations_tableWidget.rowCount()):
@@ -374,10 +376,10 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 					EWi,NSi,VDi,_ = mdl2.get_ASCCoordinates_from_MD(self.parent, MDi)
 					DLi = mdl2.get_ASCDogleg_from_MD(self.parent, MDi)
 					
-					cu.create_physicalValue_and_appendTo_field( EWi, self.ssCentralizerLocations_fields.EW )
-					cu.create_physicalValue_and_appendTo_field( NSi, self.ssCentralizerLocations_fields.NS )
-					cu.create_physicalValue_and_appendTo_field( VDi, self.ssCentralizerLocations_fields.TVD )
-					cu.create_physicalValue_and_appendTo_field( DLi, self.ssCentralizerLocations_fields.DL )
+					mu.create_physicalValue_and_appendTo_field( EWi, self.ssCentralizerLocations_fields.EW )
+					mu.create_physicalValue_and_appendTo_field( NSi, self.ssCentralizerLocations_fields.NS )
+					mu.create_physicalValue_and_appendTo_field( VDi, self.ssCentralizerLocations_fields.TVD )
+					mu.create_physicalValue_and_appendTo_field( DLi, self.ssCentralizerLocations_fields.DL )
 
 					item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.MD.pos )
 					item.set_text( MDi )
@@ -425,7 +427,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 					SO_alt.append( self.ssCentralizerLocations_fields.SOatC[k//2] )
 				elif k%2==1:
 					MD_alt.append( (self.ssCentralizerLocations_fields.MD[(k+1)//2]+self.ssCentralizerLocations_fields.MD[(k-1)//2])/2 )
-					SO_alt.append( self.ssCentralizerLocations_fields.SOatM[(k+1)//2] )
+					SO_alt.append( self.ssCentralizerLocations_fields.SOatM[k//2] )
 
 			self.ssSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, 'C1', lw=2 )
 
@@ -449,7 +451,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 					dsSO_alt.append( self.ssCentralizerLocations_fields.dsSOatC[k//2] )
 				elif k%2==1:
 					dsMD_alt.append( (self.ssCentralizerLocations_fields.dsMD[(k+1)//2]+self.ssCentralizerLocations_fields.dsMD[(k-1)//2])/2 )
-					dsSO_alt.append( self.ssCentralizerLocations_fields.dsSOatM[(k+1)//2] )
+					dsSO_alt.append( self.ssCentralizerLocations_fields.dsSOatM[k//2] )
 
 			#self.ssSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, 'C0', lw=1 )
 

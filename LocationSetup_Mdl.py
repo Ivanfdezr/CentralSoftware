@@ -23,11 +23,13 @@ def get_lsCentralizerLocations_fields():
 	NS  = Field(2006, altBg=True, altFg=True)
 	TVD = Field(2004, altBg=True, altFg=True)
 	DL  = Field(2008, altBg=True, altFg=True)
+	LatC = Field(2080, altBg=True, altFg=True)
 
 	SOatC.set_abbreviation('SOatC')
 	SOatM.set_abbreviation('SOatM')
 	ClatC.set_abbreviation('ClatC')
 	ClatM.set_abbreviation('ClatM')
+	LatC.set_abbreviation('LatC')
 	SOatC.set_representation('<SO> @ centr.')
 	SOatM.set_representation('SO @ mid span')
 	ClatC.set_representation('<Cl> @ centr.')
@@ -44,6 +46,7 @@ def get_lsCentralizerLocations_fields():
 	lsCentralizerLocations_fields.append( NS )
 	lsCentralizerLocations_fields.append( TVD )
 	lsCentralizerLocations_fields.append( DL )
+	lsCentralizerLocations_fields.append( LatC )
 
 	return lsCentralizerLocations_fields
 
@@ -105,6 +108,9 @@ def calculate_standOff_atCentralizers(self):
 	PE = mu.referenceUnitConvert_value( PE, PE.unit )
 	PW = mu.referenceUnitConvert_value( PW, PW.unit )
 	PL = mu.referenceUnitConvert_value( PL, PL.unit )
+	ρi = mu.referenceUnitConvert_value( ρi, ρi.unit )
+	ρe = mu.referenceUnitConvert_value( ρe, ρe.unit )
+	ρs = mu.referenceUnitConvert_value( ρs, ρs.unit )
 
 	ResF = {}
 	D = {}
@@ -124,6 +130,7 @@ def calculate_standOff_atCentralizers(self):
 			supports+=c['CentralizerBase'].Blades[0]
 
 	buoyancyFactor = mu.calculate_buoyancyFactor( OD=PD, ID=Pd, ρs=ρs, ρe=ρe, ρi=ρi )
+	print( PD, Pd, ρs, ρe, ρi, buoyancyFactor )
 	PW *= buoyancyFactor
 	PI = np.pi/64*(PD**4-Pd**4)
 	PR = PD/2
@@ -131,19 +138,23 @@ def calculate_standOff_atCentralizers(self):
 	def calculate_SO_per_centralizersEnsemble():
 		SO = 0
 		Cc = 0
+		L = []
 		for x, c in self.centralizers.items():
 			if c['Type']=='Bow Spring':
-				so, cc = calculate_SO_per_centralizer(x)
+				so, cc, l = calculate_SO_per_centralizer(x)
 				SO += so/supports
 				Cc += cc/supports
+				L.append(l)
 			elif c['Type']=='Rigid':
-				so, cc = calculate_SO_per_centralizer(x)
+				so, cc, l = calculate_SO_per_centralizer(x)
 				SO += so*c['CentralizerBase'].Blades[0]/supports
 				Cc += cc*c['CentralizerBase'].Blades[0]/supports
-		return SO, Cc
+				L.append(l)
+		return SO, Cc, np.mean(L)
 
 	SOatC_field = self.lsCentralizerLocations_fields.SOatC
 	ClatC_field = self.lsCentralizerLocations_fields.ClatC
+	LatC_field = self.lsCentralizerLocations_fields.LatC
 		
 	for j, (MD1,inc) in enumerate(zip(locations,Inc)):
 		i = j-1
@@ -181,19 +192,23 @@ def calculate_standOff_atCentralizers(self):
 			δ = Hr-PR
 
 			if MD0==None and MD2==None:
+				print(PE,PI,δ,PW,inc)
 				L = (384*PE*PI*δ/PW/np.sin(inc))**0.25
 			elif MD0==None:
+				print(PE,PI,δ,PW,inc)
 				Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
 				L21 = (MD2-MD1)/2
 				L21 = L21 if (L21<Lalt) else Lalt
 				L = L21 + Lalt
 			elif MD2==None:
+				print(PE,PI,δ,PW,inc)
 				Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
 				L10 = (MD1-MD0)/2
 				L10 = L10 if (L10<Lalt) else Lalt
 				δ = Hr-PR
 				L = L10 + Lalt
 			else:
+				print(PE,PI,δ,PW,inc)
 				Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
 				L21 = (MD2-MD1)/2
 				L21 = L21 if (L21<Lalt) else Lalt
@@ -213,15 +228,17 @@ def calculate_standOff_atCentralizers(self):
 			Cc = R-PR-(Hr-mHr)
 			SO = Cc/mHc
 			
-			return SO, Cc
+			return SO, Cc, L
 		
-		SO, Cc = calculate_SO_per_centralizersEnsemble()
+		SO, Cc, L = calculate_SO_per_centralizersEnsemble()
 
-		cu.create_physicalValue_and_appendTo_field( SO, SOatC_field, SOatC_field.referenceUnit )
-		cu.create_physicalValue_and_appendTo_field( Cc, ClatC_field, ClatC_field.referenceUnit )
+		mu.create_physicalValue_and_appendTo_field( SO, SOatC_field, SOatC_field.referenceUnit )
+		mu.create_physicalValue_and_appendTo_field( Cc, ClatC_field, ClatC_field.referenceUnit )
+		mu.create_physicalValue_and_appendTo_field( L, LatC_field, LatC_field.referenceUnit )
 
 	SOatC_field.inverseReferenceUnitConvert()
 	ClatC_field.inverseReferenceUnitConvert()
+	LatC_field.inverseReferenceUnitConvert()
 	locations.inverseReferenceUnitConvert()
 
 
@@ -294,7 +311,7 @@ def calculate_standOff_atMidspan(self):
 	PI = np.pi/64*(PD**4-Pd**4)
 	PR = PD/2
 
-	cu.create_physicalValue_and_appendTo_field( Inc[0], Inc_field, Inc_field.referenceUnit )
+	mu.create_physicalValue_and_appendTo_field( Inc[0], Inc_field, Inc_field.referenceUnit )
 
 	t1 = time.time()
 	t12 = []
@@ -347,14 +364,14 @@ def calculate_standOff_atMidspan(self):
 		Mc = Mc if (Mc>xHc) else xHc
 		SO = Mc/mHc
 
-		cu.create_physicalValue_and_appendTo_field( In2, Inc_field, Inc_field.referenceUnit )
-		cu.create_physicalValue_and_appendTo_field( SO, SOatM_field, SOatM_field.referenceUnit )
-		cu.create_physicalValue_and_appendTo_field( Mc, ClatM_field, ClatM_field.referenceUnit )
+		mu.create_physicalValue_and_appendTo_field( In2, Inc_field, Inc_field.referenceUnit )
+		mu.create_physicalValue_and_appendTo_field( SO, SOatM_field, SOatM_field.referenceUnit )
+		mu.create_physicalValue_and_appendTo_field( Mc, ClatM_field, ClatM_field.referenceUnit )
 
 	t12 = np.mean(t12)
 
-	cu.create_physicalValue_and_appendTo_field( 0, SOatM_field, SOatM_field.referenceUnit )
-	cu.create_physicalValue_and_appendTo_field( 0, ClatM_field, ClatM_field.referenceUnit )
+	mu.create_physicalValue_and_appendTo_field( 0, SOatM_field, SOatM_field.referenceUnit )
+	mu.create_physicalValue_and_appendTo_field( 0, ClatM_field, ClatM_field.referenceUnit )
 
 	t2 = time.time()
 	locations.inverseReferenceUnitConvert()

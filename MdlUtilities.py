@@ -238,6 +238,18 @@ def inverseReferenceUnitConvert_value( value, unit ):
 	return value
 
 
+def create_physicalValue_and_appendTo_field(value, field, unit=None ):
+
+	if unit=='referenceUnit':
+		value = physicalValue( value, field.referenceUnit )
+	elif unit==None:
+		value = physicalValue( value, field.unit )
+	else:
+		value = physicalValue( value, unit )
+	field.append( value )
+
+
+
 def xfloat( expression ):
 	if isinstance(expression, float) or isinstance(expression, np.float32) or isinstance(expression, np.float64):
 		value = __float__( expression )

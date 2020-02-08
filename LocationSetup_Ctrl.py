@@ -210,6 +210,8 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.lsCentralizerLocations_fields.SOatM.clear()
 		self.lsCentralizerLocations_fields.ClatC.clear()
 		self.lsCentralizerLocations_fields.ClatM.clear()
+		self.lsCentralizerLocations_fields.LatC.clear()
+
 		r = self.lsCentralizerLocations_tableWidget.selectedRow
 		self.lsCentralizerLocations_tableWidget.removeRow(r)
 		
@@ -287,7 +289,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 				if r<len(self.lsCentralizerLocations_fields.MD):
 					del self.lsCentralizerLocations_fields.MD[r]
 
-			cu.create_physicalValue_and_appendTo_field( MD, self.lsCentralizerLocations_fields.MD )
+			mu.create_physicalValue_and_appendTo_field( MD, self.lsCentralizerLocations_fields.MD )
 			MD = self.lsCentralizerLocations_fields.MD[-1]
 			self.lsCentralizerLocations_fields.MD.sort()
 			self.lsCentralizerLocations_fields.EW.clear()
@@ -299,6 +301,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 			self.lsCentralizerLocations_fields.SOatM.clear()
 			self.lsCentralizerLocations_fields.ClatC.clear()
 			self.lsCentralizerLocations_fields.ClatM.clear()
+			self.lsCentralizerLocations_fields.LatC.clear()
 			self.centralizerCount = len(self.lsCentralizerLocations_fields.MD)
 
 			for i, MDi in enumerate(self.lsCentralizerLocations_fields.MD):
@@ -306,10 +309,10 @@ class Main_LocationSetup(Ui_LocationSetup):
 				EWi,NSi,VDi,_ = mdl2.get_ASCCoordinates_from_MD(self.parent, MDi)
 				DLi = mdl2.get_ASCDogleg_from_MD(self.parent, MDi)
 				
-				cu.create_physicalValue_and_appendTo_field( EWi, self.lsCentralizerLocations_fields.EW )
-				cu.create_physicalValue_and_appendTo_field( NSi, self.lsCentralizerLocations_fields.NS )
-				cu.create_physicalValue_and_appendTo_field( VDi, self.lsCentralizerLocations_fields.TVD )
-				cu.create_physicalValue_and_appendTo_field( DLi, self.lsCentralizerLocations_fields.DL )
+				mu.create_physicalValue_and_appendTo_field( EWi, self.lsCentralizerLocations_fields.EW )
+				mu.create_physicalValue_and_appendTo_field( NSi, self.lsCentralizerLocations_fields.NS )
+				mu.create_physicalValue_and_appendTo_field( VDi, self.lsCentralizerLocations_fields.TVD )
+				mu.create_physicalValue_and_appendTo_field( DLi, self.lsCentralizerLocations_fields.DL )
 
 				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.MD.pos )
 				item.set_text( MDi )
@@ -320,14 +323,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 					cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,i)
 
 			self.update_calculations()
-			self.draw_MDlocations(MD, EW, NS, VD)
-
-
-			#F = mdl.get_axialTension_below_MD(self, MD)
-			##
-			
-			#mdl.calculate_standOff_atCentralizers(self)
-			#mdl.calculate_standOff_atMidspan(self)		
+			self.draw_MDlocations(MD, EW, NS, VD)	
 
 
 	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None, created=True):
