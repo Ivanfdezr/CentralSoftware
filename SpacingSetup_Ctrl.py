@@ -24,6 +24,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		self.dialog = dialog
 		self.parent = parent
 		self.centralizerCount = 0
+		self.parent.msg_label.setText( 'Initializing Spacing setup window ...' )
 
 		self.ssAccept_pushButton.clicked.connect( self.makeResults_and_done )
 
@@ -161,6 +162,10 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		#	for MD in self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields'].MD:
 		#		self.choose_MDlocation(MD)
 
+		self.parent.msg_label.setText( 'Finish' )
+		cu.sleep(0.20)
+		self.parent.msg_label.setText( '' )
+
 		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 		dialog.exec_()
 
@@ -252,12 +257,12 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 			rmMD = self.ssCentralizerLocations_fields.MD[r]
 			
 			where = mu.np.where( mu.np.isclose(self.ssCentralizerLocations_fields.hsMD, rmMD) )[0]
-			print('hs',where)
+			
 			if len(where)>0:
 				del self.ssCentralizerLocations_fields.hsMD[ where[0] ]
 			
 			where = mu.np.where( mu.np.isclose(self.ssCentralizerLocations_fields.dsMD, rmMD) )[0]
-			print('ds',where)
+			
 			if len(where)>0:
 				del self.ssCentralizerLocations_fields.dsMD[ where[0] ]
 

@@ -9,7 +9,6 @@ import MdlUtilities as mu
 import copy
 import re, os
 
-import time
 
 class Main_LocationSetup(Ui_LocationSetup):
 
@@ -253,13 +252,9 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 
 	def update_calculations(self):
-		tic = time.time()
+		
 		mdl.calculate_standOff_atCentralizers(self)
-		tac = time.time()
 		mdl.calculate_standOff_atMidspan(self)
-		toc = time.time()
-
-		print('mid:',toc-tac,'cent:',tac-tic)
 
 		for i in range(self.lsCentralizerLocations_tableWidget.rowCount()):
 

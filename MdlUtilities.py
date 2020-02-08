@@ -483,6 +483,8 @@ class Field( list ):
 			else:
 				if value.unit==self.unit:
 					newValue = physicalValue( self.factorToReferenceUnit*value + self.offsetToReferenceUnit, self.referenceUnit )
+				elif value.unit==self.referenceUnit:
+					newValue = value
 				else:	
 					raise(ValueError)
 				self[i] = newValue

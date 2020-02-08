@@ -8,8 +8,6 @@ import MdlUtilities as mu
 import CtrlUtilities as cu
 import dbUtils
 
-import time
-
 
 def get_lsCentralizerLocations_fields():
 
@@ -56,8 +54,15 @@ def get_LASMDandCALID_intoInterval(self):
 	MD = self.parent.workWellboreMD
 	ID = self.parent.workWellboreID
 
-	min_index = np.where(MD<=self.min_MD)[0][-1]
-	max_index = np.where(MD>=self.max_MD)[0][0]+1
+	try:
+		min_index = np.where(MD<=self.min_MD)[0][-1]
+	except IndexError:
+		min_index = 0
+
+	try:
+		max_index = np.where(MD>=self.max_MD)[0][0]+1
+	except IndexError:
+		max_index = len(MD)
 
 	MD = MD[min_index:max_index]
 	ID = ID[min_index:max_index]
@@ -130,7 +135,7 @@ def calculate_standOff_atCentralizers(self):
 			supports+=c['CentralizerBase'].Blades[0]
 
 	buoyancyFactor = mu.calculate_buoyancyFactor( OD=PD, ID=Pd, ρs=ρs, ρe=ρe, ρi=ρi )
-	print( PD, Pd, ρs, ρe, ρi, buoyancyFactor )
+	
 	PW *= buoyancyFactor
 	PI = np.pi/64*(PD**4-Pd**4)
 	PR = PD/2
@@ -192,23 +197,19 @@ def calculate_standOff_atCentralizers(self):
 			δ = Hr-PR
 
 			if MD0==None and MD2==None:
-				print(PE,PI,δ,PW,inc)
 				L = (384*PE*PI*δ/PW/np.sin(inc))**0.25
 			elif MD0==None:
-				print(PE,PI,δ,PW,inc)
 				Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
 				L21 = (MD2-MD1)/2
 				L21 = L21 if (L21<Lalt) else Lalt
 				L = L21 + Lalt
 			elif MD2==None:
-				print(PE,PI,δ,PW,inc)
 				Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
 				L10 = (MD1-MD0)/2
 				L10 = L10 if (L10<Lalt) else Lalt
 				δ = Hr-PR
 				L = L10 + Lalt
 			else:
-				print(PE,PI,δ,PW,inc)
 				Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
 				L21 = (MD2-MD1)/2
 				L21 = L21 if (L21<Lalt) else Lalt
@@ -244,7 +245,6 @@ def calculate_standOff_atCentralizers(self):
 
 def calculate_standOff_atMidspan(self):
 
-	t0 = time.time()
 	locations = self.lsCentralizerLocations_fields.MD
 	locations.referenceUnitConvert()
 	ClatC_field = self.lsCentralizerLocations_fields.ClatC
@@ -255,7 +255,6 @@ def calculate_standOff_atMidspan(self):
 	Inc_field   = self.lsCentralizerLocations_fields.Inc
 
 	Inc, Azi = mdl.get_inclination_and_azimuth_from_locations(self.parent, locations)
-	t01 = time.time()
 
 	MDs = self.lsCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD
 	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
@@ -313,8 +312,6 @@ def calculate_standOff_atMidspan(self):
 
 	mu.create_physicalValue_and_appendTo_field( Inc[0], Inc_field, Inc_field.referenceUnit )
 
-	t1 = time.time()
-	t12 = []
 	for i in range(len(locations)-1):
 		j = i+1
 		MD1 = locations[i]+CL
@@ -338,10 +335,8 @@ def calculate_standOff_atMidspan(self):
 				MDi = MDj
 				IDi = IDj
 				mIDi = mIDj
-		t120 = time.time()
+		
 		Ft = mdl.get_axialTension_below_MD(self.parent, MD2, referenceUnit=True)
-		t121 = time.time()
-		t12.append(t121-t120)
 
 		u = np.sqrt( Ft*L**2/4/PE/PI )
 		β = np.arccos( np.cos(In1)*np.cos(In2) + np.sin(In1)*np.sin(In2)*np.cos(Az2-Az1) )
@@ -368,20 +363,15 @@ def calculate_standOff_atMidspan(self):
 		mu.create_physicalValue_and_appendTo_field( SO, SOatM_field, SOatM_field.referenceUnit )
 		mu.create_physicalValue_and_appendTo_field( Mc, ClatM_field, ClatM_field.referenceUnit )
 
-	t12 = np.mean(t12)
-
 	mu.create_physicalValue_and_appendTo_field( 0, SOatM_field, SOatM_field.referenceUnit )
 	mu.create_physicalValue_and_appendTo_field( 0, ClatM_field, ClatM_field.referenceUnit )
 
-	t2 = time.time()
 	locations.inverseReferenceUnitConvert()
 	ClatC_field.inverseReferenceUnitConvert()
 	SOatM_field.inverseReferenceUnitConvert()
 	ClatM_field.inverseReferenceUnitConvert()
 	Inc_field.inverseReferenceUnitConvert()
-	t3 = time.time()
 
-	print(t01-t0, t1-t01, t12, t3-t2)
 
 
 

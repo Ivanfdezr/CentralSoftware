@@ -8,9 +8,9 @@ import CtrlUtilities as cu
 import MdlUtilities as mu
 import SurveyFunctions as sf
 import WellboreFunctions as wf
+import TDSFunctions as tdsf
 import importlib
 import sys
-
 
 
 class Main_InputWindow(Ui_InputWindow):
@@ -125,33 +125,15 @@ class Main_InputWindow(Ui_InputWindow):
 		importlib.reload(mu)
 		importlib.reload(wf)
 		importlib.reload(sf)
+		importlib.reload(tdsf)
 
 		print('---------------------------------------------------------')
-		"""
-		for i,attr in enumerate(dir(self)):
-			size = eval('cu.get_size(self.'+attr+')')
-			try:
-				if self.objectsSizes[attr]!=size:
-					try:
-						print( i,attr,self.objectsSizes[attr],size,eval('len(self.'+attr+')') )
-					except TypeError:
-						print( i,attr,self.objectsSizes[attr],size,'NA' )
-					self.objectsSizes[attr] = size
-			except KeyError:
-				try:
-					print( i,attr,'---B',size+'B',eval('len(self.'+attr+')') )
-				except TypeError:
-					print( i,attr,'---B',size+'B','NA' )
-				self.objectsSizes[attr] = size
-		"""
-		print(dir(self))
-
 		for i,attr in enumerate(dir(self)):
 			size = eval('cu.size_object(self.'+attr+')')
 			if attr in self.objectsSizes and attr!="objectsSizes":
-				if self.objectsSizes[attr]!=size:
-					eval('cu.count_nestedObjects(self.'+attr+',name="self.'+attr+'")')
-					print( '======================================' )
+				#if self.objectsSizes[attr]!=size:
+				eval('cu.count_nestedObjects(self.'+attr+',name="self.'+attr+'")')
+				print( '======================================' )
 			
 			self.objectsSizes[attr] = size
 
@@ -545,7 +527,15 @@ class Main_InputWindow(Ui_InputWindow):
 			item = cu.TableWidgetFieldItem( field, False )
 			self.s4Settings_tableWidget.setItem(field.pos, 0, item)
 
-		self.s4Settings_tableWidget.itemChanged.connect(cu.update_fieldItem)
+		def auxiliar_function(item):
+			item.field.clear()
+			item.field.append( item.realValue )
+
+		def update_through_itemChange(item):
+			call_function = lambda: auxiliar_function(item)
+			cu.update_fieldItem(item, call_function)
+
+		self.s4Settings_tableWidget.itemChanged.connect(update_through_itemChange)
 
 
 	def __init__s4TorqueDragSideforce_tableWidget(self):
@@ -557,7 +547,7 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s4TorqueDragSideforce_tableWidget.addAction(C)
 		
 		self.s4TorqueDragSideforce_fields = mdl.get_s4TorqueDragSideforce_fields()
-		for size,field in zip([20,20,20,20,20], self.s4TorqueDragSideforce_fields):
+		for size,field in zip([20,20,20,20,20,20,20,20,20], self.s4TorqueDragSideforce_fields):
 			item = self.s4TorqueDragSideforce_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( cu.extend_text( field.headerName, size, mode='center' ) )
 			

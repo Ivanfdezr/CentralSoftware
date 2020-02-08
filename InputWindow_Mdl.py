@@ -243,30 +243,41 @@ def get_s4TorqueDragSideforce_fields():
 	Drag_s   = Field(2075, altBg=True, altFg=True)
 	Drag_d   = Field(2075, altBg=True, altFg=True)
 	SideF    = Field(2074, altBg=True, altFg=True)
+	
+	uncMD       = Field(2001, altBg=True, altFg=True)
+	uncInc      = Field(2002, altBg=True, altFg=True)
 	uncTorque_u = Field(2082, altBg=True, altFg=True)
 	uncTorque_s = Field(2082, altBg=True, altFg=True)
 	uncTorque_d = Field(2082, altBg=True, altFg=True)
 	uncDrag_u   = Field(2075, altBg=True, altFg=True)
 	uncDrag_s   = Field(2075, altBg=True, altFg=True)
 	uncDrag_d   = Field(2075, altBg=True, altFg=True)
+	uncSideF    = Field(2074, altBg=True, altFg=True)
+	
 	Torque_u.set_representation('Torque raising')
 	Torque_s.set_representation('Torque static')
 	Torque_d.set_representation('Torque lowering')
 	Drag_u.set_representation('Drag raising')
 	Drag_s.set_representation('Drag static')
 	Drag_d.set_representation('Drag lowering')
+	
 	Torque_u.set_abbreviation('Torque_u')
 	Torque_s.set_abbreviation('Torque_s')
 	Torque_d.set_abbreviation('Torque_d')
 	Drag_u.set_abbreviation('Drag_u')
 	Drag_s.set_abbreviation('Drag_s')
 	Drag_d.set_abbreviation('Drag_d')
+	
+	uncMD.set_abbreviation('uncMD')
+	uncInc.set_abbreviation('uncInc')
 	uncTorque_u.set_abbreviation('uncTorque_u')
 	uncTorque_s.set_abbreviation('uncTorque_s')
 	uncTorque_d.set_abbreviation('uncTorque_d')
 	uncDrag_u.set_abbreviation('uncDrag_u')
 	uncDrag_s.set_abbreviation('uncDrag_s')
 	uncDrag_d.set_abbreviation('uncDrag_d')
+	uncSideF.set_abbreviation('uncSideF')
+
 	s4TorqueDragSideforce_fields = FieldList()
 	s4TorqueDragSideforce_fields.append( MD )
 	s4TorqueDragSideforce_fields.append( Inc )
@@ -277,12 +288,15 @@ def get_s4TorqueDragSideforce_fields():
 	s4TorqueDragSideforce_fields.append( Drag_s )
 	s4TorqueDragSideforce_fields.append( Drag_d )
 	s4TorqueDragSideforce_fields.append( SideF )
+	s4TorqueDragSideforce_fields.append( uncMD )
+	s4TorqueDragSideforce_fields.append( uncInc )
 	s4TorqueDragSideforce_fields.append( uncTorque_u )
 	s4TorqueDragSideforce_fields.append( uncTorque_s )
 	s4TorqueDragSideforce_fields.append( uncTorque_d )
 	s4TorqueDragSideforce_fields.append( uncDrag_u )
 	s4TorqueDragSideforce_fields.append( uncDrag_s )
 	s4TorqueDragSideforce_fields.append( uncDrag_d )
+	s4TorqueDragSideforce_fields.append( uncSideF )
 	
 	return s4TorqueDragSideforce_fields
 
@@ -491,6 +505,7 @@ def calculate_axialForce_field(self):
 	self must to point to Main_InputWindow
 	"""
 	print('Calculating Axial Forces...')
+	self.msg_label.setText( 'Calculating Axial Forces...' )
 
 	self.s3Forces_fields.AxialF.clear()
 	self.s3Forces_fields.MD_AxF.clear()
@@ -530,6 +545,8 @@ def calculate_axialForce_field(self):
 	self.s3Forces_fields.MD_AxF.inverseReferenceUnitConvert()
 	self.s3UpdateAxialF_pushButton.setEnabled(False)
 	self.s3InnerStageToolkit_tabWidget.setEnabled(True)
+
+	self.msg_label.setText( '' )
 	print('Finish')
 
 
@@ -606,7 +623,10 @@ def get_ASCCoordinates_from_MD(self, MD, unit=None):
 		MD = mu.unitConvert_value( MD, MD.unit, self.s2DataSurvey_fields.MD.unit )
 
 	MD_array = np.array( self.s2DataSurvey_fields.MD )
-	index = np.where(MD_array[:-1]<=MD)[0][-1]
+	try:
+		index = np.where(MD_array[:-1]<=MD)[0][-1]
+	except IndexError:
+		index = 0
 	del MD_array
 
 	MD = mu.referenceUnitConvert_value( MD, MD.unit )
@@ -632,7 +652,10 @@ def get_ASCT_from_MD(self, MD, unit=None):
 		MD = mu.unitConvert_value( MD, MD.unit, self.s2DataSurvey_fields.MD.unit )
 
 	MD_array = np.array( self.s2DataSurvey_fields.MD )
-	index = np.where(MD_array[:-1]<=MD)[0][-1]
+	try:
+		index = np.where(MD_array[:-1]<=MD)[0][-1]
+	except IndexError:
+		index = 0
 	del MD_array
 	
 	MD = mu.referenceUnitConvert_value( MD, MD.unit )
@@ -650,7 +673,10 @@ def get_ASCDogleg_from_MD(self, MD, unit=None):
 		MD = mu.unitConvert_value( MD, MD.unit, self.s2DataSurvey_fields.MD.unit )
 
 	MD_array = np.array( self.s2DataSurvey_fields.MD )
-	index = np.where(MD_array[:-1]<=MD)[0][-1]
+	try:
+		index = np.where(MD_array[:-1]<=MD)[0][-1]
+	except IndexError:
+		index = 0
 	del MD_array
 
 	MD = mu.referenceUnitConvert_value( MD, MD.unit )
@@ -686,25 +712,30 @@ def get_inclination_and_azimuth_from_locations(self, locations):
 	return np.array(Inc), np.array(Azi)
 
 
-def calculate_psiAngle( self, radius ):
+def calculate_psiAngle( self, diameter ):
 
 	self.s4Settings_fields.TrV.referenceUnitConvert()
 	self.s4Settings_fields.RoR.referenceUnitConvert()
-	radius = mu.referenceUnitConvert_value( radius, radius.unit )
+	radius = mu.referenceUnitConvert_value( diameter/2, diameter.unit )
 
 	Psi = np.arctan( self.s4Settings_fields.TrV[0]/self.s4Settings_fields.RoR[0]/radius )
 	Psi = mu.physicalValue( Psi, self.s4Settings_fields.Psi.referenceUnit )
 	self.s4Settings_fields.Psi.append( Psi )
 
+	self.s4Settings_fields.TrV.inverseReferenceUnitConvert()
+	self.s4Settings_fields.RoR.inverseReferenceUnitConvert()
+
 
 def set_stepMD( self ):
 
 	step = self.wellboreInnerStageData[0]['PipeBase'].PL[0]
-	step = mu.referenceUnitConvert_value( step*3, step.unit )
+	step = mu.referenceUnitConvert_value( step*2, step.unit )
 	self.s4Settings_fields.dMD.append( step )
 
 
-def calculate_TDS_for_uncentralizedStage(self, stage, FT1=None, MDLims=None ):
+def calculate_TDS_for_uncentralizedStage(self, stage, FT1=None, MDLims=None, centralizedStage=False ):
+
+	TDS_fields = self.s4TorqueDragSideforce_fields
 
 	PD = stage['PipeProps'].OD[0]
 	Pd = stage['PipeProps'].ID[0]
@@ -736,33 +767,40 @@ def calculate_TDS_for_uncentralizedStage(self, stage, FT1=None, MDLims=None ):
 
 		F1 = -self.s4Settings_fields.WOB[0] -self.s4Settings_fields.TAW[0]
 		T1 = self.s4Settings_fields.TOB[0]
+		Fu = [F1]
+		Fs = [F1]
+		Fd = [F1]
+		Tu = [T1]
+		Ts = [T1]
+		Td = [T1]
 
 		self.s4Settings_fields.WOB.inverseReferenceUnitConvert()
 		self.s4Settings_fields.TOB.inverseReferenceUnitConvert()
 		self.s4Settings_fields.TAW.inverseReferenceUnitConvert()
 	else:
-		F1 = FT1[0]
-		T1 = FT1[1]
+		Fu = [FT1['Fu']]
+		Fs = [FT1['Fs']]
+		Fd = [FT1['Fd']]
+		Tu = [FT1['Tu']]
+		Ts = [FT1['Ts']]
+		Td = [FT1['Td']]
+	SF = [0]
 
 	buoyancyFactor = mu.calculate_buoyancyFactor( OD=PD, ID=Pd, ρs=ρs, ρe=ρe, ρi=ρi )
 	ffReduction = mu.referenceUnitConvert_value( 	stage['PipeProps'].FFReduction[0], 
 													stage['PipeProps'].FFReduction[0].unit )
 	ff = ff*(1-ffReduction)
 
-	L = np.ceil( (stageBottomMD-stageTopMD)/self.s4Settings_fields.dMD[0] )
-	MD = np.arange( stageTopMD, stageBottomMD, L )
+	n = np.ceil( (stageBottomMD-stageTopMD)/self.s4Settings_fields.dMD[0] )
+	MD = np.linspace( stageTopMD, stageBottomMD, n+1 )
 	MD = list(MD)
+	L = MD[1]-MD[0]
 	MD.reverse()
-	Inc, Azi = get_inclination_and_azimuth_from_locations(self, MD)
-	DL = np.arccos( np.sin(Inc[:-1])*np.sin(Inc[1:])*cos(Azi[1:]-Azi[:-1]) + np.cos(Inc[:-1])*np.cos(Inc[1:]) )
-
-	Fu = [F1]
-	Fs = [F1]
-	Fd = [F1]
-	Tu = [T1]
-	Ts = [T1]
-	Td = [T1]
-	SF = [0]
+	physicalMD_function = lambda md: mu.physicalValue(md, TDS_fields.MD.referenceUnit)
+	physicalMD = map(physicalMD_function, MD)
+	
+	Inc, Azi = get_inclination_and_azimuth_from_locations(self, physicalMD)
+	DL = np.arccos( np.sin(Inc[:-1])*np.sin(Inc[1:])*np.cos(Azi[1:]-Azi[:-1]) + np.cos(Inc[:-1])*np.cos(Inc[1:]) )
 
 	dlThreshold = 1.5/180*np.pi
 	floatedW = buoyancyFactor*L*PW
@@ -812,44 +850,31 @@ def calculate_TDS_for_uncentralizedStage(self, stage, FT1=None, MDLims=None ):
 
 		i+=1
 
-	TDS_fields = self.s4TorqueDragSideforce_fields
-
 	for i in range(len(DL)):
-		mu.create_physicalValue_and_appendTo_field( MD[i], TDS_fields.MD, 'referenceUnit' )
-		mu.create_physicalValue_and_appendTo_field( Inc[i], TDS_fields.Inc, 'referenceUnit' )
-		mu.create_physicalValue_and_appendTo_field( Tu[i], TDS_fields.Torque_u, 'referenceUnit' )
-		mu.create_physicalValue_and_appendTo_field( Ts[i], TDS_fields.Torque_s, 'referenceUnit' )
-		mu.create_physicalValue_and_appendTo_field( Td[i], TDS_fields.Torque_d, 'referenceUnit' )
-		mu.create_physicalValue_and_appendTo_field( Fu[i], TDS_fields.Drag_u, 'referenceUnit' )
-		mu.create_physicalValue_and_appendTo_field( Fs[i], TDS_fields.Drag_s, 'referenceUnit' )
-		mu.create_physicalValue_and_appendTo_field( Fd[i], TDS_fields.Drag_d, 'referenceUnit' )
-		mu.create_physicalValue_and_appendTo_field( SF[i], TDS_fields.SideF, 'referenceUnit' )
-		mu.create_physicalValue_and_appendTo_field( Tu[i], TDS_fields.uncTorque_u, 'referenceUnit' )
-		mu.create_physicalValue_and_appendTo_field( Ts[i], TDS_fields.uncTorque_s, 'referenceUnit' )
-		mu.create_physicalValue_and_appendTo_field( Td[i], TDS_fields.uncTorque_d, 'referenceUnit' )
-		mu.create_physicalValue_and_appendTo_field( Fu[i], TDS_fields.uncDrag_u, 'referenceUnit' )
-		mu.create_physicalValue_and_appendTo_field( Fs[i], TDS_fields.uncDrag_s, 'referenceUnit' )
-		mu.create_physicalValue_and_appendTo_field( Fd[i], TDS_fields.uncDrag_d, 'referenceUnit' )
+		
+		if centralizedStage:
+			mu.create_physicalValue_and_appendTo_field( MD[i], TDS_fields.MD, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( Inc[i], TDS_fields.Inc, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( SF[i], TDS_fields.SideF, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( Tu[i], TDS_fields.Torque_u, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( Ts[i], TDS_fields.Torque_s, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( Td[i], TDS_fields.Torque_d, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( Fu[i], TDS_fields.Drag_u, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( Fs[i], TDS_fields.Drag_s, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( Fd[i], TDS_fields.Drag_d, 'referenceUnit' )
+		else:
+			mu.create_physicalValue_and_appendTo_field( MD[i], TDS_fields.uncMD, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( Inc[i], TDS_fields.uncInc, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( SF[i], TDS_fields.uncSideF, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( Tu[i], TDS_fields.uncTorque_u, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( Ts[i], TDS_fields.uncTorque_s, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( Td[i], TDS_fields.uncTorque_d, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( Fu[i], TDS_fields.uncDrag_u, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( Fs[i], TDS_fields.uncDrag_s, 'referenceUnit' )
+			mu.create_physicalValue_and_appendTo_field( Fd[i], TDS_fields.uncDrag_d, 'referenceUnit' )
 
-	"""
-	TDS_fields.MD.inverseReferenceUnitConvert()
-	TDS_fields.Inc.inverseReferenceUnitConvert()
-	TDS_fields.Torque_u.inverseReferenceUnitConvert()
-	TDS_fields.Torque_s.inverseReferenceUnitConvert()
-	TDS_fields.Torque_d.inverseReferenceUnitConvert()
-	TDS_fields.Drag_u.inverseReferenceUnitConvert()
-	TDS_fields.Drag_s.inverseReferenceUnitConvert()
-	TDS_fields.Drag_d.inverseReferenceUnitConvert()
-	TDS_fields.SideF.inverseReferenceUnitConvert()
-	TDS_fields.uncTorque_u.inverseReferenceUnitConvert()
-	TDS_fields.uncTorque_s.inverseReferenceUnitConvert()
-	TDS_fields.uncTorque_d.inverseReferenceUnitConvert()
-	TDS_fields.uncDrag_u.inverseReferenceUnitConvert()
-	TDS_fields.uncDrag_s.inverseReferenceUnitConvert()
-	TDS_fields.uncDrag_d.inverseReferenceUnitConvert()
-	"""
 
-def calculate_TDS_for_centralizedStage(self, stage, FT1=None ):
+def calculate_TDS_for_centralizedStage(self, stage ):
 
 	PD = stage['PipeProps'].OD[0]
 	Pd = stage['PipeProps'].ID[0]
@@ -872,51 +897,59 @@ def calculate_TDS_for_centralizedStage(self, stage, FT1=None ):
 	stageBottomMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
 	stageTopMD = stageBottomMD - mu.referenceUnitConvert_value( stage['Length'], stage['Length'].unit )
 
-	if FT1==None:
-		self.s4Settings_fields.WOB.referenceUnitConvert()
-		self.s4Settings_fields.TOB.referenceUnitConvert()
-		self.s4Settings_fields.TAW.referenceUnitConvert()
+	self.s4Settings_fields.WOB.referenceUnitConvert()
+	self.s4Settings_fields.TOB.referenceUnitConvert()
+	self.s4Settings_fields.TAW.referenceUnitConvert()
 
-		F1 = -self.s4Settings_fields.WOB[0] -self.s4Settings_fields.TAW[0]
-		T1 = self.s4Settings_fields.TOB[0]
+	F1 = -self.s4Settings_fields.WOB[0] -self.s4Settings_fields.TAW[0]
+	T1 = self.s4Settings_fields.TOB[0]
+	FT1 = {	'Fu':F1,
+			'Fs':F1,
+			'Fd':F1,
+			'Tu':T1,
+			'Ts':T1,
+			'Td':T1	 }
 
-		self.s4Settings_fields.WOB.inverseReferenceUnitConvert()
-		self.s4Settings_fields.TOB.inverseReferenceUnitConvert()
-		self.s4Settings_fields.TAW.inverseReferenceUnitConvert()
-	else:
-		F1 = FT1[0]
-		T1 = FT1[1]
+	self.s4Settings_fields.WOB.inverseReferenceUnitConvert()
+	self.s4Settings_fields.TOB.inverseReferenceUnitConvert()
+	self.s4Settings_fields.TAW.inverseReferenceUnitConvert()
+	
+	SF = [0]
 
 	buoyancyFactor = mu.calculate_buoyancyFactor( OD=PD, ID=Pd, ρs=ρs, ρe=ρe, ρi=ρi )
 	ffReduction = mu.referenceUnitConvert_value( 	stage['PipeProps'].FFReduction[0], 
 													stage['PipeProps'].FFReduction[0].unit )
 	ff = ff*(1-ffReduction)
 
-	Fu = [F1]
-	Fs = [F1]
-	Fd = [F1]
-	Tu = [T1]
-	Ts = [T1]
-	Td = [T1]
-	SF = [0]
-
 	sinPsi = np.sin(self.s4Settings_fields.Psi[0])
 	cosPsi = np.cos(self.s4Settings_fields.Psi[0])
 	r = PD/2
 
-	MD = stage['Centralization']['Fields'].MD
-	L = stage['Centralization']['Fields'].LatC
+	MD = copy.deepcopy( stage['Centralization']['Fields'].MD )
+	Inc = copy.deepcopy( stage['Centralization']['Fields'].Inc )
+	L  = copy.deepcopy( stage['Centralization']['Fields'].LatC )
+	SO = copy.deepcopy( stage['Centralization']['Fields'].SOatM )
+	MD.referenceUnitConvert()
+	Inc.referenceUnitConvert()
+	L.referenceUnitConvert()
+	SO.referenceUnitConvert()
 	numofC = len(MD)
 
+	TDS_fields = self.s4TorqueDragSideforce_fields
+
 	MDLims = ( MD[-1], stageBottomMD )
-	FT1 = (F1, T1)
-	calculate_TDS_for_uncentralizedStage(self, stage, FT1=FT1, MDLims=MDLims )
+	calculate_TDS_for_uncentralizedStage(self, stage, FT1=FT1, MDLims=MDLims, centralizedStage=True )
+
+	Tu = [ TDS_fields.Torque_u[-1] ]
+	Ts = [ TDS_fields.Torque_s[-1] ]
+	Td = [ TDS_fields.Torque_d[-1] ]
+	Fu = [ TDS_fields.Drag_u[-1] ]
+	Fs = [ TDS_fields.Drag_s[-1] ]
+	Fd = [ TDS_fields.Drag_d[-1] ]
 
 	for i in range(-1,-numofC,-1):
-
 		
-		dMD = MD[i] - MD[i-1]
-		floatedW = buoyancyFactor*L*PW
+		floatedW = buoyancyFactor*L[i]*PW
 
 		axialForce  = floatedW*np.cos( Inc[i] )
 		normalForce = floatedW*np.sin( Inc[i] )
@@ -933,6 +966,38 @@ def calculate_TDS_for_centralizedStage(self, stage, FT1=None ):
 		Fu.append( Fu[-1] + raisingNormalForce + axialForce)
 		Fs.append( Fs[-1] + axialForce)
 		Fd.append( Fd[-1] + loweringNormalForce + axialForce)
+
+		mu.create_physicalValue_and_appendTo_field( MD[i], TDS_fields.MD, 'referenceUnit' )
+		mu.create_physicalValue_and_appendTo_field( Inc[i], TDS_fields.Inc, 'referenceUnit' )
+		mu.create_physicalValue_and_appendTo_field( Tu[-1], TDS_fields.Torque_u, 'referenceUnit' )
+		mu.create_physicalValue_and_appendTo_field( Ts[-1], TDS_fields.Torque_s, 'referenceUnit' )
+		mu.create_physicalValue_and_appendTo_field( Td[-1], TDS_fields.Torque_d, 'referenceUnit' )
+		mu.create_physicalValue_and_appendTo_field( Fu[-1], TDS_fields.Drag_u, 'referenceUnit' )
+		mu.create_physicalValue_and_appendTo_field( Fs[-1], TDS_fields.Drag_s, 'referenceUnit' )
+		mu.create_physicalValue_and_appendTo_field( Fd[-1], TDS_fields.Drag_d, 'referenceUnit' )
+		mu.create_physicalValue_and_appendTo_field( SF[-1], TDS_fields.SideF, 'referenceUnit' )
+
+		FT1 = {	'Fu':Fu[-1],
+				'Fs':Fs[-1],
+				'Fd':Fd[-1],
+				'Tu':Tu[-1],
+				'Ts':Ts[-1],
+				'Td':Td[-1]	 }
+
+		if i>-numofC:
+			if SO[i-1]<=0:
+				MDLims = ( MD[i-1]+PL/2, MD[i]-PL/2 )
+				calculate_TDS_for_uncentralizedStage(self, stage, FT1=FT1, MDLims=MDLims, centralizedStage=True )
+				Tu.append( TDS_fields.Torque_u[-1] )
+				Ts.append( TDS_fields.Torque_s[-1] )
+				Td.append( TDS_fields.Torque_d[-1] )
+				Fu.append( TDS_fields.Drag_u[-1] )
+				Fs.append( TDS_fields.Drag_s[-1] )
+				Fd.append( TDS_fields.Drag_d[-1] )
+		else:
+			MDLims = ( stageTopMD, MD[i]-PL/2 )
+			calculate_TDS_for_uncentralizedStage(self, stage, FT1=FT1, MDLims=MDLims, centralizedStage=True )
+
 
 
 class WellboreInnerStageDataItem( dict ):
