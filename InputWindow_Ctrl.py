@@ -159,12 +159,14 @@ class Main_InputWindow(Ui_InputWindow):
 		wf.setup_s3CentralizerProperties_tableWidget(self,'A')
 		wf.setup_s3CentralizerProperties_tableWidget(self,'B')
 		wf.setup_s3CentralizerProperties_tableWidget(self,'C')
-		wf.setup_s3CentralizerRunningForce_tableWidget(self,'A')
-		wf.setup_s3CentralizerRunningForce_tableWidget(self,'B')
-		wf.setup_s3CentralizerRunningForce_tableWidget(self,'C')
+		#wf.setup_s3CentralizerRunningForce_tableWidget(self,'A')
+		#wf.setup_s3CentralizerRunningForce_tableWidget(self,'B')
+		#wf.setup_s3CentralizerRunningForce_tableWidget(self,'C')
 		wf.setup_s3CentralizerLocation_tableWidget(self,'A')
 		wf.setup_s3CentralizerLocation_tableWidget(self,'B')
 		wf.setup_s3CentralizerLocation_tableWidget(self,'C')
+		tdsf.s4Settings_tableWidget()
+		tdsf.s4TorqueDragSideforce_tableWidget()
 
 		self.wellboreOuterStageDataIsUpdatable = True
 		self.wellboreInnerStageDataIsUpdatable = True
@@ -519,13 +521,7 @@ class Main_InputWindow(Ui_InputWindow):
 		V = cu.PasteToCells_action(self.s4Settings_tableWidget)
 		self.s4Settings_tableWidget.addAction(V)
 
-		self.s4Settings_fields = mdl.get_s4Settings_fields()
-		for field in self.s4Settings_fields:
-			item = QtGui.QTableWidgetItem()
-			self.s4Settings_tableWidget.setVerticalHeaderItem(field.pos, item)
-			item.setText( cu.extend_text( field.headerName, 40 ) )
-			item = cu.TableWidgetFieldItem( field, False )
-			self.s4Settings_tableWidget.setItem(field.pos, 0, item)
+		self.setup_s4Settings_tableWidget()
 
 		def auxiliar_function(item):
 			item.field.clear()
@@ -538,6 +534,17 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s4Settings_tableWidget.itemChanged.connect(update_through_itemChange)
 
 
+	def setup_s4Settings_tableWidget(self):
+
+		self.s4Settings_fields = mdl.get_s4Settings_fields()
+		for field in self.s4Settings_fields:
+			item = QtGui.QTableWidgetItem()
+			self.s4Settings_tableWidget.setVerticalHeaderItem(field.pos, item)
+			item.setText( cu.extend_text( field.headerName, 40 ) )
+			item = cu.TableWidgetFieldItem( field, False )
+			self.s4Settings_tableWidget.setItem(field.pos, 0, item)
+
+
 	def __init__s4TorqueDragSideforce_tableWidget(self):
 		
 		self.s4TorqueDragSideforce_tableWidget.parent = self
@@ -546,6 +553,16 @@ class Main_InputWindow(Ui_InputWindow):
 		C = cu.CopySelectedCells_action(self.s4TorqueDragSideforce_tableWidget)
 		self.s4TorqueDragSideforce_tableWidget.addAction(C)
 		
+		self.setup_s4TorqueDragSideforce_tableWidget()
+
+		select_row = lambda r,c : cu.select_tableWidgetRow(self.s4TorqueDragSideforce_tableWidget,r)
+		self.s4TorqueDragSideforce_tableWidget.cellPressed.connect(select_row)
+
+		self.s4TorqueDragSideforce_tableWidget.resizeColumnsToContents()
+
+
+	def setup_s4TorqueDragSideforce_tableWidget(self):
+
 		self.s4TorqueDragSideforce_fields = mdl.get_s4TorqueDragSideforce_fields()
 		for size,field in zip([20,20,20,20,20,20,20,20,20], self.s4TorqueDragSideforce_fields):
 			item = self.s4TorqueDragSideforce_tableWidget.horizontalHeaderItem( field.pos )
@@ -555,12 +572,7 @@ class Main_InputWindow(Ui_InputWindow):
 				item = cu.TableWidgetFieldItem( field, i%2==0 )
 				self.s4TorqueDragSideforce_tableWidget.setItem(i, field.pos, item)
 
-		select_row = lambda r,c : cu.select_tableWidgetRow(self.s4TorqueDragSideforce_tableWidget,r)
-		self.s4TorqueDragSideforce_tableWidget.cellPressed.connect(select_row)
-
-		self.s4TorqueDragSideforce_tableWidget.resizeColumnsToContents()
-
-
+"""
 def main():
 	app = QtGui.QApplication([])
 	window = QtGui.QMainWindow()
@@ -573,3 +585,4 @@ def main():
 
 if __name__ == "__main__":
 	main()
+"""

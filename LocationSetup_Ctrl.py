@@ -371,7 +371,6 @@ class Main_LocationSetup(Ui_LocationSetup):
 				cu.sleep(0.2)
 				del self.lsSOVisualization_graphicsView.axes.lines[-1]
 				self.lsSOVisualization_graphicsView.draw()
-
 		
 		else:
 			self.lsCaliperMap_graphicsView.draw()

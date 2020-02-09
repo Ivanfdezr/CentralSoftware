@@ -160,7 +160,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 
 		#if self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields']!=None:
 		#	for MD in self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields'].MD:
-		#		self.choose_MDlocation(MD)
+		#		self.choose_MDlocation(MD, singleLocating=True)
 
 		self.parent.msg_label.setText( 'Finish' )
 		cu.sleep(0.20)
@@ -246,8 +246,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		self.ssCentralizerLocations_fields.dsSOatC.clear()
 		self.ssCentralizerLocations_fields.dsSOatM.clear()
 		self.ssCentralizerLocations_fields.dsClatC.clear()
-		self.ssCentralizerLocations_fields.dsClatM.clear()
-		
+		self.ssCentralizerLocations_fields.dsClatM.clear()		
 
 		r = self.ssCentralizerLocations_tableWidget.selectedRow
 		self.ssCentralizerLocations_tableWidget.removeRow(r)
@@ -351,7 +350,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 				item.set_text()
 
 
-	def choose_MDlocation(self, MD, overwrite=False):
+	def choose_MDlocation(self, MD, overwrite=False, singleLocating=False):
 
 		if MD>=self.min_MD and MD<=self.max_MD:
 
@@ -360,6 +359,11 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 				if r<len(self.ssCentralizerLocations_fields.MD):
 					del self.ssCentralizerLocations_fields.MD[r]
 
+			#if singleLocating:
+			#	mu.create_physicalValue_and_appendTo_field( MD, self.ssCentralizerLocations_fields.MD )
+			#	MD = self.ssCentralizerLocations_fields.MD[-1]
+			#	self.ssCentralizerLocations_fields.MD.sort()
+			#else:
 			MD = mdl.set_newSpacedLocations_under_MD_with_variations(self, MD)
 
 			self.ssCentralizerLocations_fields.EW.clear()

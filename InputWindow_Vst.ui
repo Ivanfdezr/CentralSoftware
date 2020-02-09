@@ -2176,7 +2176,7 @@ p, li { white-space: pre-wrap; }
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_10">
         <attribute name="title">
@@ -2214,7 +2214,7 @@ p, li { white-space: pre-wrap; }
            <x>14</x>
            <y>21</y>
            <width>371</width>
-           <height>341</height>
+           <height>332</height>
           </rect>
          </property>
          <property name="font">

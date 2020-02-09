@@ -947,7 +947,7 @@ def calculate_TDS_for_centralizedStage(self, stage ):
 	Fs = [ TDS_fields.Drag_s[-1] ]
 	Fd = [ TDS_fields.Drag_d[-1] ]
 
-	for i in range(-1,-numofC,-1):
+	for i in range(-1,-numofC-1,-1):
 		
 		floatedW = buoyancyFactor*L[i]*PW
 
