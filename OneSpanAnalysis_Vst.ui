@@ -202,7 +202,12 @@
     </row>
     <row>
      <property name="text">
-      <string>Centralized OD</string>
+      <string>Centralizer OD</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Centralizer ID</string>
      </property>
     </row>
     <row>
@@ -526,7 +531,12 @@
     </row>
     <row>
      <property name="text">
-      <string>Centralized OD</string>
+      <string>Centralizer OD</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Centralizer ID</string>
      </property>
     </row>
     <row>

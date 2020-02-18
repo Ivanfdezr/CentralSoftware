@@ -124,27 +124,32 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.lsWellbore3D_graphicsView.axes.set_ylabel( parent.s2DataSurvey_fields.NS.headerName )
 		self.lsWellbore3D_graphicsView.axes.set_zlabel( parent.s2DataSurvey_fields.TVD.headerName )
 
+		max_VD = max(parent.s2DataSurvey_fields.TVD)
+		min_VD = min(parent.s2DataSurvey_fields.TVD)
 		max_EW = max(parent.s2DataSurvey_fields.EW)
 		min_EW = min(parent.s2DataSurvey_fields.EW)
 		max_NS = max(parent.s2DataSurvey_fields.NS)
 		min_NS = min(parent.s2DataSurvey_fields.NS)
+		
+		ΔVD = max_VD - min_VD
 		ΔEW = max_EW - min_EW
 		ΔNS = max_NS - min_NS
 
-		if ΔEW>ΔNS:
-			self.lsWellbore3D_graphicsView.axes.set_xlim( min_EW, max_EW )
-			Δ = (ΔEW-ΔNS)/2
-			self.lsWellbore3D_graphicsView.axes.set_ylim( min_NS-Δ, max_NS+Δ )
-		elif ΔNS>ΔEW:
-			self.lsWellbore3D_graphicsView.axes.set_ylim( min_NS, max_NS )
-			Δ = (ΔNS-ΔEW)/2
-			self.lsWellbore3D_graphicsView.axes.set_xlim( min_EW-Δ, max_EW+Δ )
-		else:
-			self.lsWellbore3D_graphicsView.axes.set_xlim( min_EW, max_EW )
-			self.lsWellbore3D_graphicsView.axes.set_ylim( min_NS, max_NS )
+		Δ = max( [ΔVD, ΔEW, ΔNS] )
 
+		if ΔVD==Δ:
+			self.lsWellbore3D_graphicsView.axes.set_xlim( min_EW-(Δ-ΔEW)/2, max_EW+(Δ-ΔEW)/2 )
+			self.lsWellbore3D_graphicsView.axes.set_ylim( min_NS-(Δ-ΔNS)/2, max_NS+(Δ-ΔNS)/2 )
+			self.lsWellbore3D_graphicsView.axes.set_zlim( max_VD, min_VD )
+		elif ΔNS==Δ:
+			self.lsWellbore3D_graphicsView.axes.set_xlim( min_EW-(Δ-ΔEW)/2, max_EW+(Δ-ΔEW)/2 )
+			self.lsWellbore3D_graphicsView.axes.set_ylim( min_NS, max_NS )
+			self.lsWellbore3D_graphicsView.axes.set_zlim( max_VD+(Δ-ΔVD)/2, min_VD-(Δ-ΔVD)/2 )
+		elif ΔEW==Δ:
+			self.lsWellbore3D_graphicsView.axes.set_xlim( min_EW, max_EW )
+			self.lsWellbore3D_graphicsView.axes.set_ylim( min_NS-(Δ-ΔNS)/2, max_NS+(Δ-ΔNS)/2 )
+			self.lsWellbore3D_graphicsView.axes.set_zlim( max_VD+(Δ-ΔVD)/2, min_VD-(Δ-ΔVD)/2 )
 
-		self.lsWellbore3D_graphicsView.axes.set_zlim( max(VD), min(VD) )
 		self.lsWellbore3D_graphicsView.axes.mouse_init()
 		#zp.point3D_factory(self.s2TriDView_graphicsView.axes, dot, curve)
 		zp.zoom3D_factory( self.lsWellbore3D_graphicsView.axes, curve )

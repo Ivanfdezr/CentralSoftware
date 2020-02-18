@@ -25,6 +25,7 @@ def get_osaCent_fields():
 
 	RestForce      = Field(2018)
 	CentOD         = Field(2011)
+	CentID         = Field(2012)
 	IPOD           = Field(2009)
 	MinPassThru    = Field(2020)
 	RestForce.set_representation('Restoring force')
@@ -32,6 +33,7 @@ def get_osaCent_fields():
 	osaCent_fields = FieldList()
 	osaCent_fields.append( RestForce   )
 	osaCent_fields.append( CentOD      )
+	osaCent_fields.append( CentID      )
 	osaCent_fields.append( IPOD        )
 	osaCent_fields.append( MinPassThru )
 	
@@ -161,8 +163,13 @@ def get_casingDeflectionCurve(self):
 	ResFB = self.osaCentB_fields.ResF_SO67[0]
 	DA = self.osaCentA_fields.COD[0]
 	DB = self.osaCentB_fields.COD[0]
-	kA = ResFA/(DA/2-0.335*(DA-D)) # Con esto se calculan los coeficientes de los resortes ( 0.335=0.67/2 )
-	kB = ResFB/(DB/2-0.335*(DB-D))
+	dA = self.osaCentA_fields.CID[0]
+	dB = self.osaCentB_fields.CID[0]
+	#kA = ResFA/(DA/2-0.335*(DA-D)) # Con esto se calculan los coeficientes de los resortes ( 0.335=0.67/2 )
+	#kB = ResFB/(DB/2-0.335*(DB-D))
+
+	kA = 2*ResFA/( DA-dA-0.67*(dH-D) )
+	kB = 2*ResFB/( DB-dB-0.67*(dH-D) )
 
 	θ = np.pi*self.osaInclination_slider.sliderPosition()/180
 	I = np.pi/64*(D**4-d**4) # [Ref.3] Momento de inercia diferente a momento de inercia polar.
@@ -177,14 +184,21 @@ def get_casingDeflectionCurve(self):
 	yA = fC/kA
 	yB = fC/kB
 
+	print(fC,ResFA,kA,yA)
+
 	R = D/2
 	rH = dH/2
 	rA_min = R+(DA/2-R)*0.1
 	rB_min = R+(DB/2-R)*0.1
 	rA = (DA/2-yA) if (DA<dH) else (rH-yA)
 	rB = (DB/2-yB) if (DB<dH) else (rH-yB)
-	rA = rA_min if (rA<rA_min) else rA
-	rB = rB_min if (rB<rB_min) else rB
+
+	print(rA)
+
+	rA = rA_min if (rA<=rA_min) else rA
+	rB = rB_min if (rB<=rB_min) else rB
+
+	print(rA,rA_min,rH,R,DA)
 
 	α  = np.arctan( (rB-rA)/L )
 	Lα = L/np.cos(α)

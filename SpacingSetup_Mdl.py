@@ -178,6 +178,7 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 
 	ResF = {}
 	D = {}
+	d = {}
 	supports = 0
 
 	for x, c in self.centralizers.items():
@@ -186,12 +187,14 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 			ResF[x] = mu.referenceUnitConvert_value( ResF[x], ResF[x].unit )
 			D[x] = c['CentralizerProps'].COD[0]
 			D[x] = mu.referenceUnitConvert_value( D[x], D[x].unit )
+			d[x] = c['CentralizerProps'].IPOD[0]
+			d[x] = mu.referenceUnitConvert_value( d[x], d[x].unit )
 			supports+=1
 
 		elif c['Type']=='Rigid':
 			D[x] = c['CentralizerProps'].COD[0]
 			D[x] = mu.referenceUnitConvert_value( D[x], D[x].unit )
-			supports+=c['CentralizerBase'].Blades[0]
+			supports+=1#c['CentralizerBase'].Blades[0]
 
 	buoyancyFactor = mu.calculate_buoyancyFactor( OD=PD, ID=Pd, ρs=ρs, ρe=ρe, ρi=ρi )
 	PW *= buoyancyFactor
@@ -273,7 +276,8 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 
 			if self.centralizers[label]['Type']=='Bow Spring':
 				f = PW*L*np.sin(inc)/supports
-				resK = ResF[label]/(D[label]/2-0.335*(D[label]-PD))
+				resK = 2*ResF[label]/( D[label]-d[label]-0.67*(Hd-PD) )
+
 				y = f/resK
 				Rmin = PR+(R-PR)*0.1
 				R = (R-y) if (R<Hr) else (Hr-y)

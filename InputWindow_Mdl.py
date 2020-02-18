@@ -143,6 +143,7 @@ def get_s3CentralizerProperties_fields():
 	s3CentralizerProperties_fields = FieldList()
 	s3CentralizerProperties_fields.append( ProdNum     )
 	s3CentralizerProperties_fields.append( COD         )
+	#s3CentralizerProperties_fields.append( CID         )
 	s3CentralizerProperties_fields.append( IPOD        )
 	s3CentralizerProperties_fields.append( Length      )
 	s3CentralizerProperties_fields.append( FF          )
@@ -514,7 +515,7 @@ def calculate_axialForce_field(self):
 	MD_max = mu.referenceUnitConvert_value( MD_array[-1], self.s2DataSurvey_fields.MD.unit )
 	del MD_array
 
-	MDs = np.linspace(MD_min, MD_max, 1000)
+	MDs = np.linspace(MD_min, MD_max, 100)
 	cosIncs = []
 
 	for MD in MDs:

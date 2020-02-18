@@ -144,7 +144,7 @@ def clear_tableWidgetRow(tableWidget):
 	
 
 def select_tableWidgetRow(tableWidget, row):
-	tableWidget.selectRow(row)
+	#tableWidget.selectRow(row)
 	tableWidget.selectedRow = row
 
 
