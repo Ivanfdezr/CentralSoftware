@@ -142,16 +142,15 @@ def draw_survey_plots( self ):
 	self.s2TriDView_graphicsView.axes.clear()
 	self.s2Dogleg_graphicsView.axes.clear()
 
-	self.s2SectionView_graphicsView.axes.plot( self.s2DataSurvey_fields.HD, self.s2DataSurvey_fields.TVD )
-	if self.ASCComplements: self.s2SectionView_graphicsView.axes.plot( self.ASCComplements.HD, self.ASCComplements.TVD )
+	color='C1' if self.ASCComplements else 'C0'
+	self.s2SectionView_graphicsView.axes.plot( self.s2DataSurvey_fields.HD, self.s2DataSurvey_fields.TVD, color=color )
 	self.s2SectionView_graphicsView.axes.set_xlabel( self.s2DataSurvey_fields.HD.headerName )
 	self.s2SectionView_graphicsView.axes.set_ylabel( self.s2DataSurvey_fields.TVD.headerName )
 	self.s2SectionView_graphicsView.axes.set_ylim( max(self.s2DataSurvey_fields.TVD), min(self.s2DataSurvey_fields.TVD) )
 	self.s2SectionView_graphicsView.axes.grid()
 	self.s2SectionView_graphicsView.draw()
 	
-	self.s2PlanView_graphicsView.axes.plot( self.s2DataSurvey_fields.EW, self.s2DataSurvey_fields.NS )
-	if self.ASCComplements: self.s2PlanView_graphicsView.axes.plot( self.ASCComplements.EW, self.ASCComplements.NS )
+	self.s2PlanView_graphicsView.axes.plot( self.s2DataSurvey_fields.EW, self.s2DataSurvey_fields.NS, color=color )
 	self.s2PlanView_graphicsView.axes.set_xlabel( self.s2DataSurvey_fields.EW.headerName )
 	self.s2PlanView_graphicsView.axes.set_ylabel( self.s2DataSurvey_fields.NS.headerName )
 	self.s2PlanView_graphicsView.axes.grid()
@@ -165,9 +164,8 @@ def draw_survey_plots( self ):
 	##self.s2TriDView_graphicsView.axes.plot_trisurf(X,Y,Z, triangles=triangles, cmap=pu.cm.copper)
 	##self.s2TriDView_graphicsView.axes.plot(X,Y,Z,'.',markersize=2)
 
-	curve, = self.s2TriDView_graphicsView.axes.plot( self.s2DataSurvey_fields.EW, self.s2DataSurvey_fields.NS, self.s2DataSurvey_fields.TVD )
+	curve, = self.s2TriDView_graphicsView.axes.plot( self.s2DataSurvey_fields.EW, self.s2DataSurvey_fields.NS, self.s2DataSurvey_fields.TVD, color=color )
 	#dot,   = self.s2TriDView_graphicsView.axes.plot( [0],[0],[0],'bo' )
-	if self.ASCComplements: self.s2TriDView_graphicsView.axes.plot( self.ASCComplements.EW, self.ASCComplements.NS, self.ASCComplements.TVD )
 	self.s2TriDView_graphicsView.axes.set_xlabel( self.s2DataSurvey_fields.EW.headerName )
 	self.s2TriDView_graphicsView.axes.set_ylabel( self.s2DataSurvey_fields.NS.headerName )
 	self.s2TriDView_graphicsView.axes.set_zlabel( self.s2DataSurvey_fields.TVD.headerName )
@@ -201,8 +199,7 @@ def draw_survey_plots( self ):
 	zp.zoom3D_factory( self.s2TriDView_graphicsView.axes, curve )
 	self.s2TriDView_graphicsView.draw()
 	
-	self.s2Dogleg_graphicsView.axes.plot( self.s2DataSurvey_fields.DL, self.s2DataSurvey_fields.MD )
-	if self.ASCComplements: self.s2Dogleg_graphicsView.axes.plot( self.ASCComplements.DL, self.ASCComplements.MD )
+	self.s2Dogleg_graphicsView.axes.plot( self.s2DataSurvey_fields.DL, self.s2DataSurvey_fields.MD, color=color )
 	self.s2Dogleg_graphicsView.axes.set_xlabel( self.s2DataSurvey_fields.DL.headerName )
 	self.s2Dogleg_graphicsView.axes.set_ylabel( self.s2DataSurvey_fields.MD.headerName )
 	self.s2Dogleg_graphicsView.axes.set_ylim( max(self.s2DataSurvey_fields.MD), min(self.s2DataSurvey_fields.MD) )
