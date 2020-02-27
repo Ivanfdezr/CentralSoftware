@@ -302,20 +302,93 @@ def get_s4TorqueDragSideforce_fields():
 	return s4TorqueDragSideforce_fields
 
 
-def calculate_ASCComplements( fields, tortuosity=None ):
+def calculate_MCMComplements( fields, KOP, tortuosity=None ):
+
+	# Equation Reference:
+	#	Farah Omar Farah. Directional well design, rajectory and survey calculations, with a case study in Fiale, Asal Rift, Djibouti.
+	#	United Nations University, Iceland, Reports 2013 Number 27.
+
+	MD  = np.array( fields.MD.referenceUnitConvert() )
+	Inc = np.array( fields.Inc.referenceUnitConvert() )
+	Azi = np.array( fields.Azi.referenceUnitConvert() )
+
+	θ = np.arccos( np.cos(Inc[1:])*np.cos(Inc[:-1]) + np.sin(Inc[1:])*np.sin(Inc[:-1])*np.cos(Azi[1:]-Azi[:-1]))
+	RF = 2/θ*np.tan(θ/2)
+
+	ΔMD  = MD[1:]-MD[:-1]
+	ΔEW  = ΔMD/2*( np.sin(I[:-1])*np.sin(Azi[:-1]) + np.sin(I[1:])*np.sin(Azi[1:]) )*RF
+	ΔNS  = ΔMD/2*( np.sin(I[:-1])*np.cos(Azi[:-1]) + np.sin(I[1:])*np.cos(Azi[1:]) )*RF
+	ΔTVD = ΔMD/2*( np.cos(I[:-1]) + np.cos(I[1:]) )*RF
+	ΔHD  = ΔMD/2*( np.sin(I[:-1]) + np.sin(I[1:]) )*RF
+	DLS  = θ/ΔMD
+
+	ΔY = np.array( [ΔEW, ΔNS, ΔTVD, ΔHD] )
+
+	Y = [np.array([0.0, 0.0, 0.0, 0.0])]
+	
+	for i in range(ΔY.shape[1]):
+		Y.append( Y[-1] + ΔY[:,i] )
+
+	for Ei,Ni,Vi,Hi in Y:
+		fields.EW.append( mu.physicalValue(Ei, fields.EW.referenceUnit ) )
+		fields.NS.append( mu.physicalValue(Ni, fields.NS.referenceUnit ) )
+		fields.TVD.append( mu.physicalValue(Vi, fields.TVD.referenceUnit ) )
+		fields.HD.append( mu.physicalValue(Hi, fields.HD.referenceUnit ) )
+
+	fields.DL.append( mu.physicalValue(0, fields.DL.referenceUnit ) )
+	for dl in DL:
+		fields.DL.append( mu.physicalValue(dl, fields.DL.referenceUnit ) )
+
+	fields.MD.inverseReferenceUnitConvert()
+	fields.Inc.inverseReferenceUnitConvert()
+	fields.Azi.inverseReferenceUnitConvert()
+	fields.EW.inverseReferenceUnitConvert()
+	fields.NS.inverseReferenceUnitConvert()
+	fields.TVD.inverseReferenceUnitConvert()
+	fields.HD.inverseReferenceUnitConvert()
+	fields.DL.inverseReferenceUnitConvert()
+
+
+
+def calculate_ASCComplements( fields, KOP, tortuosity=None ):
 
 	# Algorithm Reference:
 	# 	Mahmoud F. Abughaban et al. Advanced Trajectory Computational Model Improves Calculated Borehole Positioning, Tortuosity and Rugosity.
 	# 	IADC/SPE-178796-MS (2016).
 
+	PL = 480 # inches
+
 	x  = np.array( fields.MD.referenceUnitConvert() )
 	In = np.array( fields.Inc.referenceUnitConvert() )
 	Az = np.array( fields.Azi.referenceUnitConvert() )
+
+	ext = {}
+	for i in range(len(x)):
+		if x[i]<KOP:
+			if (x[i+1]-x[i])>=3*PL:
+				print(i,x[i],x[i+1],KOP)
+				ext[i+1] = np.arange(x[i],x[i+1],PL)[1:]
+		else:
+			break
+
+	K = list(ext.keys())
+	K.sort()
+	K.reverse()
+	for k in K:
+		l = len(ext[k])
+		print(l,k,ext[k])
+		x  = np.insert(x,k,ext[k])
+		In = np.insert(In,k,np.zeros(l))
+		Az = np.insert(Az,k,np.zeros(l))
 
 	lE = np.sin(In)*np.sin(Az)
 	lN = np.sin(In)*np.cos(Az)
 	lV = np.cos(In)
 	lH = np.sin(In)
+
+	#θ = np.arccos( np.cos(In[1:])*np.cos(In[:-1]) + np.sin(In[1:])*np.sin(In[:-1])*np.cos(Az[1:]-Az[:-1]))
+	#ΔMD  = x[1:]-x[:-1]
+	#DLS  = θ/ΔMD
 
 	l = np.array(list(zip(lE,lN,lV,lH)))
 	h = np.array(x[1:]-x[:-1])
@@ -391,11 +464,15 @@ def calculate_ASCComplements( fields, tortuosity=None ):
 	T  = lambda i,X: A[i] + (X-x[i])*B[i] + (X-x[i])**2*C[i] + (X-x[i])**3*D[i]
 	sT = lambda i,X: (X-x[i])*A[i] + (X-x[i])**2/2*B[i] + (X-x[i])**3/3*C[i] + (X-x[i])**4/4*D[i]
 
-	for Ei,Ni,Vi,Hi in Y:
+	fields.clear_content()
+	for i,(Ei,Ni,Vi,Hi) in enumerate(Y):
+		fields.MD.append( mu.physicalValue(x[i], fields.MD.referenceUnit ) )
+		fields.Inc.append( mu.physicalValue(In[i], fields.Inc.referenceUnit ) )
+		fields.Azi.append( mu.physicalValue(Az[i], fields.Azi.referenceUnit ) )
 		fields.EW.append( mu.physicalValue(Ei, fields.EW.referenceUnit ) )
 		fields.NS.append( mu.physicalValue(Ni, fields.NS.referenceUnit ) )
 		fields.TVD.append( mu.physicalValue(Vi, fields.TVD.referenceUnit ) )
-		fields.HD.append( mu.physicalValue(Hi, fields.HD.referenceUnit ) )
+		fields.HD.append( mu.physicalValue(Hi, fields.HD.referenceUnit ) )	
 
 	fields.MD.inverseReferenceUnitConvert()
 	fields.Inc.inverseReferenceUnitConvert()
@@ -441,6 +518,7 @@ def calculate_ASCComplements( fields, tortuosity=None ):
 
 		for i,Yi in enumerate(Y[:-1]):
 			value = mu.physicalValue( la.norm(dT(i,x[i])[:-1]), fields.DL.referenceUnit )
+			#value = mu.physicalValue( DLS[i], fields.DL.referenceUnit )
 			fields.DL.append( value )
 			X_ = np.linspace( x[i], x[i+1], np.floor(x[i+1]-x[i])/dx )[:-1]
 			if len(X_)==0:
@@ -452,7 +530,11 @@ def calculate_ASCComplements( fields, tortuosity=None ):
 				D2YX = dT(i,X)
 
 				tangentVector = T(i,X)
-				enVector = np.array([tangentVector[1],-tangentVector[0],0,0])
+				verticalVector = np.array([0.0,0.0,1.0,0.0])
+				if np.allclose( tangentVector, verticalVector, atol=1e-2 ):
+					enVector = np.array([1.0,0.0,0.0,0.0])
+				else:
+					enVector = np.array([tangentVector[1],-tangentVector[0],0.0,0.0])
 
 				enSize = la.norm(enVector)
 				if enSize: enVector = enVector/enSize
@@ -479,6 +561,7 @@ def calculate_ASCComplements( fields, tortuosity=None ):
 				DL.append( value )
 
 		value = mu.physicalValue( la.norm(dT(i,x[i+1])[:-1]), fields.DL.referenceUnit )
+		#value = mu.physicalValue( DLS[i], fields.DL.referenceUnit )
 		fields.DL.append( value )
 		fields.DL.inverseReferenceUnitConvert()
 		MD.inverseReferenceUnitConvert()

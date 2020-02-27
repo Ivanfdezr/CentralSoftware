@@ -3,7 +3,7 @@
 -	Copy and Paste utility (check tables).
 -!	Save plots as png when windows is completed.
 -!	Save tables as csv when windows is completed.
--	Waiting cursor-icon
+-x	Waiting cursor-icon
 -x	Menu: "insert pipe" @ innerstages_table
 -	Error dialog due to negative length @ innerstages_table
 -	'Insert' pipe functionality @ TDB
@@ -19,7 +19,7 @@
 -	Seek for improvements in scrolling controls response
 -	Conversion functionality (no important)
 -x	Increase number of rows in location tables @ wellbore
--	Unlock location table for "by spacing"
+-x	Unlock location table for "by spacing"
 -x	Implementation of main.
 -	Save/Open functionality (very important)
 -!	Installation stuffs / DB installation (very important)
@@ -28,11 +28,10 @@
 -	Insert tip to dbs headers
 -	Centralizer CID instead PID @OSA
 -	Manage frictions
--	Change DL for cos(a1-a2) implementation
 -	Insert row @ Survey
 -	MD limits validation between Survey and Wellbore outer stages
 -	Does not tabula rassa after change Units
-
+-x	Poner tortuosity en surveyfields
 
 
 

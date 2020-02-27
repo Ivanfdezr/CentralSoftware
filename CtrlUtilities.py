@@ -1,6 +1,20 @@
 from PyQt4 import QtCore, QtGui
 import MdlUtilities as mdl
 import re, time, sys
+from functools import wraps
+
+def waiting_effects(function):
+	@wraps(function)
+	def wrap_function(*args, **kwargs):
+		QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+		try:
+			function(*args, **kwargs)
+		except Exception as e:
+			raise e
+			print("Error {}".format(e.args[0]))
+		finally:
+			QtGui.QApplication.restoreOverrideCursor()
+	return wrap_function
 
 
 def sleep(seconds):

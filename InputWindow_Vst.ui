@@ -45,7 +45,7 @@ p, li { white-space: pre-wrap; }
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <property name="iconSize">
      <size>
@@ -252,20 +252,6 @@ p, li { white-space: pre-wrap; }
         </item>
        </layout>
       </widget>
-      <widget class="QToolButton" name="s1DateUpdate_toolButton">
-       <property name="geometry">
-        <rect>
-         <x>430</x>
-         <y>55</y>
-         <width>21</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>iconos/edit-redo.png</normaloff>iconos/edit-redo.png</iconset>
-       </property>
-      </widget>
       <widget class="QWidget" name="formLayoutWidget_3">
        <property name="geometry">
         <rect>
@@ -446,34 +432,6 @@ p, li { white-space: pre-wrap; }
          </item>
         </layout>
        </widget>
-       <widget class="QPushButton" name="s2Up_pushButton">
-        <property name="geometry">
-         <rect>
-          <x>920</x>
-          <y>390</y>
-          <width>31</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>iconos/arrow-up-double.png</normaloff>iconos/arrow-up-double.png</iconset>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="s2Down_pushButton">
-        <property name="geometry">
-         <rect>
-          <x>920</x>
-          <y>427</y>
-          <width>31</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>iconos/arrow-down-double.png</normaloff>iconos/arrow-down-double.png</iconset>
-        </property>
-       </widget>
        <widget class="QGroupBox" name="s2SurveyTortuosity_groupBox">
         <property name="enabled">
          <bool>false</bool>
@@ -489,34 +447,6 @@ p, li { white-space: pre-wrap; }
         <property name="title">
          <string>Survey tortuosity</string>
         </property>
-        <widget class="QPushButton" name="s2TortuosityUpdate_pushButton">
-         <property name="geometry">
-          <rect>
-           <x>840</x>
-           <y>50</y>
-           <width>31</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>iconos/edit-redo.png</normaloff>iconos/edit-redo.png</iconset>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="s2TortuosityInfo_pushButton">
-         <property name="geometry">
-          <rect>
-           <x>840</x>
-           <y>190</y>
-           <width>31</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>iconos/documentinfo.png</normaloff>iconos/documentinfo.png</iconset>
-         </property>
-        </widget>
         <widget class="QTableWidget" name="s2SurveyTortuosity_tableWidget">
          <property name="geometry">
           <rect>
@@ -1790,7 +1720,7 @@ p, li { white-space: pre-wrap; }
         <property name="geometry">
          <rect>
           <x>930</x>
-          <y>190</y>
+          <y>240</y>
           <width>221</width>
           <height>31</height>
          </rect>
@@ -1801,6 +1731,66 @@ p, li { white-space: pre-wrap; }
         <property name="checked">
          <bool>false</bool>
         </property>
+       </widget>
+       <widget class="QTableWidget" name="s2KOP_tableWidget">
+        <property name="geometry">
+         <rect>
+          <x>930</x>
+          <y>180</y>
+          <width>231</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <property name="sortingEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="columnCount">
+         <number>1</number>
+        </property>
+        <attribute name="horizontalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="horizontalHeaderCascadingSectionResizes">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>140</number>
+        </attribute>
+        <attribute name="horizontalHeaderHighlightSections">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>30</number>
+        </attribute>
+        <attribute name="verticalHeaderMinimumSectionSize">
+         <number>28</number>
+        </attribute>
+        <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+         <bool>false</bool>
+        </attribute>
+        <row>
+         <property name="text">
+          <string>KOP [unit]</string>
+         </property>
+        </row>
+        <column/>
        </widget>
       </widget>
       <widget class="QWidget" name="tab_6">
