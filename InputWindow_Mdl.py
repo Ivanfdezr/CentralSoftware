@@ -366,7 +366,6 @@ def calculate_ASCComplements( fields, KOP, tortuosity=None ):
 	for i in range(len(x)):
 		if x[i]<KOP:
 			if (x[i+1]-x[i])>=3*PL:
-				print(i,x[i],x[i+1],KOP)
 				ext[i+1] = np.arange(x[i],x[i+1],PL)[1:]
 		else:
 			break
@@ -376,7 +375,6 @@ def calculate_ASCComplements( fields, KOP, tortuosity=None ):
 	K.reverse()
 	for k in K:
 		l = len(ext[k])
-		print(l,k,ext[k])
 		x  = np.insert(x,k,ext[k])
 		In = np.insert(In,k,np.zeros(l))
 		Az = np.insert(Az,k,np.zeros(l))
