@@ -41,6 +41,13 @@ def get_s2DataSurvey_fields():
 	return s2DataSurvey_fields
 
 
+def get_s2KOP_field():
+
+	s2KOP_field = Field(2001)
+	s2KOP_field.set_representation('KOP')
+	return s2KOP_field
+
+
 def get_s3Forces_fields():
 
 	AxF  = Field(2075, altBg=True, altFg=True)
@@ -358,6 +365,7 @@ def calculate_ASCComplements( fields, KOP, tortuosity=None ):
 
 	PL = 480 # inches
 
+	KOP = mu.referenceUnitConvert_value( KOP, KOP.unit )
 	x  = np.array( fields.MD.referenceUnitConvert() )
 	In = np.array( fields.Inc.referenceUnitConvert() )
 	Az = np.array( fields.Azi.referenceUnitConvert() )

@@ -33,6 +33,14 @@ def set_survey_to_table(self):
 	del SI
 
 
+def remove_all(self):
+
+	self.s2DataSurvey_fields.clear_content()
+	for i in range(self.s2DataSurvey_tableWidget.rowCount()):
+		for field in self.s2DataSurvey_fields:
+			self.s2DataSurvey_tableWidget.item(i, field.pos).set_text()
+
+
 def get_tortuosity_data(self):
 
 	self.s2SurveyTortuosity_fields.clear_content()
@@ -78,7 +86,13 @@ def get_tortuosity_data(self):
 @cu.waiting_effects
 def set_survey_outcomes(self):
 	
-	self.s2DataSurvey_fields.clear_content()	
+	self.s2DataSurvey_fields.clear_content()
+	KOP = self.s2KOP_tableWidget.item(0,0).realValue
+	if mu.isNoneEntry( KOP ):
+		raise(cu.MandatoryError)
+	if KOP<=0.0:
+		raise(cu.MandatoryError)
+
 	i=0
 	while True:
 	
@@ -101,14 +115,14 @@ def set_survey_outcomes(self):
 		
 		try:
 			self.tortuosity_data = get_tortuosity_data(self)
-			self.ASCComplements, self.dT, self.T, self.sT = mdl.calculate_ASCComplements( self.s2DataSurvey_fields, 120472.4, self.tortuosity_data )
+			self.ASCComplements, self.dT, self.T, self.sT = mdl.calculate_ASCComplements( self.s2DataSurvey_fields, KOP, self.tortuosity_data )
 		except cu.MandatoryError:
 			msg = "MD Interval value is non-assigned or incorrect. Can not proceed."
 			QtGui.QMessageBox.critical(self.s2TortuosityInterval_tableWidget, 'Error', msg)
 			return
 
 	else:
-		self.ASCComplements, self.dT, self.T, self.sT = mdl.calculate_ASCComplements( self.s2DataSurvey_fields, 120472.4 )
+		self.ASCComplements, self.dT, self.T, self.sT = mdl.calculate_ASCComplements( self.s2DataSurvey_fields, KOP )
 	
 	for i in range(self.s2DataSurvey_tableWidget.rowCount()):
 		try:

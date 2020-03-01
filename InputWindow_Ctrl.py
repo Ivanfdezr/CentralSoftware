@@ -31,6 +31,7 @@ class Main_InputWindow(Ui_InputWindow):
 
 		self.__init__s2DataSurvey_tableWidget()
 		self.__init__s2SurveyTortuosity_tableWidget()
+		self.__init__s2KOP_tableWidget()
 		self.__init__s2TortuosityInterval_tableWidget()
 		self.__init__s3WellboreIntervals_tableWidget()
 		self.__init__s3PipeCentralizationStage_tableWidget()
@@ -58,6 +59,8 @@ class Main_InputWindow(Ui_InputWindow):
 
 		set_survey_to_table = lambda: sf.set_survey_to_table(self)
 		self.s2Import_pushButton.clicked.connect(set_survey_to_table)
+		remove_all = lambda: sf.remove_all(self)
+		self.s2Remove_pushButton.clicked.connect(remove_all)
 		set_survey_outcomes = lambda: sf.set_survey_outcomes(self)
 		self.s2Calculate_pushButton.clicked.connect(set_survey_outcomes)
 		activate_SurveyTortuosity = lambda: self.s2SurveyTortuosity_groupBox.setDisabled( self.s2SurveyTortuosity_groupBox.isEnabled() )
@@ -239,6 +242,33 @@ class Main_InputWindow(Ui_InputWindow):
 			for i in range(self.s2DataSurvey_tableWidget.rowCount()):
 				item = cu.TableWidgetFieldItem( field, i%2==0 )
 				self.s2DataSurvey_tableWidget.setItem(i, field.pos, item)
+
+
+	def __init__s2KOP_tableWidget(self):
+		
+		self.s2KOP_tableWidget.parent = self
+		self.s2KOP_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		
+		C = cu.CopySelectedCells_action(self.s2KOP_tableWidget)
+		self.s2KOP_tableWidget.addAction(C)
+		
+		V = cu.PasteToCells_action(self.s2KOP_tableWidget)
+		self.s2KOP_tableWidget.addAction(V)
+		
+		self.setup_s2KOP_tableWidget()
+
+		select_row = lambda r,c : cu.select_tableWidgetRow(self.s2KOP_tableWidget,r)
+		self.s2KOP_tableWidget.cellPressed.connect(select_row)
+		self.s2KOP_tableWidget.itemChanged.connect(cu.update_fieldItem)
+
+
+	def setup_s2KOP_tableWidget(self):
+
+		self.s2KOP_field = mdl.get_s2KOP_field()
+		item = self.s2KOP_tableWidget.verticalHeaderItem( 0 )
+		item.setText( self.s2KOP_field.headerName )
+		item = cu.TableWidgetFieldItem( self.s2KOP_field, True )
+		self.s2KOP_tableWidget.setItem(0, 0, item)
 
 
 	def __init__s2SurveyTortuosity_tableWidget(self):
