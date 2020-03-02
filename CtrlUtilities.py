@@ -155,6 +155,24 @@ def clear_tableWidgetRow(tableWidget):
 		item.alt_flags(False)
 
 	return row
+
+
+def remove_tableWidgetRow(tableWidget):
+
+	row = tableWidget.selectedRow
+	tableWidget.removeRow(row)
+
+
+def insert_tableWidgetRow(tableWidget, fields):
+
+	row = tableWidget.selectedRow
+	tableWidget.insertRow(row)
+
+	for field in fields:
+		item = TableWidgetFieldItem( field, row%2==0 )
+		tableWidget.setItem(row, field.pos, item)
+
+	return row
 	
 
 def select_tableWidgetRow(tableWidget, row):

@@ -184,6 +184,36 @@ def draw_survey_plots( self ):
 	self.s2TriDView_graphicsView.axes.set_ylabel( self.s2DataSurvey_fields.NS.headerName )
 	self.s2TriDView_graphicsView.axes.set_zlabel( self.s2DataSurvey_fields.TVD.headerName )
 
+	
+	max_VD = max(self.s2DataSurvey_fields.TVD)
+	min_VD = min(self.s2DataSurvey_fields.TVD)
+	max_EW = max(self.s2DataSurvey_fields.EW)
+	min_EW = min(self.s2DataSurvey_fields.EW)
+	max_NS = max(self.s2DataSurvey_fields.NS)
+	min_NS = min(self.s2DataSurvey_fields.NS)
+	
+	ΔVD = max_VD - min_VD
+	ΔEW = max_EW - min_EW
+	ΔNS = max_NS - min_NS
+
+	Δ = max( [ΔVD, ΔEW, ΔNS] )
+
+	if ΔVD==Δ:
+		self.s2TriDView_graphicsView.axes.set_xlim( min_EW-(Δ-ΔEW)/2, max_EW+(Δ-ΔEW)/2 )
+		self.s2TriDView_graphicsView.axes.set_ylim( min_NS-(Δ-ΔNS)/2, max_NS+(Δ-ΔNS)/2 )
+		self.s2TriDView_graphicsView.axes.set_zlim( max_VD, min_VD )
+	elif ΔNS==Δ:
+		self.s2TriDView_graphicsView.axes.set_xlim( min_EW-(Δ-ΔEW)/2, max_EW+(Δ-ΔEW)/2 )
+		self.s2TriDView_graphicsView.axes.set_ylim( min_NS, max_NS )
+		self.s2TriDView_graphicsView.axes.set_zlim( max_VD+(Δ-ΔVD)/2, min_VD-(Δ-ΔVD)/2 )
+	elif ΔEW==Δ:
+		self.s2TriDView_graphicsView.axes.set_xlim( min_EW, max_EW )
+		self.s2TriDView_graphicsView.axes.set_ylim( min_NS-(Δ-ΔNS)/2, max_NS+(Δ-ΔNS)/2 )
+		self.s2TriDView_graphicsView.axes.set_zlim( max_VD+(Δ-ΔVD)/2, min_VD-(Δ-ΔVD)/2 )
+
+
+
+	"""
 	max_EW = max(self.s2DataSurvey_fields.EW)
 	min_EW = min(self.s2DataSurvey_fields.EW)
 
@@ -205,14 +235,19 @@ def draw_survey_plots( self ):
 		self.s2TriDView_graphicsView.axes.set_xlim( min_EW, max_EW )
 		self.s2TriDView_graphicsView.axes.set_ylim( min_NS, max_NS )
 
-
 	self.s2TriDView_graphicsView.axes.set_zlim( max(self.s2DataSurvey_fields.TVD), min(self.s2DataSurvey_fields.TVD) )
+	"""
+
+
 	self.s2TriDView_graphicsView.axes.mouse_init()
 	zp = pu.ZoomPan()
 	#zp.point3D_factory(self.s2TriDView_graphicsView.axes, dot, curve)
 	zp.zoom3D_factory( self.s2TriDView_graphicsView.axes, curve )
 	self.s2TriDView_graphicsView.draw()
 	
+	zp.zoom2D_factory( self.s2Dogleg_graphicsView.axes )
+	zp.pan2D_factory( self.s2Dogleg_graphicsView.axes )
+
 	self.s2Dogleg_graphicsView.axes.plot( self.s2DataSurvey_fields.DL, self.s2DataSurvey_fields.MD, color=color )
 	self.s2Dogleg_graphicsView.axes.set_xlabel( self.s2DataSurvey_fields.DL.headerName )
 	self.s2Dogleg_graphicsView.axes.set_ylabel( self.s2DataSurvey_fields.MD.headerName )

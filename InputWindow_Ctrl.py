@@ -218,8 +218,16 @@ class Main_InputWindow(Ui_InputWindow):
 		V = cu.PasteToCells_action(self.s2DataSurvey_tableWidget)
 		self.s2DataSurvey_tableWidget.addAction(V)
 
+		insert_row = lambda: cu.insert_tableWidgetRow(self.s2DataSurvey_tableWidget, self.s2DataSurvey_fields)
+		I = cu.FunctionToWidget_action(self.s2DataSurvey_tableWidget, insert_row, "Insert above row")
+		self.s2DataSurvey_tableWidget.addAction(I)
+
+		remove_row = lambda: cu.remove_tableWidgetRow(self.s2DataSurvey_tableWidget)
+		R = cu.FunctionToWidget_action(self.s2DataSurvey_tableWidget, remove_row, "Remove row")
+		self.s2DataSurvey_tableWidget.addAction(R)
+
 		clear_row = lambda: cu.clear_tableWidgetRow(self.s2DataSurvey_tableWidget)
-		D = cu.FunctionToWidget_action(self.s2DataSurvey_tableWidget, clear_row, "Delete", 'Del')
+		D = cu.FunctionToWidget_action(self.s2DataSurvey_tableWidget, clear_row, "Clear row", 'Del')
 		self.s2DataSurvey_tableWidget.addAction(D)
 		
 		self.setup_s2DataSurvey_tableWidget()
