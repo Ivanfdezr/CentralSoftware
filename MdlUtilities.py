@@ -365,6 +365,7 @@ class Field( list ):
 		self.pos = None
 		self.id = fieldID
 		self.mandatory = mandatory
+		self._altFg_ = altFg
 
 		if substitutefieldID:
 			query = """ select f.abbreviation from fields f where f.fieldID = '{fieldID}' """.format(fieldID=substitutefieldID)			

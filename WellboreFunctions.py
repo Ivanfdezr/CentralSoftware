@@ -774,18 +774,29 @@ def open_TDB_dialog_for_outerStages(self):
 			self.s3WellboreIntervals_tableWidget.editItem(item)
 
 
-def set_row_as_free(self, description):
+def set_row_as_free(self): #, description):
 
 	row = self.s3WellboreIntervals_tableWidget.selectedRow
-	self.s3WellboreIntervals_tableWidget.item(row, 0).set_text( description )
+	#self.s3WellboreIntervals_tableWidget.item(row, 0).set_text( description )
 	
-	for column in [4,3,2,1]:
+	for column in [5,4,3,2,1,0]:
 		item = self.s3WellboreIntervals_tableWidget.item(row, column)
 		item.set_text()
 		item.alt_backgroundColor()
 		item.alt_flags()
 	
 	self.s3WellboreIntervals_tableWidget.editItem(item)
+
+
+def unlock_tableWidget(self):
+	
+	for row in range(self.s3WellboreIntervals_tableWidget.rowCount()):
+		for field in self.s3WellboreIntervals_fields:
+
+			item = self.s3WellboreIntervals_tableWidget.item(row, field.pos)
+			item.set_text()
+			item.alt_backgroundColor()
+			item.alt_flags()
 
 
 def adjust_Length_and_MD(self, item):

@@ -20,6 +20,13 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 		self.__init__CDBBowSpring_tableWidget()
 		self.__init__CDBRigid_tableWidget()
 		self.__init__CDBCasingOD_listWidget()
+
+		def export_centralizer():
+			if self.CDB_tabWidget.currentTabText == "Bow Spring":
+				self.export_centralizer(self.CDBBowSpring_tableWidget, self.CDBBowSpring_fields)
+			elif self.CDB_tabWidget.currentTabText == "Rigid":
+				self.export_centralizer(self.CDBRigid_tableWidget, self.CDBRigid_fields)
+		self.CDBAccept_pushButton.clicked.connect(export_centralizer)
 		
 		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 		dialog.exec_()

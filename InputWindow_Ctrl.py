@@ -359,17 +359,21 @@ class Main_InputWindow(Ui_InputWindow):
 		A = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, open_caliper_dialog, "Add caliper data")
 		self.s3WellboreIntervals_tableWidget.addAction(A)
 
-		set_row_as_freeCH = lambda: wf.set_row_as_free(self, 'Casing Hole')
-		F = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, set_row_as_freeCH, "Add as free CH")
+		set_row_as_freeCH = lambda: wf.set_row_as_free(self)#, 'Casing Hole')
+		F = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, set_row_as_freeCH, "Add as free stage")
 		self.s3WellboreIntervals_tableWidget.addAction(F)
 
-		set_row_as_freeOH = lambda: wf.set_row_as_free(self, 'Open Hole')
-		F = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, set_row_as_freeOH, "Add as free OH")
-		self.s3WellboreIntervals_tableWidget.addAction(F)
+		#set_row_as_freeOH = lambda: wf.set_row_as_free(self, 'Open Hole')
+		#F = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, set_row_as_freeOH, "Add as free OH")
+		#self.s3WellboreIntervals_tableWidget.addAction(F)
 
 		delete_outerStageObjects = lambda: wf.delete_outerStageObjects(self)
 		D = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, delete_outerStageObjects, "Delete stage", 'Del')
 		self.s3WellboreIntervals_tableWidget.addAction(D)
+
+		unlock_tableWidget = lambda: wf.unlock_tableWidget(self)
+		U = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, unlock_tableWidget, "Unlock all the table", 'Del')
+		self.s3WellboreIntervals_tableWidget.addAction(U)
 		
 		self.setup_s3WellboreIntervals_tableWidget()
 

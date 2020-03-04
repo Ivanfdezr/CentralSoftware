@@ -370,7 +370,7 @@ class Ui_InputWindow(object):
 		self.s3WellboreIntervals_tableWidget.setFrameShape(QtGui.QFrame.WinPanel)
 		self.s3WellboreIntervals_tableWidget.setEditTriggers(QtGui.QAbstractItemView.AnyKeyPressed|QtGui.QAbstractItemView.DoubleClicked|QtGui.QAbstractItemView.EditKeyPressed)
 		self.s3WellboreIntervals_tableWidget.setAlternatingRowColors(True)
-		self.s3WellboreIntervals_tableWidget.setRowCount(100)
+		self.s3WellboreIntervals_tableWidget.setRowCount(500)
 		self.s3WellboreIntervals_tableWidget.setObjectName(_fromUtf8("s3WellboreIntervals_tableWidget"))
 		self.s3WellboreIntervals_tableWidget.setColumnCount(6)
 		item = QtGui.QTableWidgetItem()

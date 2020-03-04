@@ -6,8 +6,8 @@
 -x	Waiting cursor-icon
 -x	Menu: "insert pipe" @ innerstages_table
 -	Error dialog due to negative length @ innerstages_table
--	'Insert' pipe functionality @ TDB
--	'Insert' centralizer functionality @ CDB
+-x	'Insert' pipe functionality @ TDB
+-x	'Insert' centralizer functionality @ CDB
 -x	Remove type-combo @ TDB and CDB
 -x	Remove Centralizer spacing limits
 -x	Delete Fluids-label subwindow
@@ -16,7 +16,6 @@
 -x	Remove rotational FF @ centralization properties
 -	Check calculations for SO: PL, midspan into caves.
 -x	Set default Restoring force value for rigid centralizers @ Span Analysis
--	Seek for improvements in scrolling controls response
 -	Conversion functionality (no important)
 -x	Increase number of rows in location tables @ wellbore
 -x	Unlock location table for "by spacing"
@@ -28,9 +27,8 @@
 -	Insert tip to dbs headers
 -	Centralizer CID instead PID @OSA
 -	Manage frictions
--	Insert row @ Survey
+-x	Insert row @ Survey
 -	MD limits validation between Survey and Wellbore outer stages
--	Does not tabula rassa after change Units
 -x	Poner tortuosity en surveyfields
 
 

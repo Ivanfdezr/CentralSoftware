@@ -14,6 +14,8 @@ class Main_TubularDatabase(Ui_TubularDatabase):
 		self.__init__TDBPipeOD_listWidget()
 		self.__init__TDB_tableWidget()
 		
+		self.TDBAccept_pushButton.clicked.connect( self.export_pipe )
+
 		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 		#
 		dialog.exec_()
