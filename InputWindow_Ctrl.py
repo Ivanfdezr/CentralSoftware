@@ -356,7 +356,11 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s3WellboreIntervals_tableWidget.addAction(A)
 
 		open_caliper_dialog = lambda: wf.open_caliper_dialog(self)
-		A = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, open_caliper_dialog, "Add caliper data")
+		A = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, open_caliper_dialog, "Import DR-CAL")
+		self.s3WellboreIntervals_tableWidget.addAction(A)
+
+		open_csv_dialog = lambda: wf.open_csv_dialog(self)
+		A = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, open_csv_dialog, "Insert CAL data")
 		self.s3WellboreIntervals_tableWidget.addAction(A)
 
 		set_row_as_freeCH = lambda: wf.set_row_as_free(self)#, 'Casing Hole')
@@ -371,9 +375,9 @@ class Main_InputWindow(Ui_InputWindow):
 		D = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, delete_outerStageObjects, "Delete stage", 'Del')
 		self.s3WellboreIntervals_tableWidget.addAction(D)
 
-		unlock_tableWidget = lambda: wf.unlock_tableWidget(self)
-		U = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, unlock_tableWidget, "Unlock all the table", 'Del')
-		self.s3WellboreIntervals_tableWidget.addAction(U)
+		#unlock_tableWidget = lambda: wf.unlock_tableWidget(self)
+		#U = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, unlock_tableWidget, "Unlock all the table", 'Del')
+		#self.s3WellboreIntervals_tableWidget.addAction(U)
 		
 		self.setup_s3WellboreIntervals_tableWidget()
 

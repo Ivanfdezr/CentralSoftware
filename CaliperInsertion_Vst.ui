@@ -28,6 +28,9 @@
    <property name="columnCount">
     <number>3</number>
    </property>
+   <attribute name="horizontalHeaderVisible">
+    <bool>true</bool>
+   </attribute>
    <row/>
    <row/>
    <row/>
@@ -1028,9 +1031,21 @@
    <row/>
    <row/>
    <row/>
-   <column/>
-   <column/>
-   <column/>
+   <column>
+    <property name="text">
+     <string>MD top</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>MD bottom</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Hole ID</string>
+    </property>
+   </column>
   </widget>
   <widget class="QPushButton" name="csvAccept_pushButton">
    <property name="geometry">

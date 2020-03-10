@@ -97,7 +97,7 @@ def get_s3WellboreIntervals_fields():
 	MDbot.set_abbreviation('MDbot')
 	MDtop.set_abbreviation('MDtop')
 	ID.set_representation('ID / <HID>')
-	Drift.set_representation('Drift / <BS>')
+	Drift.set_representation('Drift / BS')
 	MDbot.set_representation('bottom MD')
 	MDtop.set_representation('top MD')
 	s3WellboreIntervals_fields = FieldList()

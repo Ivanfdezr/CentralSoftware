@@ -376,13 +376,11 @@ class TableClipboard():
 			thecolumn = min(index.column() for index in self.selection)
 		
 			self.text = self.sys_clip.text()
-			print(self.text.__repr__())
 				
 			for i,line in enumerate(re.split('[\n\r]+',self.text)[:-1]):
 				for j,value in enumerate(re.split('\t',line)):
 					item = self.tableWidget.item(therow+i,thecolumn+j)
 					if item:
-						print('!!',therow+i,thecolumn+j,item.field._altFg_)
 						try:
 							if not item.field._altFg_:
 								item.set_text(str(value))

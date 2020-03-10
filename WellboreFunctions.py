@@ -2,6 +2,7 @@ from PyQt4 import QtCore, QtGui
 from TubularDatabase_Ctrl import Main_TubularDatabase
 from CentralizerDatabase_Ctrl import Main_CentralizerDatabase
 from CaliperImport_Ctrl import Main_CaliperImport
+from CaliperInsertion_Ctrl import Main_CaliperInsertion
 #from LocationSetup_Ctrl import Main_LocationSetup
 import LocationSetup_Ctrl as ls
 import SpacingSetup_Ctrl as ss
@@ -753,6 +754,34 @@ def open_caliper_dialog(self):
 
 
 @updateByBlock_currentWellboreOuterStageDataItem
+def open_csv_dialog(self):
+
+	dialog = QtGui.QDialog(self.s3WellboreIntervals_tableWidget)
+	CI = Main_CaliperInsertion(dialog)
+	if 'data' not in dir(CI): return
+
+	row = self.s3WellboreIntervals_tableWidget.selectedRow
+	self.currentWellboreOuterStageDataItem['CaliperData'] = {	'CAL_fields': [CI.csvCal_fields.HID], 
+																'MD_field': CI.csvCal_fields.MD,
+																'CALmax_array': CI.HID,
+																'MD_array': CI.MD 
+															}
+	for field in self.s3WellboreIntervals_fields:
+
+		item = self.s3WellboreIntervals_tableWidget.item(row, field.pos)
+
+		if field.abbreviation in CI.data:
+			value = CI.data[field.abbreviation]
+			item.set_text( value, value.unit )
+		else:
+			item.set_text()
+			item.alt_backgroundColor()
+			item.alt_flags()
+			self.s3WellboreIntervals_tableWidget.editItem(item)
+
+
+
+@updateByBlock_currentWellboreOuterStageDataItem
 def open_TDB_dialog_for_outerStages(self):
 	
 	dialog = QtGui.QDialog(self.s3WellboreIntervals_tableWidget)
@@ -786,17 +815,6 @@ def set_row_as_free(self): #, description):
 		item.alt_flags()
 	
 	self.s3WellboreIntervals_tableWidget.editItem(item)
-
-
-def unlock_tableWidget(self):
-	
-	for row in range(self.s3WellboreIntervals_tableWidget.rowCount()):
-		for field in self.s3WellboreIntervals_fields:
-
-			item = self.s3WellboreIntervals_tableWidget.item(row, field.pos)
-			item.set_text()
-			item.alt_backgroundColor()
-			item.alt_flags()
 
 
 def adjust_Length_and_MD(self, item):

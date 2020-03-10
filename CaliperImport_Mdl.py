@@ -17,14 +17,14 @@ def get_ciCaliperReport_fields():
 
 	Desc  = Field(2055, altBg=True, altFg=True)
 	mHID  = Field(2031, altBg=True, altFg=True)  #ID
-	mBS   = Field(2046, altBg=True, altFg=True)  #Drift
+	BS    = Field(2046, altBg=True, altFg=True)  #Drift
 	MDbot = Field(2001, altBg=True, altFg=True)
 	MDtop = Field(2001, altBg=True, altFg=True)
 	MDbot.set_abbreviation('MDbot')
 	MDtop.set_abbreviation('MDtop')
 	ciCaliperReport_fields = FieldList()
 	ciCaliperReport_fields.append( Desc  )
-	ciCaliperReport_fields.append( mBS   )
+	ciCaliperReport_fields.append( BS    )
 	ciCaliperReport_fields.append( mHID  )
 	ciCaliperReport_fields.append( MDtop )
 	ciCaliperReport_fields.append( MDbot )
