@@ -440,6 +440,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 
 			self.ssSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, 'C1', lw=2 )
 
+			"""
 			hsMD_alt = []
 			hsSO_alt = []
 			for k in range(2*len(self.ssCentralizerLocations_fields.hsMD)-1):
@@ -467,7 +468,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 			dsSO_int = mu.np.interp(hsMD_alt, dsMD_alt, dsSO_alt)
 
 			self.ssSOVisualization_graphicsView.axes.fill_betweenx( hsMD_alt, hsSO_alt, dsSO_int, alpha=0.5, color='C0')
-
+			"""
 
 			self.ssSOVisualization_graphicsView.axes.plot(	self.ssCentralizerLocations_fields.SOatC, 
 															self.ssCentralizerLocations_fields.MD, marker='o', color='C3', alpha=0.5, ls='' )

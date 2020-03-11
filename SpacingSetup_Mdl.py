@@ -213,12 +213,14 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 				L.append(l)
 			elif c['Type']=='Rigid':
 				so, cc, l = calculate_SO_per_centralizer(x)
-				SO += so*c['CentralizerBase'].Blades[0]/supports
-				Cc += cc*c['CentralizerBase'].Blades[0]/supports
+				SO += so/supports #*c['CentralizerBase'].Blades[0]/supports
+				Cc += cc/supports #*c['CentralizerBase'].Blades[0]/supports
 				L.append(l)
 		return SO, Cc, np.mean(L)
 		
 	for j, (MD1,inc) in enumerate(zip(locations,Inc)):
+
+		inc += 1e-12
 		i = j-1
 		k = j+1
 		if i==-1:

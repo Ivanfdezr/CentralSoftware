@@ -787,14 +787,20 @@ def get_inclination_and_azimuth_from_locations(self, locations):
 	Azi = []
 	for MD in locations:
 		T_values = get_ASCT_from_MD(self, MD)
-		inc = np.arccos( T_values[2] )
-		sinazi = T_values[0]/np.sin(inc)
-		cosazi = T_values[1]/np.sin(inc)
+		aux = 1.0 if np.isclose(T_values[2],1.0,rtol=1e-3,atol=0) else T_values[2]
+		inc = np.arccos( aux )
+		print( inc, T_values, aux )
 
-		if sinazi>=0:
-			azi = np.arccos( cosazi )
-		elif sinazi<0:
-			azi = 2*np.pi-np.arccos( cosazi )
+		if inc==0.0:
+			azi = 0.0
+		else:
+			sinazi = T_values[0]/np.sin(inc)
+			cosazi = T_values[1]/np.sin(inc)
+
+			if sinazi>=0:
+				azi = np.arccos( cosazi )
+			elif sinazi<0:
+				azi = 2*np.pi-np.arccos( cosazi )
 
 		Inc.append(inc)
 		Azi.append(azi)

@@ -34,6 +34,22 @@ Traceback (most recent call last):
 ValueError: 983.9583333333336 is not in list
 
 
+@ IW: CLICK MANAGE FOR SS
+
+Traceback (most recent call last):
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\InputWindow_Ctrl.py", line 81, in <lambda>
+    open_specifyCentralization_dialog = lambda: wf.open_specifyCentralization_dialog(self)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\WellboreFunctions.py", line 678, in open_specifyCentralization_dialog
+    open_SS_dialog(self)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\WellboreFunctions.py", line 129, in wrap_function
+    function(*args, **kwargs)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\WellboreFunctions.py", line 711, in open_SS_dialog
+    SS = ss.Main_SpacingSetup(dialog, self)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\SpacingSetup_Ctrl.py", line 86, in __init__
+    IDHeaderName = parent.currentWellboreOuterStageDataItem['WellboreProps'].ID.headerName
+AttributeError: 'NoneType' object has no attribute 'ID'
+
+
 
 
 
