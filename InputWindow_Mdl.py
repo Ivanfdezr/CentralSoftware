@@ -1095,6 +1095,19 @@ def calculate_TDS_for_centralizedStage(self, stage ):
 			calculate_TDS_for_uncentralizedStage(self, stage, FT1=FT1, MDLims=MDLims, centralizedStage=True )
 
 
+def get_sortedIndexes_of_wellboreOuterStageData(self):
+
+	stages = list(self.wellboreOuterStageData.values())
+	print('s:',stages)
+	mapfunction = lambda stage: stage['WellboreProps'].MDtop[0]
+	MDtops = list(map( mapfunction, stages ))
+	print('m:',MDtops)
+	sortedIndexes = np.argsort( MDtops )
+	print('i:',sortedIndexes)
+
+	return sortedIndexes
+
+
 
 class WellboreInnerStageDataItem( dict ):
 	

@@ -77,7 +77,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.lsCaliperMap_graphicsView.axes.plot( [ +self.IPOD, +self.IPOD], [MD[0],MD[-1]], 'C1', lw=2 )
 
 		MDHeaderName = self.lsCentralizerLocations_fields.MD.headerName
-		IDHeaderName = parent.currentWellboreOuterStageDataItem['WellboreProps'].ID.headerName
+		IDHeaderName = self.lsCentralizerLocations_fields.ID.headerName
 
 		self.lsCaliperMap_graphicsView.axes.set_xlabel( IDHeaderName )
 		self.lsCaliperMap_graphicsView.axes.set_ylabel( MDHeaderName )

@@ -83,7 +83,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		self.ssCaliperMap_graphicsView.axes.plot( [ +self.IPOD, +self.IPOD], [MD[0],MD[-1]], 'C1', lw=2 )
 
 		MDHeaderName = self.ssCentralizerLocations_fields.MD.headerName
-		IDHeaderName = parent.currentWellboreOuterStageDataItem['WellboreProps'].ID.headerName
+		IDHeaderName = self.ssCentralizerLocations_fields.ID.headerName
 
 		self.ssCaliperMap_graphicsView.axes.set_xlabel( IDHeaderName )
 		self.ssCaliperMap_graphicsView.axes.set_ylabel( MDHeaderName )

@@ -49,6 +49,7 @@ def get_ssCentralizerLocations_fields():
 	DL  = Field(2008, altBg=True, altFg=True)
 
 	LatC = Field(2080, altBg=True, altFg=True)
+	ID   = Field(2031, altBg=True, altFg=True)
 
 	SOatC.set_abbreviation('SOatC')
 	SOatM.set_abbreviation('SOatM')
@@ -74,6 +75,7 @@ def get_ssCentralizerLocations_fields():
 	SOatM.set_representation('SO @ mid span')
 	ClatC.set_representation('<Cl> @ centr.')
 	ClatM.set_representation('Cl @ mid span')
+	ID.set_representation('Hole ID')
 
 	ssCentralizerLocations_fields = FieldList()
 	ssCentralizerLocations_fields.append( MD )
@@ -103,6 +105,7 @@ def get_ssCentralizerLocations_fields():
 	ssCentralizerLocations_fields.append( DL )
 
 	ssCentralizerLocations_fields.append( LatC )
+	ssCentralizerLocations_fields.append( ID )
 
 	return ssCentralizerLocations_fields
 

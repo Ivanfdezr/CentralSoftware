@@ -272,8 +272,11 @@ def update_wellboreOuterStageData(self):
 		self.currentWellboreOuterStageDataItem['WellboreProps'] = copy.deepcopy(self.s3WellboreIntervals_fields)
 
 		workWellbore_exist = False
-		K = list(self.wellboreOuterStageData.keys())
-		K.sort()
+
+		K = mdl.get_sortedIndexes_of_wellboreOuterStageData(self)
+
+		#K = list(self.wellboreOuterStageData.keys())
+		#K.sort()
 		for k in K:
 			stage = self.wellboreOuterStageData[k]
 
@@ -289,8 +292,8 @@ def update_wellboreOuterStageData(self):
 				ID = cu.mdl.array([])
 				
 			if workWellbore_exist:
-				self.workWellboreMD = cu.mdl.np.hstack( (self.workWellboreMD, MD) )
-				self.workWellboreID = cu.mdl.np.hstack( (self.workWellboreID, ID) )
+				self.workWellboreMD = mdl.np.hstack( (self.workWellboreMD, MD) )
+				self.workWellboreID = mdl.np.hstack( (self.workWellboreID, ID) )
 			else:
 				self.workWellboreMD = MD
 				self.workWellboreID = ID
@@ -834,6 +837,7 @@ def adjust_Length_and_MD(self, item):
 			self.s3PipeCentralizationStage_tableWidget.item(row, self.s3PipeCentralizationStage_fields.L.pos).set_text()
 		
 		try:
+			print(self.workWellboreMD)
 			lastMD = min(self.workWellboreMD)
 		except ValueError:
 			msg = "Any top MD has been assigned yet in Wellbore intervals. Can not proceed."
@@ -923,3 +927,9 @@ def print_wellboreOuterStageData(self):
 		print('\n',self.wellboreOuterStageData[k],'\n')
 	print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n')
 	pass
+
+
+
+
+
+

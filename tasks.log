@@ -1,6 +1,6 @@
 -	Reset-plot button for charts.
--	Delete-all utility for tables.
--	Copy and Paste utility (check tables).
+-x	Delete-all utility for tables.
+-x	Copy and Paste utility (check tables).
 -!	Save plots as png when windows is completed.
 -!	Save tables as csv when windows is completed.
 -x	Waiting cursor-icon

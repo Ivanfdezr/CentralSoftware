@@ -13,9 +13,9 @@ def get_pipeODList():
 	return pipeODList
 	
 
-def make_description(prefix,OD,fields):
+def make_description(prefix,OD,Grade,fields):
 	
-	return prefix +' of '+OD+' '+fields.OD.unit
+	return prefix +' of '+OD+' '+fields.OD.unit+', '+Grade
 
 
 def set_TDB_data_to_fields(OD, fields):
@@ -31,14 +31,14 @@ def set_TDB_data_to_fields(OD, fields):
 		if index != item[0]:
 			if index:
 				data['i'] = item[0]
-				data['Desc'] = make_description(data['Type'],OD,fields)
+				data['Desc'] = make_description(data['Type'],OD,data['Grade'],fields)
 				fields.insert_data( data )
 			index = item[0]
 			data  = {}
 		data[item[1]] = item[2]
 
 	data['i'] = item[0]
-	data['Desc'] = make_description(data['Type'],OD,fields)
+	data['Desc'] = make_description(data['Type'],OD,data['Grade'],fields)
 	fields.insert_data( data )
 	
 

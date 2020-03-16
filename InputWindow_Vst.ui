@@ -2581,7 +2581,7 @@ p, li { white-space: pre-wrap; }
         <widget class="QPushButton" name="s3ODID_pushButton">
          <property name="geometry">
           <rect>
-           <x>390</x>
+           <x>490</x>
            <y>50</y>
            <width>111</width>
            <height>31</height>
@@ -2594,7 +2594,7 @@ p, li { white-space: pre-wrap; }
         <widget class="QPushButton" name="s3ODWt_pushButton">
          <property name="geometry">
           <rect>
-           <x>390</x>
+           <x>490</x>
            <y>110</y>
            <width>111</width>
            <height>31</height>
@@ -2609,7 +2609,7 @@ p, li { white-space: pre-wrap; }
           <rect>
            <x>14</x>
            <y>21</y>
-           <width>371</width>
+           <width>461</width>
            <height>332</height>
           </rect>
          </property>
@@ -2628,7 +2628,7 @@ p, li { white-space: pre-wrap; }
           <bool>false</bool>
          </attribute>
          <attribute name="horizontalHeaderDefaultSectionSize">
-          <number>150</number>
+          <number>250</number>
          </attribute>
          <attribute name="horizontalHeaderMinimumSectionSize">
           <number>120</number>
@@ -2637,7 +2637,7 @@ p, li { white-space: pre-wrap; }
           <number>30</number>
          </attribute>
          <attribute name="verticalHeaderMinimumSectionSize">
-          <number>28</number>
+          <number>20</number>
          </attribute>
          <row>
           <property name="text">
