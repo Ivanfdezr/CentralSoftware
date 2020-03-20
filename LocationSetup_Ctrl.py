@@ -60,7 +60,8 @@ class Main_LocationSetup(Ui_LocationSetup):
 		zp.panYD_factory(	(self.lsCaliperMap_graphicsView.axes, self.lsSOVisualization_graphicsView.axes), 
 							(self.lsCaliperMap_graphicsView_ylimits, self.lsSOVisualization_graphicsView_ylimits), 
 							(self.lsCaliperMap_graphicsView_yselection, self.lsSOVisualization_graphicsView_yselection),
-							self.choose_MDlocation )
+							ypressfunction1=self.highlight_MDlocation,
+							ypressfunction3=self.choose_MDlocation )
 
 		self.lsCaliperMap_graphicsView.axes.clear()
 		self.lsSOVisualization_graphicsView.axes.clear()
@@ -92,16 +93,20 @@ class Main_LocationSetup(Ui_LocationSetup):
 		if self.lsCentralizerLocations_fields.SOatC.unit=='%':
 			self.max_SO = 100
 			self.min_SO = 67
+			self.ΔSO = 10
 		elif self.lsCentralizerLocations_fields.SOatC.unit=='1':
 			self.max_SO = 1
 			self.min_SO = 0.67
+			self.ΔSO = 0.1
 
 		self.lsSOVisualization_graphicsView.axes.set_xlabel( SOHeaderName )
 		self.lsSOVisualization_graphicsView.axes.set_ylabel( MDHeaderName )
-		self.lsSOVisualization_graphicsView.axes.set_xlim( 0, self.max_SO )
+		self.lsSOVisualization_graphicsView.axes.set_xlim( -self.ΔSO, self.max_SO+self.ΔSO )
 		self.lsSOVisualization_graphicsView.axes.set_ylim( self.max_MD, self.min_MD )
 		#self.lsSOVisualization_graphicsView.axes.grid()
-		self.lsSOVisualization_graphicsView.axes.plot( [self.min_SO, self.min_SO], [self.max_MD, self.min_MD], 'C3--', lw=2 ) 
+		self.lsSOVisualization_graphicsView.axes.plot( [self.min_SO, self.min_SO], [self.max_MD, self.min_MD], 'C3--', lw=2 )
+		self.lsSOVisualization_graphicsView.axes.plot( [0, 0], [self.max_MD, self.min_MD], 'k-', lw=1, alpha=0.3 )
+		self.lsSOVisualization_graphicsView.axes.plot( [self.max_SO, self.max_SO], [self.max_MD, self.min_MD], 'k-', lw=1, alpha=0.3 ) 
 		self.lsSOVisualization_graphicsView.draw()
 
 		#-------------------------------------------------
@@ -199,6 +204,16 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 	def makeResults_and_done(self):
 
+		cu.savetable( 	self.lsCentralizerLocations_tableWidget,
+						self.lsCentralizerLocations_fields[:4],
+						"tmp/CentralizerLocationsAndSO_'{stagerow}'.csv"
+						.format(stagerow=self.stage['row']) )
+		self.lsCaliperMap_graphicsView.figure.savefig( "tmp/CaliperMap_'{stagerow}'.png"
+			.format(stagerow=self.stage['row']), dpi=300 )
+		self.lsSOVisualization_graphicsView.figure.savefig( "tmp/SOVisualization_'{stagerow}'.png"
+			.format(stagerow=self.stage['row']), dpi=300 )
+		self.lsWellbore3D_graphicsView.figure.savefig( "tmp/Wellbore3D_'{stagerow}'.png"
+			.format(stagerow=self.stage['row']), dpi=300 )
 		self.fields = self.lsCentralizerLocations_fields
 		self.dialog.done(0)
 
@@ -239,9 +254,9 @@ class Main_LocationSetup(Ui_LocationSetup):
 				self.draw_MDlocations()
 
 
-	def select_row(self, r, c):
+	def select_row(self, r, c, alltherow=False ):
 
-		cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,r)
+		cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget, r, alltherow)
 		
 		if r<self.centralizerCount:
 			MD = self.lsCentralizerLocations_fields.MD[r]
@@ -352,13 +367,19 @@ class Main_LocationSetup(Ui_LocationSetup):
 			self.draw_MDlocations(MD, EW, NS, VD)	
 
 
+	def highlight_MDlocation(self, MD):
+
+		index = mu.np.argmin( abs(mu.array(self.lsCentralizerLocations_fields.MD)-MD) )
+		self.select_row( index, 0, alltherow=True )
+
+
 	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None, created=True):
 
 		xlim = self.lsCaliperMap_graphicsView.axes.get_xlim()
 
 		del self.lsCaliperMap_graphicsView.axes.lines[2:]
 		del self.lsWellbore3D_graphicsView.axes.lines[1:]
-		del self.lsSOVisualization_graphicsView.axes.lines[1:]
+		del self.lsSOVisualization_graphicsView.axes.lines[3:]
 
 		if MD!=None:
 

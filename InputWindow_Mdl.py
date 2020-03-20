@@ -1108,7 +1108,6 @@ def calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, Clat
 			Fl   = np.sqrt( Fldp**2 + Flp**2 )
 
 			δ = Fl*L**3/384/PE/PI*24/u**4*(u**2/2 - u*(np.cosh(u)-1)/np.sinh(u) )
-		#print(δ,MD1,MD2,β,u)
 		
 		c1 = ClatC_field[i]
 		c2 = ClatC_field[j]

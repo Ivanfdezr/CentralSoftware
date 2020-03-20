@@ -3,6 +3,26 @@ import MdlUtilities as mdl
 import re, time, sys
 from functools import wraps
 
+
+def savetable(table, fields, filename):
+
+	csvtext = ''
+	
+	for field in fields:
+		csvtext += field.headerName +','
+	csvtext = csvtext[:-1] +'\n'
+
+	for row in range(len(fields[0])):
+		for field in fields:
+			item = table.item( row, field.pos )
+			csvtext += item.text() +','
+		csvtext = csvtext[:-1] +'\n'
+	csvtext = csvtext[:-1]
+
+	with open(filename,'w') as FILE:
+		FILE.write(csvtext)
+
+
 def waiting_effects(function):
 	@wraps(function)
 	def wrap_function(*args, **kwargs):
@@ -24,7 +44,6 @@ def sleep(seconds):
 
 
 idleFunction = lambda: sleep(0.01)
-
 
 
 def size_object(obj, seen=None):

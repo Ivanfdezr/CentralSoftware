@@ -220,7 +220,7 @@ class ZoomPan:
 		return zoomYD
 
 	# ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
-	def panYD_factory(self, ax_, ylims_=None, yselection_=None, yselectionfunction=None): 
+	def panYD_factory(self, ax_, ylims_=None, yselection_=None, ypressfunction1=None, ypressfunction3=None, ymotionfunction=None): 
 		
 		if not isinstance(ax_,tuple):
 			ax_ = (ax_,)
@@ -239,12 +239,14 @@ class ZoomPan:
 					if event.button==1:
 						self.cur_ylim = ax.get_ylim()
 						self.ypress = event.ydata
+						if not isinstance(ypressfunction1,type(None)):
+							ypressfunction1(event.ydata)
 					
 					elif event.button==3:
 						if isinstance(yselection,list):
 							yselection.append(event.ydata)
-						if not isinstance(yselectionfunction,type(None)):
-							yselectionfunction(event.ydata)
+						if not isinstance(ypressfunction3,type(None)):
+							ypressfunction3(event.ydata)
 					break
 
 		def onRelease(event):
@@ -258,19 +260,25 @@ class ZoomPan:
 
 		def onMotion(event):
 			
-			if self.ypress is None: return
+			#if self.ypress is None: return
+			if self.ypress!=None:
 
-			for ax in ax_:
-				if event.inaxes == ax:
-					dy = event.ydata - self.ypress
-					self.cur_ylim -= dy
-					break
+				for ax in ax_:
+					if event.inaxes == ax:
+						dy = event.ydata - self.ypress
+						self.cur_ylim -= dy
+						break
 
-			for ax,ylims in zip(ax_,ylims_):
-				ax.set_ylim(self.cur_ylim)
-				if isinstance(ylims,list):
-					ylims[0], ylims[1] = ax.get_ylim()
-				ax.figure.canvas.draw()
+				for ax,ylims in zip(ax_,ylims_):
+					ax.set_ylim(self.cur_ylim)
+					if isinstance(ylims,list):
+						ylims[0], ylims[1] = ax.get_ylim()
+					ax.figure.canvas.draw()
+
+			elif self.ypress==None:
+				if not isinstance(ymotionfunction,type(None)):
+					ymotionfunction(event.ydata)
+
 
 		for ax in ax_:
 			fig = ax.get_figure()

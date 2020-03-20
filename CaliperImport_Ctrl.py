@@ -40,13 +40,30 @@ class Main_CaliperImport(Ui_CaliperImport):
 		self.ciHoleIDsmoothing_graphicsView_yselection = []
 		zp = pu.ZoomPan()
 		zp.zoomYD_factory(self.ciHoleIDsmoothing_graphicsView.axes, self.ciHoleIDsmoothing_graphicsView_ylimits )
-		zp.panYD_factory( self.ciHoleIDsmoothing_graphicsView.axes, self.ciHoleIDsmoothing_graphicsView_ylimits )#, 
-						  #self.ciHoleIDsmoothing_graphicsView_yselection, self.choose_MDlocation )
+		zp.panYD_factory( self.ciHoleIDsmoothing_graphicsView.axes, self.ciHoleIDsmoothing_graphicsView_ylimits, 
+						  ypressfunction3=self.snapshot )
 
 		self.setup_valueDecimalPoint()
 
 		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 		dialog.exec_()
+
+
+	def snapshot(self,x):
+
+		label = ''
+		for i in range(8):
+			label += str(mu.np.random.randint(10))
+		self.ciHoleIDsmoothing_graphicsView.figure.savefig( "tmp/DR-CAL_'{label}'.png"
+			.format(label=label), dpi=300 )
+		self.ciHoleIDsmoothing_graphicsView.axes.set_visible(False)
+		self.ciHoleIDsmoothing_graphicsView.draw()
+		cu.idleFunction()
+		self.ciHoleIDsmoothing_graphicsView.axes.set_visible(True)
+		self.ciHoleIDsmoothing_graphicsView.draw()
+		cu.idleFunction()
+
+
 
 
 	def update_sliderValue(self, intAction):
