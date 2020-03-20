@@ -789,7 +789,6 @@ def get_inclination_and_azimuth_from_locations(self, locations):
 		T_values = get_ASCT_from_MD(self, MD)
 		aux = 1.0 if np.isclose(T_values[2],1.0,rtol=1e-3,atol=0) else T_values[2]
 		inc = np.arccos( aux )
-		print( inc, T_values, aux )
 
 		if inc==0.0:
 			azi = 0.0
@@ -806,6 +805,334 @@ def get_inclination_and_azimuth_from_locations(self, locations):
 		Azi.append(azi)
 
 	return np.array(Inc), np.array(Azi)
+
+
+def get_centralizersEnsembleLength(self):
+
+	gap = mu.referenceUnitConvert_value( 2.0, 'm' )
+
+	CEL = 0
+	for x, c in self.centralizers.items():
+		if c['Type']!=None:
+			CL = c['CentralizerBase'].CL[0]
+			mu.referenceUnitConvert_value( CL, CL.unit )
+			CEL += CL + gap
+
+	return CEL
+
+
+def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field, LatC_field):
+
+	locations.referenceUnitConvert()
+	SOatC_field.referenceUnitConvert()
+	ClatC_field.referenceUnitConvert()
+	numofLocations = len(locations)
+
+	Inc, Azi = get_inclination_and_azimuth_from_locations(self.parent, locations)
+	MDs = locations.factorToReferenceUnit*self.MD
+	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
+	meanIDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.mean_ID
+
+	PD = self.stage['PipeProps'].OD[0]
+	Pd = self.stage['PipeProps'].ID[0]
+	PE = self.stage['PipeProps'].E[0]
+	PW = self.stage['PipeProps'].PW[0]
+	PL = self.stage['PipeBase'].PL[0]
+	ρi = self.stage['PipeProps'].InnerMudDensity[0]
+	ρe = self.stage['PipeProps'].OuterMudDensity[0]
+	ρs = self.stage['PipeProps'].Density[0]
+
+	PD = mu.referenceUnitConvert_value( PD, PD.unit )
+	Pd = mu.referenceUnitConvert_value( Pd, Pd.unit )
+	PE = mu.referenceUnitConvert_value( PE, PE.unit )
+	PW = mu.referenceUnitConvert_value( PW, PW.unit )
+	PL = mu.referenceUnitConvert_value( PL, PL.unit )
+	ρi = mu.referenceUnitConvert_value( ρi, ρi.unit )
+	ρe = mu.referenceUnitConvert_value( ρe, ρe.unit )
+	ρs = mu.referenceUnitConvert_value( ρs, ρs.unit )
+
+	ResF = {}
+	D = {}
+	d = {}
+	CL = {}
+	B = {}
+	supports = 0
+
+	for x, c in self.centralizers.items():
+		if c['Type']=='Bow Spring':
+			ResF[x] = c['CentralizerProps'].ResF_CH[0]
+			ResF[x] = mu.referenceUnitConvert_value( ResF[x], ResF[x].unit )
+			D[x] = c['CentralizerProps'].COD[0]
+			D[x] = mu.referenceUnitConvert_value( D[x], D[x].unit )
+			d[x] = c['CentralizerProps'].IPOD[0]
+			d[x] = mu.referenceUnitConvert_value( d[x], d[x].unit )
+			CL[x] = c['CentralizerBase'].CL[0]
+			CL[x] = mu.referenceUnitConvert_value( CL[x], CL[x].unit )
+			supports+=1
+
+		elif c['Type']=='Rigid':
+			D[x] = c['CentralizerProps'].COD[0]
+			D[x] = mu.referenceUnitConvert_value( D[x], D[x].unit )
+			CL[x] = c['CentralizerBase'].CL[0]
+			CL[x] = mu.referenceUnitConvert_value( CL[x], CL[x].unit )
+			B[x] = int(c['CentralizerBase'].Blades[0])
+			supports+=1#c['CentralizerBase'].Blades[0]
+
+	buoyancyFactor = mu.calculate_buoyancyFactor( OD=PD, ID=Pd, ρs=ρs, ρe=ρe, ρi=ρi )
+	PW *= buoyancyFactor/supports
+	PI = np.pi/64*(PD**4-Pd**4)
+	PR = PD/2
+	CEL = get_centralizersEnsembleLength(self)
+
+	def calculate_SO_per_centralizersEnsemble():
+		SO = []
+		Cc = []
+		L = []
+		Δ = 0
+		for x, c in self.centralizers.items():
+			#if c['Type']=='Bow Spring':
+			if c['Type']!=None:
+				so, cc, l = calculate_SO_per_centralizer(x,c['Type'],supports,Δ)
+				Δ += CL[x]
+				SO.append( so )
+				Cc.append( cc )
+				L.append( l )
+			#elif c['Type']=='Rigid':
+			#	so, cc, l = calculate_SO_per_centralizer(x)
+			#	SO += so/supports #*c['CentralizerBase'].Blades[0]/supports
+			#	Cc += cc/supports #*c['CentralizerBase'].Blades[0]/supports
+			#	L.append(l)
+		return np.mean(SO), np.mean(Cc), np.mean(L)
+
+	def get_Hr_mHr_R_L(label, MD0, MD1, MD2, inc):
+
+		MDi = MDs[0]
+		IDi = IDs[0]
+		mIDi = meanIDs[0]
+		for MDj,IDj,mIDj in zip(MDs,IDs,meanIDs):
+			if MD1<MDj:
+				Hd = (MD1-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
+				mHd = (MD1-MDi)/(MDj-MDi)*(mIDj-mIDi)+mIDi
+				break
+			else:
+				MDi = MDj
+				IDi = IDj
+				mIDi = mIDj
+
+		Hr = Hd/2
+		mHr = mHd/2
+		R = D[label]/2
+		δ = Hr-PR
+
+		if MD0==None and MD2==None:
+			L = (384*PE*PI*δ/PW/np.sin(inc))**0.25
+		elif MD0==None:
+			Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
+			L21 = (MD2-MD1)/2
+			L21 = L21 if (L21<Lalt) else Lalt
+			L = L21 + Lalt
+		elif MD2==None:
+			Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
+			L10 = (MD1-MD0)/2
+			L10 = L10 if (L10<Lalt) else Lalt
+			L = L10 + Lalt
+		else:
+			Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
+			L21 = (MD2-MD1)/2
+			L21 = L21 if (L21<Lalt) else Lalt
+			L10 = (MD1-MD0)/2
+			L10 = L10 if (L10<Lalt) else Lalt
+			L = L21 + L10
+
+		return Hr,mHr,R,L
+		
+	for j, (MD1,inc) in enumerate(zip(locations,Inc)):
+
+		if MD1+CEL>MDs[-1]:
+			locations.pop()
+			Inc.pop()
+			break
+
+		inc += 1e-12
+		i = j-1
+		k = j+1
+		if i==-1:
+			MD0 = None
+		else:
+			MD0 = locations[i]+CEL
+			if MD0>MD1:
+				raise(mu.LogicalError)
+		if k==numofLocations:
+			MD2 = None
+		else:
+			MD2 = locations[k]
+			if MD1+CEL>MD2:
+				raise(mu.LogicalError)
+
+		def calculate_SO_per_centralizer(label,ctype,supports,ΔMD1):
+			"""
+			Define before use: MD0, MD1, MD2, inc
+			Return "SO, Cc, L" in reference units.
+			"""
+			MD1_ = MD1 + ΔMD1
+
+			if ctype=='Bow Spring':
+				
+				Hr,mHr,R,L = get_Hr_mHr_R_L(label, MD0, MD1_, MD2, inc)
+
+				f = PW*L*np.sin(inc)/supports
+				resK = 2*ResF[label]/( D[label]-d[label]-0.67*(Hr*2-PD) )
+
+				y = f/resK
+				Rmin = PR+(R-PR)*0.1
+				R = (R-y) if (R<Hr) else (Hr-y)
+				R = Rmin if (R<Rmin) else R
+
+				mHc = mHr-PR
+				Cc = R-PR-(Hr-mHr)
+				SO = Cc/mHc
+
+			elif ctype=='Rigid':
+
+				SO_ = []
+				Cc_ = []
+				L_  = []
+
+				for i in range(B[label]):
+					Hr,mHr,R,L = get_Hr_mHr_R_L(label, MD0, MD1_, MD2, inc)
+
+					mHc = mHr-PR
+					cc = R-PR-(Hr-mHr)
+					Cc_.append( cc )
+					SO_.append( cc/mHc )
+					L_.append( L )
+
+					MD1_ += CL[label]/B[label]
+
+				Cc = np.mean( Cc_ )
+				SO = np.mean( SO_ )
+				L = np.mean( L_ )
+			
+			return SO, Cc, L
+		
+		SO, Cc, L = calculate_SO_per_centralizersEnsemble()
+
+		mu.create_physicalValue_and_appendTo_field( SO, SOatC_field, SOatC_field.referenceUnit )
+		mu.create_physicalValue_and_appendTo_field( Cc, ClatC_field, ClatC_field.referenceUnit )
+		if LatC_field!=None:
+			mu.create_physicalValue_and_appendTo_field( L, LatC_field, LatC_field.referenceUnit )
+
+	SOatC_field.inverseReferenceUnitConvert()
+	ClatC_field.inverseReferenceUnitConvert()
+	if LatC_field!=None:
+		LatC_field.inverseReferenceUnitConvert()
+	locations.inverseReferenceUnitConvert()
+
+
+def calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field, Inc_field):
+
+	locations.referenceUnitConvert()
+	ClatC_field.referenceUnitConvert()
+	SOatM_field.referenceUnitConvert()
+	ClatM_field.referenceUnitConvert()
+	Inc_field.clear()
+
+	Inc, Azi = get_inclination_and_azimuth_from_locations(self.parent, locations)
+
+	MDs = locations.factorToReferenceUnit*self.MD
+	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
+	meanIDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.mean_ID
+
+	PD = self.stage['PipeProps'].OD[0]
+	Pd = self.stage['PipeProps'].ID[0]
+	PE = self.stage['PipeProps'].E[0]
+	PW = self.stage['PipeProps'].PW[0]
+	PL = self.stage['PipeBase'].PL[0]
+	ρi = self.stage['PipeProps'].InnerMudDensity[0]
+	ρe = self.stage['PipeProps'].OuterMudDensity[0]
+	ρs = self.stage['PipeProps'].Density[0]
+
+	PD = mu.referenceUnitConvert_value( PD, PD.unit )
+	Pd = mu.referenceUnitConvert_value( Pd, Pd.unit )
+	PE = mu.referenceUnitConvert_value( PE, PE.unit )
+	PW = mu.referenceUnitConvert_value( PW, PW.unit )
+	PL = mu.referenceUnitConvert_value( PL, PL.unit )
+	gap = mu.referenceUnitConvert_value( 2.0, 'm' )
+
+	CEL = get_centralizersEnsembleLength(self)
+
+	buoyancyFactor = mu.calculate_buoyancyFactor( OD=PD, ID=Pd, ρs=ρs, ρe=ρe, ρi=ρi )
+	PW *= buoyancyFactor
+	PI = np.pi/64*(PD**4-Pd**4)
+	PR = PD/2
+
+	mu.create_physicalValue_and_appendTo_field( Inc[0], Inc_field, Inc_field.referenceUnit )
+
+	for i in range(len(locations)-1):
+		j = i+1
+		MD1 = locations[i]+CEL
+		MD2 = locations[j]
+		In1 = Inc[i]
+		In2 = Inc[j]
+		Az1 = Azi[i]
+		Az2 = Azi[j]
+		L = MD2-MD1
+		MDm = MD1 + L/2
+
+		MDi = MDs[0]
+		IDi = IDs[0]
+		mIDi = meanIDs[0]
+		for MDj,IDj,mIDj in zip(MDs,IDs,meanIDs):
+			if MDm<MDj:
+				Hd = (MDm-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
+				mHd = (MDm-MDi)/(MDj-MDi)*(mIDj-mIDi)+mIDi
+				break
+			else:
+				MDi = MDj
+				IDi = IDj
+				mIDi = mIDj
+		
+		Ft = get_axialTension_below_MD(self.parent, MD2, referenceUnit=True)
+
+		u = np.sqrt( Ft*L**2/4/PE/PI )
+		β = np.arccos( np.cos(In1)*np.cos(In2) + np.sin(In1)*np.sin(In2)*np.cos(Az2-Az1) )
+		
+		if β==0.0:
+			δ = 0.0
+		else:
+			cosγ0 = np.sin(In1)*np.sin(In2)*np.sin(Az2-Az1)/np.sin(β)
+			cosγn = np.sin( (In1-In2)/2 )*np.sin( (In1+In2)/2 )/np.sin(β/2)
+
+			Fldp = PW*L*cosγn + 2*Ft*np.sin(β/2)
+			Flp  = PW*L*cosγ0
+			Fl   = np.sqrt( Fldp**2 + Flp**2 )
+
+			δ = Fl*L**3/384/PE/PI*24/u**4*(u**2/2 - u*(np.cosh(u)-1)/np.sinh(u) )
+		#print(δ,MD1,MD2,β,u)
+		
+		c1 = ClatC_field[i]
+		c2 = ClatC_field[j]
+
+		Hr = Hd/2
+		mHr = mHd/2
+		mHc = mHr-PR
+		Mc = (c1+c2)/2-δ
+		xHc = mHr-Hr
+		Mc = Mc if (Mc>xHc) else xHc
+		SO = Mc/mHc
+
+		mu.create_physicalValue_and_appendTo_field( In2, Inc_field, Inc_field.referenceUnit )
+		mu.create_physicalValue_and_appendTo_field( SO, SOatM_field, SOatM_field.referenceUnit )
+		mu.create_physicalValue_and_appendTo_field( Mc, ClatM_field, ClatM_field.referenceUnit )
+
+	mu.create_physicalValue_and_appendTo_field( 0, SOatM_field, SOatM_field.referenceUnit )
+	mu.create_physicalValue_and_appendTo_field( 0, ClatM_field, ClatM_field.referenceUnit )
+
+	locations.inverseReferenceUnitConvert()
+	ClatC_field.inverseReferenceUnitConvert()
+	SOatM_field.inverseReferenceUnitConvert()
+	ClatM_field.inverseReferenceUnitConvert()
+	Inc_field.inverseReferenceUnitConvert()
 
 
 def calculate_psiAngle( self, diameter ):

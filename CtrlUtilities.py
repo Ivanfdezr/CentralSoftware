@@ -175,8 +175,9 @@ def insert_tableWidgetRow(tableWidget, fields):
 	return row
 	
 
-def select_tableWidgetRow(tableWidget, row):
-	#tableWidget.selectRow(row)
+def select_tableWidgetRow(tableWidget, row, alltherow=False):
+	if alltherow:
+		tableWidget.selectRow(row)
 	tableWidget.selectedRow = row
 
 

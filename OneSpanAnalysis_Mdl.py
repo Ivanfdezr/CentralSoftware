@@ -184,8 +184,6 @@ def get_casingDeflectionCurve(self):
 	yA = fC/kA
 	yB = fC/kB
 
-	print(fC,ResFA,kA,yA)
-
 	R = D/2
 	rH = dH/2
 	rA_min = R+(DA/2-R)*0.1
@@ -193,12 +191,8 @@ def get_casingDeflectionCurve(self):
 	rA = (DA/2-yA) if (DA<dH) else (rH-yA)
 	rB = (DB/2-yB) if (DB<dH) else (rH-yB)
 
-	print(rA)
-
 	rA = rA_min if (rA<=rA_min) else rA
 	rB = rB_min if (rB<=rB_min) else rB
-
-	print(rA,rA_min,rH,R,DA)
 
 	α  = np.arctan( (rB-rA)/L )
 	Lα = L/np.cos(α)

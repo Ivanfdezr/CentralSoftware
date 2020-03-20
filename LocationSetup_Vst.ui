@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1417</width>
-    <height>567</height>
+    <height>585</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1072,7 +1072,7 @@
    <property name="geometry">
     <rect>
      <x>1300</x>
-     <y>510</y>
+     <y>530</y>
      <width>93</width>
      <height>30</height>
     </rect>
@@ -1156,6 +1156,46 @@
      </property>
     </widget>
    </widget>
+  </widget>
+  <widget class="QLabel" name="lsMeanSOatC_label">
+   <property name="geometry">
+    <rect>
+     <x>880</x>
+     <y>510</y>
+     <width>331</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Mean SO at centralizers: </string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lsMeanSOatM_label">
+   <property name="geometry">
+    <rect>
+     <x>880</x>
+     <y>540</y>
+     <width>331</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Mean SO at midspan:</string>
+   </property>
   </widget>
  </widget>
  <customwidgets>

@@ -2542,14 +2542,20 @@ p, li { white-space: pre-wrap; }
        <widget class="QPushButton" name="s3UpdateAxialF_pushButton">
         <property name="geometry">
          <rect>
-          <x>370</x>
+          <x>320</x>
           <y>460</y>
-          <width>171</width>
+          <width>221</width>
           <height>41</height>
          </rect>
         </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
-         <string>Update Axial Force</string>
+         <string>UPDATE AXIAL FORCE</string>
         </property>
        </widget>
       </widget>
@@ -16768,7 +16774,7 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>10</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>

@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_LocationSetup(object):
 	def setupUi(self, LocationSetup):
 		LocationSetup.setObjectName(_fromUtf8("LocationSetup"))
-		LocationSetup.resize(1417, 567)
+		LocationSetup.resize(1417, 585)
 		LocationSetup.setWindowOpacity(1.0)
 		self.lsCaliperMap_graphicsView = MatplotlibWidget(LocationSetup)
 		self.lsCaliperMap_graphicsView.setGeometry(QtCore.QRect(40, 40, 350, 450))
@@ -46,7 +46,7 @@ class Ui_LocationSetup(object):
 		self.lsCentralizerLocations_tableWidget.horizontalHeader().setDefaultSectionSize(110)
 		self.lsCentralizerLocations_tableWidget.horizontalHeader().setMinimumSectionSize(30)
 		self.lsAccept_pushButton = QtGui.QPushButton(LocationSetup)
-		self.lsAccept_pushButton.setGeometry(QtCore.QRect(1300, 510, 93, 30))
+		self.lsAccept_pushButton.setGeometry(QtCore.QRect(1300, 530, 93, 30))
 		font = QtGui.QFont()
 		font.setPointSize(10)
 		self.lsAccept_pushButton.setFont(font)
@@ -78,6 +78,22 @@ class Ui_LocationSetup(object):
 		self.lsSOVisualization_graphicsView.setGeometry(QtCore.QRect(0, 0, 450, 450))
 		self.lsSOVisualization_graphicsView.setObjectName(_fromUtf8("lsSOVisualization_graphicsView"))
 		self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
+		self.lsMeanSOatC_label = QtGui.QLabel(LocationSetup)
+		self.lsMeanSOatC_label.setGeometry(QtCore.QRect(880, 510, 331, 21))
+		font = QtGui.QFont()
+		font.setPointSize(9)
+		font.setBold(True)
+		font.setWeight(75)
+		self.lsMeanSOatC_label.setFont(font)
+		self.lsMeanSOatC_label.setObjectName(_fromUtf8("lsMeanSOatC_label"))
+		self.lsMeanSOatM_label = QtGui.QLabel(LocationSetup)
+		self.lsMeanSOatM_label.setGeometry(QtCore.QRect(880, 540, 331, 21))
+		font = QtGui.QFont()
+		font.setPointSize(9)
+		font.setBold(True)
+		font.setWeight(75)
+		self.lsMeanSOatM_label.setFont(font)
+		self.lsMeanSOatM_label.setObjectName(_fromUtf8("lsMeanSOatM_label"))
 
 		self.retranslateUi(LocationSetup)
 		self.tabWidget.setCurrentIndex(0)
@@ -96,5 +112,7 @@ class Ui_LocationSetup(object):
 		self.lsAccept_pushButton.setText(_translate("LocationSetup", "Accept", None))
 		self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("LocationSetup", "3D View", None))
 		self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("LocationSetup", "SO Visualization", None))
+		self.lsMeanSOatC_label.setText(_translate("LocationSetup", "Mean SO at centralizers: ", None))
+		self.lsMeanSOatM_label.setText(_translate("LocationSetup", "Mean SO at midspan:", None))
 
 from matplotlibwidget import Matplotlib3DWidget, MatplotlibWidget

@@ -16,6 +16,7 @@ import time
 
 class Main_SpacingSetup(Ui_SpacingSetup):
 
+	@cu.waiting_effects
 	def __init__(self, dialog, parent):
 		
 		Ui_SpacingSetup.__init__(self)
@@ -24,7 +25,6 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		self.dialog = dialog
 		self.parent = parent
 		self.centralizerCount = 0
-		self.parent.msg_label.setText( 'Initializing Spacing setup window ...' )
 
 		self.ssAccept_pushButton.clicked.connect( self.makeResults_and_done )
 
@@ -155,16 +155,6 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		#zp.point3D_factory(self.s2TriDView_graphicsView.axes, dot, curve)
 		zp.zoom3D_factory( self.ssWellbore3D_graphicsView.axes, curve )
 		self.ssWellbore3D_graphicsView.draw()
-		
-		#-------------------------------------------------
-
-		#if self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields']!=None:
-		#	for MD in self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields'].MD:
-		#		self.choose_MDlocation(MD, singleLocating=True)
-
-		self.parent.msg_label.setText( 'Finish' )
-		cu.sleep(0.20)
-		self.parent.msg_label.setText( '' )
 
 		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 		dialog.exec_()
@@ -236,6 +226,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		self.ssCentralizerLocations_fields.ClatM.clear()
 		self.ssCentralizerLocations_fields.LatC.clear()
 
+		"""
 		self.ssCentralizerLocations_fields.hsInc.clear()
 		self.ssCentralizerLocations_fields.hsSOatC.clear()
 		self.ssCentralizerLocations_fields.hsSOatM.clear()
@@ -247,23 +238,22 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		self.ssCentralizerLocations_fields.dsSOatM.clear()
 		self.ssCentralizerLocations_fields.dsClatC.clear()
 		self.ssCentralizerLocations_fields.dsClatM.clear()		
+		"""
 
 		r = self.ssCentralizerLocations_tableWidget.selectedRow
 		self.ssCentralizerLocations_tableWidget.removeRow(r)
 		
 		if r<self.centralizerCount:
 			
+			"""
 			rmMD = self.ssCentralizerLocations_fields.MD[r]
-			
 			where = mu.np.where( mu.np.isclose(self.ssCentralizerLocations_fields.hsMD, rmMD) )[0]
-			
 			if len(where)>0:
 				del self.ssCentralizerLocations_fields.hsMD[ where[0] ]
-			
 			where = mu.np.where( mu.np.isclose(self.ssCentralizerLocations_fields.dsMD, rmMD) )[0]
-			
 			if len(where)>0:
 				del self.ssCentralizerLocations_fields.dsMD[ where[0] ]
+			"""
 
 			del self.ssCentralizerLocations_fields.MD[r]
 			del self.ssCentralizerLocations_fields.EW[r]
@@ -303,6 +293,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 
 	def update_calculations(self):
 
+		"""
 		locations = self.ssCentralizerLocations_fields.hsMD
 		SOatC_field = self.ssCentralizerLocations_fields.hsSOatC
 		ClatC_field = self.ssCentralizerLocations_fields.hsClatC
@@ -320,6 +311,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 
 		mdl.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field)
 		mdl.calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field)
+		"""
 
 		locations = self.ssCentralizerLocations_fields.MD
 		SOatC_field = self.ssCentralizerLocations_fields.SOatC
@@ -327,9 +319,10 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		SOatM_field = self.ssCentralizerLocations_fields.SOatM
 		ClatM_field = self.ssCentralizerLocations_fields.ClatM
 		LatC_field = self.ssCentralizerLocations_fields.LatC
+		Inc_field = self.ssCentralizerLocations_fields.Inc
 
-		mdl.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field, LatC_field)
-		mdl.calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field)
+		mdl2.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field, LatC_field)
+		mdl2.calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field, Inc_field)
 
 		for i in range(self.ssCentralizerLocations_tableWidget.rowCount()):
 
@@ -349,8 +342,17 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 				item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.SOatM.pos )
 				item.set_text()
 
+		self.meanSOatC = mu.np.round( mu.np.mean(SOatC_field), 1 )
+		self.meanSOatM = mu.np.round( mu.np.mean(SOatM_field), 1 )
+		self.ssMeanSOatC_label.setText( 'Mean SO at centralizers:\t{mSOatC} {unit}'.format( mSOatC=self.meanSOatC, 
+																							unit=SOatC_field.unit ) )
+		self.ssMeanSOatM_label.setText( 'Mean SO at minspan:\t{mSOatM} {unit}'.format(  mSOatM=self.meanSOatM,
+																						unit=SOatM_field.unit ) )
+		cu.idleFunction()
 
-	def choose_MDlocation(self, MD, overwrite=False, singleLocating=False):
+
+	@cu.waiting_effects
+	def choose_MDlocation(self, MD, overwrite=False):
 
 		if MD>=self.min_MD and MD<=self.max_MD:
 
@@ -359,11 +361,12 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 				if r<len(self.ssCentralizerLocations_fields.MD):
 					del self.ssCentralizerLocations_fields.MD[r]
 
-			#if singleLocating:
-			#	mu.create_physicalValue_and_appendTo_field( MD, self.ssCentralizerLocations_fields.MD )
-			#	MD = self.ssCentralizerLocations_fields.MD[-1]
-			#	self.ssCentralizerLocations_fields.MD.sort()
-			#else:
+			MD_bk = copy.deepcopy( self.ssCentralizerLocations_fields.MD )
+			EW_bk = copy.deepcopy( self.ssCentralizerLocations_fields.EW )
+			NS_bk = copy.deepcopy( self.ssCentralizerLocations_fields.NS )
+			VD_bk = copy.deepcopy( self.ssCentralizerLocations_fields.TVD )
+			DL_bk = copy.deepcopy( self.ssCentralizerLocations_fields.DL )
+
 			MD = mdl.set_newSpacedLocations_under_MD_with_variations(self, MD)
 
 			self.ssCentralizerLocations_fields.EW.clear()
@@ -396,13 +399,24 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 						EW = EWi
 						NS = NSi
 						VD = VDi
-						cu.select_tableWidgetRow(self.ssCentralizerLocations_tableWidget,i)
+						cu.select_tableWidgetRow(self.ssCentralizerLocations_tableWidget, i, alltherow=True)
 
 				except IndexError:
 					item = self.ssCentralizerLocations_tableWidget.item( i, self.ssCentralizerLocations_fields.MD.pos )
 					item.set_text()
 
-			self.update_calculations()
+			try:
+				self.update_calculations()
+			except mu.LogicalError:
+				msg = "There is a logical error between centralizer locations and length.\nPlease try with a larger spacing."
+				QtGui.QMessageBox.critical(self.ssCentralizerLocations_tableWidget, 'Error', msg)
+				self.ssCentralizerLocations_fields.MD = MD_bk
+				self.ssCentralizerLocations_fields.EW = EW_bk
+				self.ssCentralizerLocations_fields.NS = NS_bk
+				self.ssCentralizerLocations_fields.TVD = VD_bk
+				self.ssCentralizerLocations_fields.DL = DL_bk
+				self.update_calculations()
+				return
 			self.draw_MDlocations(MD, EW, NS, VD)	
 
 
@@ -426,7 +440,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 														self.ssCentralizerLocations_fields.NS,
 														self.ssCentralizerLocations_fields.TVD, marker='o', color='C3', alpha=0.5, ls='' )
 			
-			self.ssWellbore3D_graphicsView.axes.plot( [EW],[NS],[VD], marker='o', mec='black', color='C3', ms='8' )
+			self.ssWellbore3D_graphicsView.axes.plot( [EW],[NS],[VD], marker='o', mec='black', color='C3', ms=8 )
 
 			MD_alt = []
 			SO_alt = []
@@ -438,7 +452,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 					MD_alt.append( (self.ssCentralizerLocations_fields.MD[(k+1)//2]+self.ssCentralizerLocations_fields.MD[(k-1)//2])/2 )
 					SO_alt.append( self.ssCentralizerLocations_fields.SOatM[k//2] )
 
-			self.ssSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, 'C1', lw=2 )
+			self.ssSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, marker='s', ms=5, color='C1', lw=1.5, alpha=0.7 )
 
 			"""
 			hsMD_alt = []
@@ -475,7 +489,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 			
 			index = mu.np.where( mu.np.isclose(self.ssCentralizerLocations_fields.MD, MD) )[0][0]
 			SOatC = self.ssCentralizerLocations_fields.SOatC[index]
-			self.ssSOVisualization_graphicsView.axes.plot(	SOatC, MD, marker='o', mec='black', color='C3', ms='8' )
+			self.ssSOVisualization_graphicsView.axes.plot(	SOatC, MD, marker='o', mec='black', color='C3', ms=8 )
 			if created:
 				self.ssSOVisualization_graphicsView.axes.plot(	[0, self.max_SO], [MD, MD], color='C3', lw=4, alpha=0.4 )
 			

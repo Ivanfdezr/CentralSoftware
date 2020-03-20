@@ -279,6 +279,9 @@ def physicalValue(value, unit):
 	return entry
 
 
+class LogicalError( Exception ): pass
+
+
 class __int__(int): pass                                                   
 
 

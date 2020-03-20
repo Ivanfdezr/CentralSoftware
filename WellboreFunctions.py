@@ -705,6 +705,12 @@ def open_LS_dialog(self):
 				except IndexError:
 					item.set_text()
 
+	self.msg_label.setText( 'Mean SO at centralizers:   {meanSOatC} {unit} ,   Mean SO at minspan:   {meanSOatM} {unit}'.format(
+							meanSOatC=LS.meanSOatC, meanSOatM=LS.meanSOatM, unit=LS.fields.SOatC.unit ) )
+	cu.idleFunction()
+	self.meanSOatC = LS.meanSOatC
+	self.meanSOatM = LS.meanSOatM
+
 
 @updateByBlock_currentWellboreInnerStageDataItem
 def open_SS_dialog(self):
@@ -727,6 +733,12 @@ def open_SS_dialog(self):
 					item.set_text( value, value.unit )
 				except IndexError:
 					item.set_text()
+
+	self.msg_label.setText( 'Mean SO at centralizers:   {meanSOatC} {unit} ,   Mean SO at minspan:   {meanSOatM} {unit}'.format(
+							meanSOatC=SS.meanSOatC, meanSOatM=SS.meanSOatM, unit=SS.fields.SOatC.unit ) )
+	cu.idleFunction()
+	self.meanSOatC = SS.meanSOatC
+	self.meanSOatM = SS.meanSOatM
 
 
 @updateByBlock_currentWellboreOuterStageDataItem

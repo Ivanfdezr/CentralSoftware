@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_SpacingSetup(object):
 	def setupUi(self, SpacingSetup):
 		SpacingSetup.setObjectName(_fromUtf8("SpacingSetup"))
-		SpacingSetup.resize(1417, 567)
+		SpacingSetup.resize(1417, 585)
 		SpacingSetup.setWindowOpacity(1.0)
 		self.ssCaliperMap_graphicsView = MatplotlibWidget(SpacingSetup)
 		self.ssCaliperMap_graphicsView.setGeometry(QtCore.QRect(40, 40, 350, 450))
@@ -46,7 +46,7 @@ class Ui_SpacingSetup(object):
 		self.ssCentralizerLocations_tableWidget.horizontalHeader().setDefaultSectionSize(110)
 		self.ssCentralizerLocations_tableWidget.horizontalHeader().setMinimumSectionSize(30)
 		self.ssAccept_pushButton = QtGui.QPushButton(SpacingSetup)
-		self.ssAccept_pushButton.setGeometry(QtCore.QRect(1300, 510, 93, 30))
+		self.ssAccept_pushButton.setGeometry(QtCore.QRect(1300, 530, 93, 30))
 		font = QtGui.QFont()
 		font.setPointSize(10)
 		self.ssAccept_pushButton.setFont(font)
@@ -99,6 +99,22 @@ class Ui_SpacingSetup(object):
 		self.ssNextSpacing_tableWidget.verticalHeader().setDefaultSectionSize(30)
 		self.ssNextSpacing_tableWidget.verticalHeader().setMinimumSectionSize(28)
 		self.ssNextSpacing_tableWidget.verticalHeader().setSortIndicatorShown(False)
+		self.ssMeanSOatC_label = QtGui.QLabel(SpacingSetup)
+		self.ssMeanSOatC_label.setGeometry(QtCore.QRect(880, 510, 331, 21))
+		font = QtGui.QFont()
+		font.setPointSize(9)
+		font.setBold(True)
+		font.setWeight(75)
+		self.ssMeanSOatC_label.setFont(font)
+		self.ssMeanSOatC_label.setObjectName(_fromUtf8("ssMeanSOatC_label"))
+		self.ssMeanSOatM_label = QtGui.QLabel(SpacingSetup)
+		self.ssMeanSOatM_label.setGeometry(QtCore.QRect(880, 540, 331, 21))
+		font = QtGui.QFont()
+		font.setPointSize(9)
+		font.setBold(True)
+		font.setWeight(75)
+		self.ssMeanSOatM_label.setFont(font)
+		self.ssMeanSOatM_label.setObjectName(_fromUtf8("ssMeanSOatM_label"))
 
 		self.retranslateUi(SpacingSetup)
 		self.tabWidget.setCurrentIndex(0)
@@ -120,5 +136,7 @@ class Ui_SpacingSetup(object):
 		self.ssNextSpacing_tableWidget.setSortingEnabled(False)
 		item = self.ssNextSpacing_tableWidget.verticalHeaderItem(0)
 		item.setText(_translate("SpacingSetup", "Next stage spacing           ", None))
+		self.ssMeanSOatC_label.setText(_translate("SpacingSetup", "Mean SO at centralizers: ", None))
+		self.ssMeanSOatM_label.setText(_translate("SpacingSetup", "Mean SO at midspan:", None))
 
 from matplotlibwidget import Matplotlib3DWidget, MatplotlibWidget

@@ -29,6 +29,7 @@ def get_ssCentralizerLocations_fields():
 	ClatC = Field(2073, altBg=True, altFg=True)
 	ClatM = Field(2073, altBg=True, altFg=True)
 
+	"""
 	hsMD  = Field(2001)
 	hsInc = Field(2002, altBg=True, altFg=True)
 	hsSOatC = Field(2078, altBg=True, altFg=True)
@@ -42,6 +43,7 @@ def get_ssCentralizerLocations_fields():
 	dsSOatM = Field(2078, altBg=True, altFg=True)
 	dsClatC = Field(2073, altBg=True, altFg=True)
 	dsClatM = Field(2073, altBg=True, altFg=True)
+	"""
 
 	EW  = Field(2007, altBg=True, altFg=True)
 	NS  = Field(2006, altBg=True, altFg=True)
@@ -57,6 +59,7 @@ def get_ssCentralizerLocations_fields():
 	ClatM.set_abbreviation('ClatM')
 	LatC.set_abbreviation('LatC')
 
+	"""
 	hsMD.set_abbreviation('hsMD')
 	hsInc.set_abbreviation('hsInc')
 	hsSOatC.set_abbreviation('hsSOatC')
@@ -70,6 +73,7 @@ def get_ssCentralizerLocations_fields():
 	dsSOatM.set_abbreviation('dsSOatM')	
 	dsClatC.set_abbreviation('dsClatC')
 	dsClatM.set_abbreviation('dsClatM')
+	"""
 
 	SOatC.set_representation('<SO> @ centr.')
 	SOatM.set_representation('SO @ mid span')
@@ -85,6 +89,7 @@ def get_ssCentralizerLocations_fields():
 	ssCentralizerLocations_fields.append( ClatC )
 	ssCentralizerLocations_fields.append( ClatM )
 
+	"""
 	ssCentralizerLocations_fields.append( hsMD )
 	ssCentralizerLocations_fields.append( hsInc )
 	ssCentralizerLocations_fields.append( hsSOatC )
@@ -98,6 +103,7 @@ def get_ssCentralizerLocations_fields():
 	ssCentralizerLocations_fields.append( dsSOatM )
 	ssCentralizerLocations_fields.append( dsClatC )
 	ssCentralizerLocations_fields.append( dsClatM )
+	"""
 
 	ssCentralizerLocations_fields.append( EW )
 	ssCentralizerLocations_fields.append( NS )
@@ -135,8 +141,9 @@ def get_LASMDandCALID_intoInterval(self):
 	MD[0] = self.min_MD
 	MD[-1] = self.max_MD
 
-	K = list(self.parent.wellboreOuterStageData.keys())
-	K.sort()
+	K = mdl.get_sortedIndexes_of_wellboreOuterStageData(self.parent)
+	#K = list(self.parent.wellboreOuterStageData.keys())
+	#K.sort()
 	mean_ID = []
 	for md in MD:
 		for k in K:
@@ -149,7 +156,23 @@ def get_LASMDandCALID_intoInterval(self):
 	return MD, ID, mean_ID, lim_ID
 
 
-def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field, LatC_field=None):
+def get_centralizersEnsembleLength(self):
+
+	gap = mu.referenceUnitConvert_value( 2.0, 'm' )
+
+	CEL = 0
+	numofCent = 0
+	for x, c in self.centralizers.items():
+		if c['Type']!=None:
+			CL = c['CentralizerBase'].CL[0]
+			mu.referenceUnitConvert_value( CL, CL.unit )
+			CEL += CL + gap
+			numofCent +=1
+
+	return CEL
+
+
+def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field, LatC_field, Inc_field):
 
 	locations.referenceUnitConvert()
 	SOatC_field.referenceUnitConvert()
@@ -157,7 +180,7 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 	numofLocations = len(locations)
 
 	Inc, Azi = mdl.get_inclination_and_azimuth_from_locations(self.parent, locations)
-	MDs = self.ssCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD
+	MDs = locations.factorToReferenceUnit*self.MD
 	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
 	meanIDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.mean_ID
 
@@ -192,34 +215,85 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 			D[x] = mu.referenceUnitConvert_value( D[x], D[x].unit )
 			d[x] = c['CentralizerProps'].IPOD[0]
 			d[x] = mu.referenceUnitConvert_value( d[x], d[x].unit )
+			CL[x] = c['CentralizerBase'].CL[0]
+			CL[x] = mu.referenceUnitConvert_value( CL[x], CL[x].unit )
 			supports+=1
 
 		elif c['Type']=='Rigid':
 			D[x] = c['CentralizerProps'].COD[0]
 			D[x] = mu.referenceUnitConvert_value( D[x], D[x].unit )
+			CL[x] = c['CentralizerBase'].CL[0]
+			CL[x] = mu.referenceUnitConvert_value( CL[x], CL[x].unit )
+			B[x] = int(c['CentralizerBase'].Blades[0])
 			supports+=1#c['CentralizerBase'].Blades[0]
 
 	buoyancyFactor = mu.calculate_buoyancyFactor( OD=PD, ID=Pd, ρs=ρs, ρe=ρe, ρi=ρi )
-	PW *= buoyancyFactor
+	PW *= buoyancyFactor/supports
 	PI = np.pi/64*(PD**4-Pd**4)
 	PR = PD/2
+	CEL = get_centralizersEnsembleLength(self)
 
 	def calculate_SO_per_centralizersEnsemble():
-		SO = 0
-		Cc = 0
+		SO = []
+		Cc = []
 		L = []
+		Δ = 0
 		for x, c in self.centralizers.items():
-			if c['Type']=='Bow Spring':
-				so, cc, l = calculate_SO_per_centralizer(x)
-				SO += so/supports
-				Cc += cc/supports
-				L.append(l)
-			elif c['Type']=='Rigid':
-				so, cc, l = calculate_SO_per_centralizer(x)
-				SO += so/supports #*c['CentralizerBase'].Blades[0]/supports
-				Cc += cc/supports #*c['CentralizerBase'].Blades[0]/supports
-				L.append(l)
-		return SO, Cc, np.mean(L)
+			#if c['Type']=='Bow Spring':
+			if c['Type']!=None:
+				so, cc, l = calculate_SO_per_centralizer(x,c['Type'],supports,Δ)
+				Δ += CL[x]
+				SO.append( so )
+				Cc.append( cc )
+				L.append( l )
+			#elif c['Type']=='Rigid':
+			#	so, cc, l = calculate_SO_per_centralizer(x)
+			#	SO += so/supports #*c['CentralizerBase'].Blades[0]/supports
+			#	Cc += cc/supports #*c['CentralizerBase'].Blades[0]/supports
+			#	L.append(l)
+		return np.mean(SO), np.mean(Cc), np.mean(L)
+
+	def get_Hr_mHr_R_L(MD0, MD1, MD2, inc):
+
+		MDi = MDs[0]
+		IDi = IDs[0]
+		mIDi = meanIDs[0]
+		for MDj,IDj,mIDj in zip(MDs,IDs,meanIDs):
+			if MD1<MDj:
+				Hd = (MD1-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
+				mHd = (MD1-MDi)/(MDj-MDi)*(mIDj-mIDi)+mIDi
+				break
+			else:
+				MDi = MDj
+				IDi = IDj
+				mIDi = mIDj
+
+		Hr = Hd/2
+		mHr = mHd/2
+		R = D[label]/2
+		δ = Hr-PR
+
+		if MD0==None and MD2==None:
+			L = (384*PE*PI*δ/PW/np.sin(inc))**0.25
+		elif MD0==None:
+			Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
+			L21 = (MD2-MD1)/2
+			L21 = L21 if (L21<Lalt) else Lalt
+			L = L21 + Lalt
+		elif MD2==None:
+			Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
+			L10 = (MD1-MD0)/2
+			L10 = L10 if (L10<Lalt) else Lalt
+			L = L10 + Lalt
+		else:
+			Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
+			L21 = (MD2-MD1)/2
+			L21 = L21 if (L21<Lalt) else Lalt
+			L10 = (MD1-MD0)/2
+			L10 = L10 if (L10<Lalt) else Lalt
+			L = L21 + L10
+
+		return Hr,mHr,R,L
 		
 	for j, (MD1,inc) in enumerate(zip(locations,Inc)):
 
@@ -229,57 +303,23 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 		if i==-1:
 			MD0 = None
 		else:
-			MD0 = locations[i]
+			MD0 = locations[i]+CEL
 		if k==numofLocations:
 			MD2 = None
 		else:
 			MD2 = locations[k]
 
-		def calculate_SO_per_centralizer(label):
+		def calculate_SO_per_centralizer(label,ctype,supports,ΔMD1):
 			"""
 			Define before use: MD0, MD1, MD2, inc
-			Return "y" in reference units.
+			Return "SO, Cc, L" in reference units.
 			"""
-			MDi = MDs[0]
-			IDi = IDs[0]
-			mIDi = meanIDs[0]
-			for MDj,IDj,mIDj in zip(MDs,IDs,meanIDs):
-				if MD1<MDj:
-					Hd = (MD1-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
-					mHd = (MD1-MDi)/(MDj-MDi)*(mIDj-mIDi)+mIDi
-					break
-				else:
-					MDi = MDj
-					IDi = IDj
-					mIDi = mIDj
+			MD1 += ΔMD1
 
-			Hr = Hd/2
-			mHr = mHd/2
-			R = D[label]/2
-			δ = Hr-PR
+			if ctype=='Bow Spring':
+				
+				Hr,mHr,R,L = get_Hr_mHr_R_L(MD0, MD1, MD2, inc)
 
-			if MD0==None and MD2==None:
-				L = (384*PE*PI*δ/PW/np.sin(inc))**0.25
-			elif MD0==None:
-				Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
-				L21 = (MD2-MD1)/2
-				L21 = L21 if (L21<Lalt) else Lalt
-				L = L21 + Lalt
-			elif MD2==None:
-				Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
-				L10 = (MD1-MD0)/2
-				L10 = L10 if (L10<Lalt) else Lalt
-				δ = Hr-PR
-				L = L10 + Lalt
-			else:
-				Lalt = (384*PE*PI*δ/PW/np.sin(inc))**0.25/2
-				L21 = (MD2-MD1)/2
-				L21 = L21 if (L21<Lalt) else Lalt
-				L10 = (MD1-MD0)/2
-				L10 = L10 if (L10<Lalt) else Lalt
-				L = L21 + L10
-
-			if self.centralizers[label]['Type']=='Bow Spring':
 				f = PW*L*np.sin(inc)/supports
 				resK = 2*ResF[label]/( D[label]-d[label]-0.67*(Hd-PD) )
 
@@ -288,9 +328,29 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 				R = (R-y) if (R<Hr) else (Hr-y)
 				R = Rmin if (R<Rmin) else R
 
-			mHc = mHr-PR
-			Cc = R-PR-(Hr-mHr)
-			SO = Cc/mHc
+				mHc = mHr-PR
+				Cc = R-PR-(Hr-mHr)
+				SO = Cc/mHc
+
+			elif ctype=='Rigid':
+
+				SO_ = []
+				Cc_ = []
+				L_  = []
+
+				for i in range(B[x]):
+					Hr,mHr,R,L = get_Hr_mHr_R_L(MD0, MD1, MD2, inc)
+
+					mHc = mHr-PR
+					Cc_.append( R-PR-(Hr-mHr) )
+					SO_.append( Cc/mHc )
+					L_.append( L )
+
+					MD1 += CL[x]/B[x]
+
+				Cc = np.mean( Cc_ )
+				SO = np.mean( SO_ )
+				L = np.mean( L_ )
 			
 			return SO, Cc, L
 		
@@ -299,7 +359,7 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 		mu.create_physicalValue_and_appendTo_field( SO, SOatC_field, SOatC_field.referenceUnit )
 		mu.create_physicalValue_and_appendTo_field( Cc, ClatC_field, ClatC_field.referenceUnit )
 		if LatC_field!=None:
-			mu.create_physicalValue_and_appendTo_field( L,  LatC_field,   LatC_field.referenceUnit )
+			mu.create_physicalValue_and_appendTo_field( L, LatC_field, LatC_field.referenceUnit )
 
 	SOatC_field.inverseReferenceUnitConvert()
 	ClatC_field.inverseReferenceUnitConvert()
@@ -314,12 +374,11 @@ def calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, Clat
 	ClatC_field.referenceUnitConvert()
 	SOatM_field.referenceUnitConvert()
 	ClatM_field.referenceUnitConvert()
-	Inc_field = self.ssCentralizerLocations_fields.Inc
 	Inc_field.clear()
 
 	Inc, Azi = mdl.get_inclination_and_azimuth_from_locations(self.parent, locations)
 
-	MDs = self.ssCentralizerLocations_fields.MD.factorToReferenceUnit*self.MD
+	MDs = locations.factorToReferenceUnit*self.MD
 	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
 	meanIDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.mean_ID
 
@@ -339,34 +398,7 @@ def calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, Clat
 	PL = mu.referenceUnitConvert_value( PL, PL.unit )
 	gap = mu.referenceUnitConvert_value( 2.0, 'm' )
 
-	firstCent = None
-	lastCent  = None
-	for x, c in self.centralizers.items():
-		if firstCent==None and c['Type']!=None:
-			firstCent = x
-		elif firstCent!=None and c['Type']!=None:
-			lastCent = x
-	if lastCent==None:
-		lastCent = firstCent
-
-	CL = 0
-	numofCent = 0
-	for x, c in self.centralizers.items():
-		if c['Type']!=None:
-			CL += c['CentralizerBase'].CL[0]
-			numofCent +=1
-
-	if numofCent==2:
-		if firstCent=='A' and lastCent=='C':
-			CL = PL
-		else:
-			CL += gap
-
-	if numofCent==3:
-		CL += gap
-
-	if CL>PL:
-		print('SIZE ERROR in CENTRALIZERS ENSEMBLE')
+	CL = get_centralizersEnsembleLength(self)
 
 	buoyancyFactor = mu.calculate_buoyancyFactor( OD=PD, ID=Pd, ρs=ρs, ρe=ρe, ρi=ρi )
 	PW *= buoyancyFactor
@@ -390,9 +422,9 @@ def calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, Clat
 		IDi = IDs[0]
 		mIDi = meanIDs[0]
 		for MDj,IDj,mIDj in zip(MDs,IDs,meanIDs):
-			if MD1<MDj:
-				Hd = (MD1-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
-				mHd = (MD1-MDi)/(MDj-MDi)*(mIDj-mIDi)+mIDi
+			if MDm<MDj:
+				Hd = (MDm-MDi)/(MDj-MDi)*(IDj-IDi)+IDi
+				mHd = (MDm-MDi)/(MDj-MDi)*(mIDj-mIDi)+mIDi
 				break
 			else:
 				MDi = MDj
@@ -442,6 +474,7 @@ def set_newSpacedLocations_under_MD_with_variations(self, MD):
 	space = mu.unitConvert_value(	item.realValue, item.realValue.unit,
 									self.ssCentralizerLocations_fields.MD.unit )
 
+	"""
 	auxarray = np.array(self.ssCentralizerLocations_fields.hsMD)
 	indexes = np.where( auxarray<MD )[0]
 	auxarray = np.append( 	auxarray[indexes],
@@ -461,6 +494,8 @@ def set_newSpacedLocations_under_MD_with_variations(self, MD):
 	for value in auxarray:
 		mu.create_physicalValue_and_appendTo_field( value, self.ssCentralizerLocations_fields.dsMD, 
 													self.ssCentralizerLocations_fields.dsMD.unit )
+
+	"""
 
 	auxarray = np.array(self.ssCentralizerLocations_fields.MD)
 	indexes = np.where( auxarray<MD )[0]
