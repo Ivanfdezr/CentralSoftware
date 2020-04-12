@@ -111,7 +111,7 @@ def get_s2TortuosityInterval_field():
 	return s2TortuosityInterval_field
 	
 	
-def get_s3WellboreIntervals_fields():
+def get_s3WellboreOuterStages_fields():
 
 	Desc  = Field(2055, altBg=True, altFg=True)
 	ID    = Field(2031, altBg=True, altFg=True)
@@ -125,18 +125,18 @@ def get_s3WellboreIntervals_fields():
 	Drift.set_representation('Drift / BS')
 	MDbot.set_representation('bottom MD')
 	MDtop.set_representation('top MD')
-	s3WellboreIntervals_fields = FieldList()
-	s3WellboreIntervals_fields.append( Desc  )
-	s3WellboreIntervals_fields.append( ID    )
-	s3WellboreIntervals_fields.append( Drift )
-	s3WellboreIntervals_fields.append( MDtop )
-	s3WellboreIntervals_fields.append( MDbot )
-	s3WellboreIntervals_fields.append( FF    )
+	s3WellboreOuterStages_fields = FieldList()
+	s3WellboreOuterStages_fields.append( Desc  )
+	s3WellboreOuterStages_fields.append( ID    )
+	s3WellboreOuterStages_fields.append( Drift )
+	s3WellboreOuterStages_fields.append( MDtop )
+	s3WellboreOuterStages_fields.append( MDbot )
+	s3WellboreOuterStages_fields.append( FF    )
 	
-	return s3WellboreIntervals_fields
+	return s3WellboreOuterStages_fields
 
 
-def get_s3PipeCentralizationStage_fields():
+def get_s3WellboreInnerStages_fields():
 
 	Desc  = Field(2055, altBg=True, altFg=True)
 	MDtop = Field(2001)
@@ -145,12 +145,12 @@ def get_s3PipeCentralizationStage_fields():
 	MDtop.set_abbreviation('MDtop')
 	MDbot.set_representation('bottom MD')
 	MDtop.set_representation('top MD')
-	s3PipeCentralizationStage_fields = FieldList()
-	s3PipeCentralizationStage_fields.append( Desc  )
-	s3PipeCentralizationStage_fields.append( MDtop )
-	s3PipeCentralizationStage_fields.append( MDbot )
+	s3WellboreInnerStages_fields = FieldList()
+	s3WellboreInnerStages_fields.append( Desc  )
+	s3WellboreInnerStages_fields.append( MDtop )
+	s3WellboreInnerStages_fields.append( MDbot )
 
-	return s3PipeCentralizationStage_fields
+	return s3WellboreInnerStages_fields
 
 
 def get_s3CentralizerSpacing_fields():
@@ -662,7 +662,7 @@ def calculate_axialForce_field(self):
 
 	self.s3Forces_fields.AxialF.inverseReferenceUnitConvert()
 	self.s3Forces_fields.MD_AxF.inverseReferenceUnitConvert()
-	self.s3UpdateAxialF_pushButton.setEnabled(False)
+	self.s3UpdateInnerStages_pushButton.setEnabled(False)
 	self.s3InnerStageToolkit_tabWidget.setEnabled(True)
 
 	self.msg_label.setText( '' )
@@ -859,8 +859,8 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 
 	Inc, Azi = get_inclination_and_azimuth_from_locations(self.parent, locations)
 	MDs = locations.factorToReferenceUnit*self.MD
-	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
-	meanIDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.mean_ID
+	IDs = self.parent.s3WellboreOuterStages_fields.ID.factorToReferenceUnit*self.ID
+	meanIDs = self.parent.s3WellboreOuterStages_fields.ID.factorToReferenceUnit*self.mean_ID
 
 	PD = self.stage['PipeProps'].OD[0]
 	Pd = self.stage['PipeProps'].ID[0]
@@ -1069,8 +1069,8 @@ def calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, Clat
 	Inc, Azi = get_inclination_and_azimuth_from_locations(self.parent, locations)
 
 	MDs = locations.factorToReferenceUnit*self.MD
-	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
-	meanIDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.mean_ID
+	IDs = self.parent.s3WellboreOuterStages_fields.ID.factorToReferenceUnit*self.ID
+	meanIDs = self.parent.s3WellboreOuterStages_fields.ID.factorToReferenceUnit*self.mean_ID
 
 	PD = self.stage['PipeProps'].OD[0]
 	Pd = self.stage['PipeProps'].ID[0]

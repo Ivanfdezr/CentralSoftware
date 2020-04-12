@@ -181,8 +181,8 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 
 	Inc, Azi = mdl.get_inclination_and_azimuth_from_locations(self.parent, locations)
 	MDs = locations.factorToReferenceUnit*self.MD
-	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
-	meanIDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.mean_ID
+	IDs = self.parent.s3WellboreOuterStages_fields.ID.factorToReferenceUnit*self.ID
+	meanIDs = self.parent.s3WellboreOuterStages_fields.ID.factorToReferenceUnit*self.mean_ID
 
 	PD = self.stage['PipeProps'].OD[0]
 	Pd = self.stage['PipeProps'].ID[0]
@@ -379,8 +379,8 @@ def calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, Clat
 	Inc, Azi = mdl.get_inclination_and_azimuth_from_locations(self.parent, locations)
 
 	MDs = locations.factorToReferenceUnit*self.MD
-	IDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.ID
-	meanIDs = self.parent.s3WellboreIntervals_fields.ID.factorToReferenceUnit*self.mean_ID
+	IDs = self.parent.s3WellboreOuterStages_fields.ID.factorToReferenceUnit*self.ID
+	meanIDs = self.parent.s3WellboreOuterStages_fields.ID.factorToReferenceUnit*self.mean_ID
 
 	PD = self.stage['PipeProps'].OD[0]
 	Pd = self.stage['PipeProps'].ID[0]

@@ -37,8 +37,8 @@ class Main_InputWindow(Ui_InputWindow):
 		self.__init__s2SurveyTortuosity_tableWidget()
 		self.__init__s2KOP_tableWidget()
 		self.__init__s2TortuosityInterval_tableWidget()
-		self.__init__s3WellboreIntervals_tableWidget()
-		self.__init__s3PipeCentralizationStage_tableWidget()
+		self.__init__s3WellboreOuterStages_tableWidget()
+		self.__init__s3WellboreInnerStages_tableWidget()
 		#self.__init__s3CentralizerSpacing_tableWidget()
 		self.__init__s3PipeProperties_tableWidget()
 		self.__init__s3CentralizerProperties_tableWidgets()
@@ -75,8 +75,8 @@ class Main_InputWindow(Ui_InputWindow):
 		#self.s3PipeDB_pushButton.clicked.connect(open_TDB_dialog_for_innerStages)
 		
 		calculate_axialForce_field = lambda: mdl.calculate_axialForce_field(self)
-		self.s3UpdateAxialF_pushButton.clicked.connect(calculate_axialForce_field)
-		self.s3UpdateAxialF_pushButton.setEnabled(False)
+		self.s3UpdateInnerStages_pushButton.clicked.connect(calculate_axialForce_field)
+		self.s3UpdateInnerStages_pushButton.setEnabled(False)
 
 		adjust_Wt = lambda: wf.adjust_Wt(self)
 		adjust_ID = lambda: wf.adjust_ID(self)
@@ -160,8 +160,8 @@ class Main_InputWindow(Ui_InputWindow):
 		self.setup_s2DataSurvey_tableWidget()
 		self.setup_s2SurveyTortuosity_tableWidget()
 		self.setup_s2TortuosityInterval_tableWidget()
-		self.setup_s3WellboreIntervals_tableWidget()
-		self.setup_s3PipeCentralizationStage_tableWidget()
+		self.setup_s3WellboreOuterStages_tableWidget()
+		self.setup_s3WellboreInnerStages_tableWidget()
 		#self.setup_s3CentralizerSpacing_tableWidget()
 		self.setup_s3PipeProperties_tableWidget()
 		wf.setup_s3CentralizerProperties_tableWidget(self,'A')
@@ -236,13 +236,13 @@ class Main_InputWindow(Ui_InputWindow):
 
 		self.s2Dogleg_graphicsView.figure.savefig( self.workingDirectory+"/Dogleg.png", dpi=300 )
 
-		cu.savetable( 	self.s3WellboreIntervals_tableWidget,
-						self.s3WellboreIntervals_fields,
+		cu.savetable( 	self.s3WellboreOuterStages_tableWidget,
+						self.s3WellboreOuterStages_fields,
 						["tmp/WellboreOuterStages.csv",
 						self.workingDirectory+"/WellboreOuterStages.csv"] )
 
-		cu.savetable( 	self.s3PipeCentralizationStage_tableWidget,
-						self.s3PipeCentralizationStage_fields,
+		cu.savetable( 	self.s3WellboreInnerStages_tableWidget,
+						self.s3WellboreInnerStages_fields,
 						["tmp/WellboreInnerStages.csv",
 						self.workingDirectory+"/WellboreInnerStages.csv"] )
 
@@ -409,111 +409,111 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s2TortuosityInterval_tableWidget.setItem(0, 0, item)
 	
 		
-	def __init__s3WellboreIntervals_tableWidget(self):
+	def __init__s3WellboreOuterStages_tableWidget(self):
 			
-		self.s3WellboreIntervals_tableWidget.parent = self
-		self.s3WellboreIntervals_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.s3WellboreOuterStages_tableWidget.parent = self
+		self.s3WellboreOuterStages_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
 		
-		#C = cu.CopySelectedCells_action(self.s3WellboreIntervals_tableWidget)
-		#self.s3WellboreIntervals_tableWidget.addAction(C)
+		#C = cu.CopySelectedCells_action(self.s3WellboreOuterStages_tableWidget)
+		#self.s3WellboreOuterStages_tableWidget.addAction(C)
 		
-		#V = cu.PasteToCells_action(self.s3WellboreIntervals_tableWidget)
-		#self.s3WellboreIntervals_tableWidget.addAction(V)
+		#V = cu.PasteToCells_action(self.s3WellboreOuterStages_tableWidget)
+		#self.s3WellboreOuterStages_tableWidget.addAction(V)
 		
 		open_TDB_dialog_for_outerStages = lambda: wf.open_TDB_dialog_for_outerStages(self)
-		A = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, open_TDB_dialog_for_outerStages, "Add outer pipe")
-		self.s3WellboreIntervals_tableWidget.addAction(A)
+		A = cu.FunctionToWidget_action(self.s3WellboreOuterStages_tableWidget, open_TDB_dialog_for_outerStages, "Add outer pipe")
+		self.s3WellboreOuterStages_tableWidget.addAction(A)
 
 		open_caliper_dialog = lambda: wf.open_caliper_dialog(self)
-		A = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, open_caliper_dialog, "Import DR-CAL")
-		self.s3WellboreIntervals_tableWidget.addAction(A)
+		A = cu.FunctionToWidget_action(self.s3WellboreOuterStages_tableWidget, open_caliper_dialog, "Import DR-CAL")
+		self.s3WellboreOuterStages_tableWidget.addAction(A)
 
 		open_csv_dialog = lambda: wf.open_csv_dialog(self)
-		A = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, open_csv_dialog, "Insert CAL data")
-		self.s3WellboreIntervals_tableWidget.addAction(A)
+		A = cu.FunctionToWidget_action(self.s3WellboreOuterStages_tableWidget, open_csv_dialog, "Insert CAL data")
+		self.s3WellboreOuterStages_tableWidget.addAction(A)
 
 		set_row_as_freeCH = lambda: wf.set_row_as_free(self)#, 'Casing Hole')
-		F = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, set_row_as_freeCH, "Add as free stage")
-		self.s3WellboreIntervals_tableWidget.addAction(F)
+		F = cu.FunctionToWidget_action(self.s3WellboreOuterStages_tableWidget, set_row_as_freeCH, "Add as free stage")
+		self.s3WellboreOuterStages_tableWidget.addAction(F)
 
 		#set_row_as_freeOH = lambda: wf.set_row_as_free(self, 'Open Hole')
-		#F = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, set_row_as_freeOH, "Add as free OH")
-		#self.s3WellboreIntervals_tableWidget.addAction(F)
+		#F = cu.FunctionToWidget_action(self.s3WellboreOuterStages_tableWidget, set_row_as_freeOH, "Add as free OH")
+		#self.s3WellboreOuterStages_tableWidget.addAction(F)
 
 		delete_outerStageObjects = lambda: wf.delete_outerStageObjects(self)
-		D = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, delete_outerStageObjects, "Delete stage", 'Del')
-		self.s3WellboreIntervals_tableWidget.addAction(D)
+		D = cu.FunctionToWidget_action(self.s3WellboreOuterStages_tableWidget, delete_outerStageObjects, "Delete stage", 'Del')
+		self.s3WellboreOuterStages_tableWidget.addAction(D)
 
 		#unlock_tableWidget = lambda: wf.unlock_tableWidget(self)
-		#U = cu.FunctionToWidget_action(self.s3WellboreIntervals_tableWidget, unlock_tableWidget, "Unlock all the table", 'Del')
-		#self.s3WellboreIntervals_tableWidget.addAction(U)
+		#U = cu.FunctionToWidget_action(self.s3WellboreOuterStages_tableWidget, unlock_tableWidget, "Unlock all the table", 'Del')
+		#self.s3WellboreOuterStages_tableWidget.addAction(U)
 		
-		self.setup_s3WellboreIntervals_tableWidget()
+		self.setup_s3WellboreOuterStages_tableWidget()
 
 		select_outerStageRow_and_prepare_outerStageObjects = lambda r,c : wf.select_outerStageRow_and_prepare_outerStageObjects(self, r)
 		update_fieldItem_and_wellboreOuterStageData = lambda item: wf.update_fieldItem_and_wellboreOuterStageData(self, item)
-		self.s3WellboreIntervals_tableWidget.cellPressed.connect(select_outerStageRow_and_prepare_outerStageObjects)
-		self.s3WellboreIntervals_tableWidget.itemChanged.connect(update_fieldItem_and_wellboreOuterStageData)
+		self.s3WellboreOuterStages_tableWidget.cellPressed.connect(select_outerStageRow_and_prepare_outerStageObjects)
+		self.s3WellboreOuterStages_tableWidget.itemChanged.connect(update_fieldItem_and_wellboreOuterStageData)
 
 
-	def setup_s3WellboreIntervals_tableWidget(self):
+	def setup_s3WellboreOuterStages_tableWidget(self):
 
-		self.s3WellboreIntervals_fields = mdl.get_s3WellboreIntervals_fields()
-		for field in self.s3WellboreIntervals_fields:
-			item = self.s3WellboreIntervals_tableWidget.horizontalHeaderItem( field.pos )
+		self.s3WellboreOuterStages_fields = mdl.get_s3WellboreOuterStages_fields()
+		for field in self.s3WellboreOuterStages_fields:
+			item = self.s3WellboreOuterStages_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( field.headerName )
 			
-			for i in range(self.s3WellboreIntervals_tableWidget.rowCount()):
+			for i in range(self.s3WellboreOuterStages_tableWidget.rowCount()):
 				item = cu.TableWidgetFieldItem( field, i%2==0 )
-				self.s3WellboreIntervals_tableWidget.setItem(i, field.pos, item)
+				self.s3WellboreOuterStages_tableWidget.setItem(i, field.pos, item)
 
 	
-	def __init__s3PipeCentralizationStage_tableWidget(self):
+	def __init__s3WellboreInnerStages_tableWidget(self):
 		
-		self.s3PipeCentralizationStage_tableWidget.parent = self
-		self.s3PipeCentralizationStage_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.s3WellboreInnerStages_tableWidget.parent = self
+		self.s3WellboreInnerStages_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
 
-		#C = cu.CopySelectedCells_action(self.s3PipeCentralizationStage_tableWidget)
-		#self.s3PipeCentralizationStage_tableWidget.addAction(C)
+		#C = cu.CopySelectedCells_action(self.s3WellboreInnerStages_tableWidget)
+		#self.s3WellboreInnerStages_tableWidget.addAction(C)
 		
-		#V = cu.PasteToCells_action(self.s3PipeCentralizationStage_tableWidget)
-		#self.s3PipeCentralizationStage_tableWidget.addAction(V)
+		#V = cu.PasteToCells_action(self.s3WellboreInnerStages_tableWidget)
+		#self.s3WellboreInnerStages_tableWidget.addAction(V)
 
 		open_TDB_dialog_for_innerStages = lambda: wf.open_TDB_dialog_for_innerStages(self)
-		P = cu.FunctionToWidget_action(self.s3PipeCentralizationStage_tableWidget, open_TDB_dialog_for_innerStages, "Import Pipe ...", '')
-		self.s3PipeCentralizationStage_tableWidget.addAction(P)
+		P = cu.FunctionToWidget_action(self.s3WellboreInnerStages_tableWidget, open_TDB_dialog_for_innerStages, "Import Pipe ...", '')
+		self.s3WellboreInnerStages_tableWidget.addAction(P)
 
 		adjust_MD_to_wellboreDeep = lambda: wf.adjust_MD_to_wellboreDeep(self)
-		A = cu.FunctionToWidget_action(self.s3PipeCentralizationStage_tableWidget, adjust_MD_to_wellboreDeep, "Adjust stage to depth", '')
-		self.s3PipeCentralizationStage_tableWidget.addAction(A)
+		A = cu.FunctionToWidget_action(self.s3WellboreInnerStages_tableWidget, adjust_MD_to_wellboreDeep, "Adjust stage to depth", '')
+		self.s3WellboreInnerStages_tableWidget.addAction(A)
 
 		delete_innerStageObjects = lambda: wf.delete_innerStageObjects(self)
-		D = cu.FunctionToWidget_action(self.s3PipeCentralizationStage_tableWidget, delete_innerStageObjects, "Delete stage", 'Del')
-		self.s3PipeCentralizationStage_tableWidget.addAction(D)
+		D = cu.FunctionToWidget_action(self.s3WellboreInnerStages_tableWidget, delete_innerStageObjects, "Delete stage", 'Del')
+		self.s3WellboreInnerStages_tableWidget.addAction(D)
 		
-		self.setup_s3PipeCentralizationStage_tableWidget()
+		self.setup_s3WellboreInnerStages_tableWidget()
 
 		select_innerStageRow_and_prepare_innerStageObjects = lambda r,c : wf.select_innerStageRow_and_prepare_innerStageObjects(self, r)
 		#adjust_Length_and_MD = lambda item: wf.adjust_Length_and_MD(self, item)
 		updateMD_wellboreInnerStageData = lambda item: wf.updateMD_wellboreInnerStageData(self, item)
 		self._PipeCentralizationStageAdjusting_isEnabled = True
-		self.s3PipeCentralizationStage_tableWidget.cellPressed.connect(select_innerStageRow_and_prepare_innerStageObjects)
-		#self.s3PipeCentralizationStage_tableWidget.itemChanged.connect(adjust_Length_and_MD)
-		self.s3PipeCentralizationStage_tableWidget.itemChanged.connect(updateMD_wellboreInnerStageData)
+		self.s3WellboreInnerStages_tableWidget.cellPressed.connect(select_innerStageRow_and_prepare_innerStageObjects)
+		#self.s3WellboreInnerStages_tableWidget.itemChanged.connect(adjust_Length_and_MD)
+		self.s3WellboreInnerStages_tableWidget.itemChanged.connect(updateMD_wellboreInnerStageData)
 
-		self.s3PipeCentralizationStage_tableWidget.resizeColumnsToContents()
+		self.s3WellboreInnerStages_tableWidget.resizeColumnsToContents()
 
 
-	def setup_s3PipeCentralizationStage_tableWidget(self):
+	def setup_s3WellboreInnerStages_tableWidget(self):
 
-		self.s3PipeCentralizationStage_fields = mdl.get_s3PipeCentralizationStage_fields()
-		for size,field in zip([46,20,20], self.s3PipeCentralizationStage_fields):
-			item = self.s3PipeCentralizationStage_tableWidget.horizontalHeaderItem( field.pos )
+		self.s3WellboreInnerStages_fields = mdl.get_s3WellboreInnerStages_fields()
+		for size,field in zip([46,20,20], self.s3WellboreInnerStages_fields):
+			item = self.s3WellboreInnerStages_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( cu.extend_text( field.headerName, size, mode='center' ) )
 			
-			for i in range(self.s3PipeCentralizationStage_tableWidget.rowCount()):
+			for i in range(self.s3WellboreInnerStages_tableWidget.rowCount()):
 				item = cu.TableWidgetFieldItem( field, i%2==0 )
-				self.s3PipeCentralizationStage_tableWidget.setItem(i, field.pos, item)
+				self.s3WellboreInnerStages_tableWidget.setItem(i, field.pos, item)
 
 
 	def __init__s3CentralizerSpacing_tableWidget(self):
