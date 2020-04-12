@@ -2419,7 +2419,7 @@ p, li { white-space: pre-wrap; }
        <widget class="QPushButton" name="s3UpdateAxialF_pushButton">
         <property name="geometry">
          <rect>
-          <x>320</x>
+          <x>10</x>
           <y>460</y>
           <width>221</width>
           <height>41</height>
@@ -2445,7 +2445,7 @@ p, li { white-space: pre-wrap; }
          <x>590</x>
          <y>15</y>
          <width>631</width>
-         <height>543</height>
+         <height>471</height>
         </rect>
        </property>
        <property name="contextMenuPolicy">
@@ -2589,77 +2589,6 @@ p, li { white-space: pre-wrap; }
         <attribute name="title">
          <string>Centralization</string>
         </attribute>
-        <widget class="QFrame" name="s3SpecifyCentralization_frame">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>3</y>
-           <width>611</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Box</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <widget class="QRadioButton" name="s3SpecifyLocationCentralization_radioButton">
-          <property name="geometry">
-           <rect>
-            <x>310</x>
-            <y>10</y>
-            <width>145</width>
-            <height>25</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Specify Location</string>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="s3NoneCentralization_radioButton">
-          <property name="geometry">
-           <rect>
-            <x>40</x>
-            <y>10</y>
-            <width>81</width>
-            <height>25</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>None</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="s3SpecifySpacingCentralization_radioButton">
-          <property name="geometry">
-           <rect>
-            <x>140</x>
-            <y>10</y>
-            <width>142</width>
-            <height>25</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Specify Spacing</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="s3SpecifyCentralization_pushButton">
-          <property name="geometry">
-           <rect>
-            <x>470</x>
-            <y>10</y>
-            <width>93</width>
-            <height>28</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>manage ...</string>
-          </property>
-         </widget>
-        </widget>
         <widget class="QTabWidget" name="ABC_tabWidget">
          <property name="enabled">
           <bool>false</bool>
@@ -2667,9 +2596,9 @@ p, li { white-space: pre-wrap; }
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>60</y>
+           <y>10</y>
            <width>611</width>
-           <height>444</height>
+           <height>421</height>
           </rect>
          </property>
          <property name="font">
@@ -2752,7 +2681,7 @@ p, li { white-space: pre-wrap; }
              <x>20</x>
              <y>120</y>
              <width>341</width>
-             <height>301</height>
+             <height>281</height>
             </rect>
            </property>
            <property name="focusPolicy">
@@ -2795,7 +2724,7 @@ p, li { white-space: pre-wrap; }
            <property name="geometry">
             <rect>
              <x>380</x>
-             <y>30</y>
+             <y>20</y>
              <width>71</width>
              <height>21</height>
             </rect>
@@ -2813,7 +2742,7 @@ p, li { white-space: pre-wrap; }
              <x>50</x>
              <y>210</y>
              <width>293</width>
-             <height>158</height>
+             <height>111</height>
             </rect>
            </property>
            <property name="font">
@@ -2880,9 +2809,9 @@ p, li { white-space: pre-wrap; }
            <property name="geometry">
             <rect>
              <x>380</x>
-             <y>60</y>
+             <y>50</y>
              <width>175</width>
-             <height>361</height>
+             <height>351</height>
             </rect>
            </property>
            <property name="font">
@@ -3933,9 +3862,9 @@ p, li { white-space: pre-wrap; }
            <property name="geometry">
             <rect>
              <x>380</x>
-             <y>60</y>
+             <y>50</y>
              <width>175</width>
-             <height>361</height>
+             <height>351</height>
             </rect>
            </property>
            <property name="font">
@@ -4976,7 +4905,7 @@ p, li { white-space: pre-wrap; }
              <x>50</x>
              <y>210</y>
              <width>293</width>
-             <height>158</height>
+             <height>71</height>
             </rect>
            </property>
            <property name="font">
@@ -5048,7 +4977,7 @@ p, li { white-space: pre-wrap; }
              <x>20</x>
              <y>160</y>
              <width>341</width>
-             <height>261</height>
+             <height>241</height>
             </rect>
            </property>
            <property name="focusPolicy">
@@ -5120,7 +5049,7 @@ p, li { white-space: pre-wrap; }
            <property name="geometry">
             <rect>
              <x>380</x>
-             <y>30</y>
+             <y>20</y>
              <width>71</width>
              <height>21</height>
             </rect>
@@ -5185,7 +5114,7 @@ p, li { white-space: pre-wrap; }
              <x>20</x>
              <y>160</y>
              <width>341</width>
-             <height>261</height>
+             <height>241</height>
             </rect>
            </property>
            <property name="rowCount">
@@ -5225,7 +5154,7 @@ p, li { white-space: pre-wrap; }
            <property name="geometry">
             <rect>
              <x>380</x>
-             <y>30</y>
+             <y>20</y>
              <width>71</width>
              <height>21</height>
             </rect>
@@ -5243,7 +5172,7 @@ p, li { white-space: pre-wrap; }
              <x>60</x>
              <y>190</y>
              <width>293</width>
-             <height>158</height>
+             <height>61</height>
             </rect>
            </property>
            <property name="font">
@@ -5316,9 +5245,9 @@ p, li { white-space: pre-wrap; }
            <property name="geometry">
             <rect>
              <x>380</x>
-             <y>60</y>
+             <y>50</y>
              <width>175</width>
-             <height>361</height>
+             <height>351</height>
             </rect>
            </property>
            <property name="font">
@@ -6377,6 +6306,39 @@ p, li { white-space: pre-wrap; }
          </widget>
         </widget>
        </widget>
+      </widget>
+      <widget class="QPushButton" name="s3SpecifyCentralization_pushButton">
+       <property name="geometry">
+        <rect>
+         <x>600</x>
+         <y>500</y>
+         <width>251</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>MANAGE LOCATIONS...</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="SO_label">
+       <property name="geometry">
+        <rect>
+         <x>910</x>
+         <y>500</y>
+         <width>271</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
       </widget>
      </widget>
     </widget>
@@ -16646,7 +16608,7 @@ p, li { white-space: pre-wrap; }
       <x>50</x>
       <y>800</y>
       <width>1251</width>
-      <height>31</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">
