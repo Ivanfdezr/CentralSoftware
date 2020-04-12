@@ -221,8 +221,6 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
      </widget>
-     <zorder>groupBox</zorder>
-     <zorder>s1Date_entry</zorder>
     </widget>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
@@ -1764,7 +1762,7 @@ p, li { white-space: pre-wrap; }
        </font>
       </property>
       <property name="title">
-       <string>Wellbore intervals (from top down)</string>
+       <string>Wellbore Outer Stages (from top down)</string>
       </property>
       <widget class="QTableWidget" name="s3WellboreIntervals_tableWidget">
        <property name="geometry">
@@ -2345,7 +2343,7 @@ p, li { white-space: pre-wrap; }
        </font>
       </property>
       <property name="title">
-       <string>Pipe and centralization properties (from top down) </string>
+       <string>Wellbore Inner Stages (from top down) </string>
       </property>
       <widget class="QFrame" name="frame">
        <property name="geometry">
@@ -2434,7 +2432,7 @@ p, li { white-space: pre-wrap; }
          </font>
         </property>
         <property name="text">
-         <string>UPDATE AXIAL FORCE</string>
+         <string>UPDATE INNER STAGES</string>
         </property>
        </widget>
       </widget>
