@@ -220,8 +220,10 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 
 		cu.savetable( 	self.ssCentralizerLocations_tableWidget,
 						self.ssCentralizerLocations_fields[:4],
-						"tmp/CentralizerLocationsAndSO_'{stagerow}'.csv"
-						.format(stagerow=self.stage['row']) )
+						["tmp/CentralizerLocationsAndSO_'{stagerow}'.csv"
+						.format(stagerow=self.stage['row']),
+						self.parent.workingDirectory+"/CentralizerLocationsAndSO_'{stagerow}'.csv"
+						.format(stagerow=self.stage['row'])] )
 		self.ssCaliperMap_graphicsView.figure.savefig( "tmp/CaliperMap_'{stagerow}'.png"
 			.format(stagerow=self.stage['row']), dpi=300 )
 		self.ssSOVisualization_graphicsView.figure.savefig( "tmp/SOVisualization_'{stagerow}'.png"

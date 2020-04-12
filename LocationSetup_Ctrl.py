@@ -206,14 +206,29 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 		cu.savetable( 	self.lsCentralizerLocations_tableWidget,
 						self.lsCentralizerLocations_fields[:4],
-						"tmp/CentralizerLocationsAndSO_'{stagerow}'.csv"
-						.format(stagerow=self.stage['row']) )
+						["tmp/CentralizerLocationsAndSO_'{stagerow}'.csv"
+						.format(stagerow=self.stage['row']),
+						self.parent.workingDirectory+"/CentralizerLocationsAndSO_'{stagerow}'.csv"
+						.format(stagerow=self.stage['row'])] )
+
 		self.lsCaliperMap_graphicsView.figure.savefig( "tmp/CaliperMap_'{stagerow}'.png"
 			.format(stagerow=self.stage['row']), dpi=300 )
+
 		self.lsSOVisualization_graphicsView.figure.savefig( "tmp/SOVisualization_'{stagerow}'.png"
 			.format(stagerow=self.stage['row']), dpi=300 )
+
 		self.lsWellbore3D_graphicsView.figure.savefig( "tmp/Wellbore3D_'{stagerow}'.png"
 			.format(stagerow=self.stage['row']), dpi=300 )
+
+		self.lsCaliperMap_graphicsView.figure.savefig( self.parent.workingDirectory+"/CaliperMap_'{stagerow}'.png"
+			.format(stagerow=self.stage['row']), dpi=300 )
+
+		self.lsSOVisualization_graphicsView.figure.savefig( self.parent.workingDirectory+"/SOVisualization_'{stagerow}'.png"
+			.format(stagerow=self.stage['row']), dpi=300 )
+
+		self.lsWellbore3D_graphicsView.figure.savefig( self.parent.workingDirectory+"/Wellbore3D_'{stagerow}'.png"
+			.format(stagerow=self.stage['row']), dpi=300 )
+
 		self.fields = self.lsCentralizerLocations_fields
 		self.dialog.done(0)
 

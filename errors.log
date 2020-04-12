@@ -36,6 +36,12 @@ ValueError: 983.9583333333336 is not in list
 
 @ IW: CLICK MANAGE FOR SS
 
+
+
+
+
+
+
 Traceback (most recent call last):
   File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\InputWindow_Ctrl.py", line 81, in <lambda>
     open_specifyCentralization_dialog = lambda: wf.open_specifyCentralization_dialog(self)
@@ -50,7 +56,70 @@ Traceback (most recent call last):
 AttributeError: 'NoneType' object has no attribute 'ID'
 
 
+@ 
+
+Traceback (most recent call last):
+  File "C:\Program Files (x86)\Python36-32\lib\site-packages\matplotlib\cbook\__init__.py", line 215, in process
+    func(*args, **kwargs)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\PlotUtilities.py", line 249, in onPress
+    ypressfunction3(event.ydata)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\CtrlUtilities.py", line 74, in wrap_function
+    raise e
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\CtrlUtilities.py", line 72, in wrap_function
+    function(*args, **kwargs)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\SpacingSetup_Ctrl.py", line 426, in choose_MDlocation
+    self.update_calculations()
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\SpacingSetup_Ctrl.py", line 341, in update_calculations
+    mdl2.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field, LatC_field)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\InputWindow_Mdl.py", line 875, in calculate_standOff_atCentralizers
+    ρi = mu.referenceUnitConvert_value( ρi, ρi.unit )
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\MdlUtilities.py", line 222, in referenceUnitConvert_value
+    value = physicalValue( factor*value+offset, referenceUnit )
+TypeError: can't multiply sequence by non-int of type 'float'
 
 
 
 
+
+Traceback (most recent call last):
+  File "C:\Program Files (x86)\Python36-32\lib\site-packages\matplotlib\cbook\__init__.py", line 215, in process
+    func(*args, **kwargs)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\PlotUtilities.py", line 249, in onPress
+    ypressfunction3(event.ydata)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\CtrlUtilities.py", line 74, in wrap_function
+    raise e
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\CtrlUtilities.py", line 72, in wrap_function
+    function(*args, **kwargs)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\SpacingSetup_Ctrl.py", line 426, in choose_MDlocation
+    self.update_calculations()
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\SpacingSetup_Ctrl.py", line 341, in update_calculations
+    mdl2.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field, LatC_field)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\InputWindow_Mdl.py", line 1043, in calculate_standOff_atCentralizers
+    SO, Cc, L = calculate_SO_per_centralizersEnsemble()
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\InputWindow_Mdl.py", line 920, in calculate_SO_per_centralizersEnsemble
+    so, cc, l = calculate_SO_per_centralizer(x,c['Type'],supports,Δ)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\InputWindow_Mdl.py", line 1027, in calculate_SO_per_centralizer
+    Hr,mHr,R,L = get_Hr_mHr_R_L(label, MD0, MD1_, MD2, inc)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\InputWindow_Mdl.py", line 947, in get_Hr_mHr_R_L
+    Hr = Hd/2
+UnboundLocalError: local variable 'Hd' referenced before assignment
+
+
+
+
+Traceback (most recent call last):
+  File "C:\Program Files (x86)\Python36-32\lib\site-packages\matplotlib\cbook\__init__.py", line 215, in process
+    func(*args, **kwargs)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\PlotUtilities.py", line 249, in onPress
+    ypressfunction3(event.ydata)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\CtrlUtilities.py", line 74, in wrap_function
+    raise e
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\CtrlUtilities.py", line 72, in wrap_function
+    function(*args, **kwargs)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\SpacingSetup_Ctrl.py", line 426, in choose_MDlocation
+    self.update_calculations()
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\SpacingSetup_Ctrl.py", line 341, in update_calculations
+    mdl2.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field, LatC_field)
+  File "C:\Users\arcad\Documents\Aztecatrol\CentralSoftware\InputWindow_Mdl.py", line 978, in calculate_standOff_atCentralizers
+    Inc.pop()
+AttributeError: 'numpy.ndarray' object has no attribute 'pop'

@@ -45,7 +45,7 @@ p, li { white-space: pre-wrap; }
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <property name="iconSize">
      <size>
@@ -64,9 +64,9 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>10</y>
-        <width>961</width>
-        <height>311</height>
+        <y>50</y>
+        <width>1051</width>
+        <height>541</height>
        </rect>
       </property>
       <property name="font">
@@ -79,271 +79,150 @@ p, li { white-space: pre-wrap; }
       <property name="title">
        <string>General Information</string>
       </property>
-      <widget class="QWidget" name="formLayoutWidget">
+      <widget class="QTableWidget" name="s1Info_tableWidget">
        <property name="geometry">
         <rect>
-         <x>10</x>
+         <x>40</x>
          <y>50</y>
-         <width>411</width>
-         <height>191</height>
+         <width>691</width>
+         <height>371</height>
         </rect>
        </property>
-       <layout class="QFormLayout" name="_2">
-        <property name="labelAlignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       <property name="columnCount">
+        <number>1</number>
+       </property>
+       <attribute name="horizontalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="horizontalHeaderDefaultSectionSize">
+        <number>600</number>
+       </attribute>
+       <attribute name="verticalHeaderDefaultSectionSize">
+        <number>60</number>
+       </attribute>
+       <row>
+        <property name="text">
+         <string>Well name</string>
         </property>
-        <property name="horizontalSpacing">
-         <number>30</number>
+       </row>
+       <row>
+        <property name="text">
+         <string>Location</string>
         </property>
-        <property name="verticalSpacing">
-         <number>25</number>
+       </row>
+       <row>
+        <property name="text">
+         <string>Operator</string>
         </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="s1date_label">
-          <property name="text">
-           <string>Date:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QDateEdit" name="s1Date_entry">
-          <property name="font">
-           <font>
-            <family>MS Shell Dlg 2</family>
-            <pointsize>10</pointsize>
-            <strikeout>false</strikeout>
-            <kerning>false</kerning>
-           </font>
-          </property>
-          <property name="wrapping">
-           <bool>false</bool>
-          </property>
-          <property name="dateTime">
-           <datetime>
-            <hour>0</hour>
-            <minute>0</minute>
-            <second>0</second>
-            <year>2018</year>
-            <month>1</month>
-            <day>1</day>
-           </datetime>
-          </property>
-          <property name="date">
-           <date>
-            <year>2018</year>
-            <month>1</month>
-            <day>1</day>
-           </date>
-          </property>
-          <property name="minimumDate">
-           <date>
-            <year>1752</year>
-            <month>12</month>
-            <day>14</day>
-           </date>
-          </property>
-          <property name="calendarPopup">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="s1operator_label">
-          <property name="text">
-           <string>Operator:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="s1Operator_entry"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="s1wellname_label">
-          <property name="text">
-           <string>Well name:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="s1Wellname_entry">
-          <property name="font">
-           <font>
-            <stylestrategy>NoAntialias</stylestrategy>
-           </font>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="s1location_label">
-          <property name="text">
-           <string>Location:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="s1Location_entry"/>
-        </item>
-       </layout>
+       </row>
+       <row>
+        <property name="text">
+         <string>Contractor</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Date</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Directory</string>
+        </property>
+       </row>
+       <column/>
       </widget>
-      <widget class="QWidget" name="formLayoutWidget_2">
+      <widget class="QGroupBox" name="groupBox_2">
        <property name="geometry">
         <rect>
-         <x>520</x>
-         <y>50</y>
-         <width>411</width>
-         <height>191</height>
+         <x>750</x>
+         <y>40</y>
+         <width>231</width>
+         <height>241</height>
         </rect>
        </property>
-       <layout class="QFormLayout" name="_3">
-        <property name="labelAlignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="title">
+        <string>Units</string>
+       </property>
+       <widget class="QRadioButton" name="s1USOF_radioButton">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>40</y>
+          <width>141</width>
+          <height>25</height>
+         </rect>
         </property>
-        <property name="horizontalSpacing">
-         <number>30</number>
+        <property name="text">
+         <string>US oil field</string>
         </property>
-        <property name="verticalSpacing">
-         <number>25</number>
+       </widget>
+       <widget class="QRadioButton" name="s1Metric_radioButton">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>80</y>
+          <width>141</width>
+          <height>25</height>
+         </rect>
         </property>
-        <item row="1" column="0">
-         <widget class="QLabel" name="s1contractor_label">
-          <property name="text">
-           <string>Contractor:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="s1Contractor_entry"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="s1typejob_label">
-          <property name="text">
-           <string>Type of job:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="s1TypeJob_entry"/>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="s1PreparedBy_entry">
-          <property name="font">
-           <font>
-            <stylestrategy>NoAntialias</stylestrategy>
-           </font>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="s1preparedby_label">
-          <property name="text">
-           <string>Prepared by:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="s1country_label">
-          <property name="text">
-           <string>Country:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="s1Country_entry"/>
-        </item>
-       </layout>
+        <property name="text">
+         <string>Metric</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="s1Customized_radioButton">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>120</y>
+          <width>141</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Customized</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="s1UnitSetting_pushButton">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>170</y>
+          <width>171</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Unit Setting...</string>
+        </property>
+       </widget>
       </widget>
-      <widget class="QWidget" name="formLayoutWidget_3">
+      <widget class="QPushButton" name="s1SelectDirectory_pushButton">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>250</y>
-         <width>921</width>
-         <height>51</height>
+         <x>780</x>
+         <y>360</y>
+         <width>171</width>
+         <height>41</height>
         </rect>
        </property>
-       <layout class="QFormLayout" name="formLayout">
-        <property name="horizontalSpacing">
-         <number>30</number>
-        </property>
-        <property name="verticalSpacing">
-         <number>25</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="s1comments_label">
-          <property name="text">
-           <string>Comments:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="s1Comments_entry"/>
-        </item>
-       </layout>
+       <property name="text">
+        <string>Select directory ...</string>
+       </property>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_2">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>340</y>
-        <width>961</width>
-        <height>91</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="title">
-       <string>Units</string>
-      </property>
-      <widget class="QWidget" name="horizontalLayoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>921</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QRadioButton" name="s1USOF_radioButton">
-          <property name="text">
-           <string>US oil field</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="s1Metric_radioButton">
-          <property name="text">
-           <string>Metric</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="s1Customized_radioButton">
-          <property name="text">
-           <string>Customized</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="s1UnitSetting_pushButton">
-          <property name="text">
-           <string>Unit Setting...</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
+     <zorder>groupBox</zorder>
+     <zorder>s1Date_entry</zorder>
     </widget>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
@@ -16800,80 +16679,14 @@ p, li { white-space: pre-wrap; }
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionNew"/>
-   <addaction name="actionOpen"/>
-   <addaction name="actionSave"/>
-   <addaction name="actionPrint_2"/>
    <addaction name="separator"/>
    <addaction name="actionStar_Calculation"/>
    <addaction name="separator"/>
    <addaction name="actionOne_Span_Analysis"/>
    <addaction name="separator"/>
    <addaction name="actionUnit_Conversion"/>
-   <addaction name="actionCalculator"/>
-   <addaction name="actionNotepad"/>
    <addaction name="separator"/>
    <addaction name="actionAbout"/>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1321</width>
-     <height>26</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuWindows">
-    <property name="title">
-     <string>Windows</string>
-    </property>
-    <addaction name="actionOne_Span_Analysis"/>
-   </widget>
-   <widget class="QMenu" name="menuUtilities">
-    <property name="title">
-     <string>Utilities</string>
-    </property>
-    <addaction name="actionUnit_Setting"/>
-    <addaction name="actionUnit_Conversion"/>
-    <addaction name="separator"/>
-    <addaction name="actionCalculator"/>
-    <addaction name="actionNotepad"/>
-   </widget>
-   <widget class="QMenu" name="menuHelp">
-    <property name="title">
-     <string>Help</string>
-    </property>
-    <addaction name="actionAbout"/>
-    <addaction name="actionAbbreviation"/>
-    <addaction name="separator"/>
-    <addaction name="actionDisclaimer"/>
-   </widget>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionNew"/>
-    <addaction name="actionOpen"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionSave_As"/>
-    <addaction name="separator"/>
-    <addaction name="actionPrint"/>
-    <addaction name="actionPrint_2"/>
-    <addaction name="separator"/>
-    <addaction name="actionExit"/>
-   </widget>
-   <widget class="QMenu" name="menuCalculate">
-    <property name="title">
-     <string>Calculate</string>
-    </property>
-    <addaction name="actionStar_Calculation"/>
-   </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuCalculate"/>
-   <addaction name="menuWindows"/>
-   <addaction name="menuUtilities"/>
-   <addaction name="menuHelp"/>
   </widget>
   <action name="actionNew">
    <property name="icon">

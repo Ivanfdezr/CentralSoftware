@@ -795,7 +795,6 @@ def open_csv_dialog(self):
 			self.s3WellboreIntervals_tableWidget.editItem(item)
 
 
-
 @updateByBlock_currentWellboreOuterStageDataItem
 def open_TDB_dialog_for_outerStages(self):
 	
@@ -830,6 +829,22 @@ def set_row_as_free(self): #, description):
 		item.alt_flags()
 	
 	self.s3WellboreIntervals_tableWidget.editItem(item)
+
+
+def updateMD_wellboreInnerStageData(self, item):
+
+	cu.update_fieldItem(item)
+
+	row = self.s3PipeCentralizationStage_tableWidget.selectedRow
+
+	if item.field.pos == self.s3PipeCentralizationStage_fields.MDtop.pos:
+		self.wellboreInnerStageData[row]['MDtop'] = item.realValue
+
+	elif item.field.pos == self.s3PipeCentralizationStage_fields.MDbot.pos:
+		self.wellboreInnerStageData[row]['MDbot'] = item.realValue
+
+	print_wellboreInnerStageData(self)
+
 
 
 def adjust_Length_and_MD(self, item):

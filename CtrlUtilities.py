@@ -3,8 +3,8 @@ import MdlUtilities as mdl
 import re, time, sys
 from functools import wraps
 
-
-def savetable(table, fields, filename):
+"""
+def savetable(table, fields, filenames, orientation='h'):
 
 	csvtext = ''
 	
@@ -12,15 +12,56 @@ def savetable(table, fields, filename):
 		csvtext += field.headerName +','
 	csvtext = csvtext[:-1] +'\n'
 
-	for row in range(len(fields[0])):
+	for i in range(len(fields[0])):
 		for field in fields:
-			item = table.item( row, field.pos )
+			if orientation=='h':
+				item = table.item( i, field.pos )
+			elif orientation=='v':
+				item = table.item( field.pos, i )
 			csvtext += item.text() +','
 		csvtext = csvtext[:-1] +'\n'
 	csvtext = csvtext[:-1]
 
-	with open(filename,'w') as FILE:
-		FILE.write(csvtext)
+	for filename in filenames:
+		with open(filename,'w') as FILE:
+			FILE.write(csvtext)
+"""
+
+def savetable(table, fields, filenames, orientation='h'):
+
+	csvtext = ''
+	
+	if orientation=='h':
+
+		for field in fields:
+			csvtext += field.headerName +','
+		csvtext = csvtext[:-1] +'\n'
+
+		for i in range(len(fields[0])):
+			for field in fields:
+				item = table.item( i, field.pos )
+				parts = re.split('\n',item.text())
+				text = ''.join(parts)
+				csvtext += text +','
+			csvtext = csvtext[:-1] +'\n'
+		csvtext = csvtext[:-1]
+
+	elif orientation=='v':
+
+		for field in fields:
+			csvtext += field.headerName +','
+			for i in range(len(fields[0])):
+				item = table.item( field.pos, i )
+				parts = re.split('\n',item.text())
+				text = ''.join(parts)
+				csvtext += text +','
+			csvtext = csvtext[:-1] +'\n'
+		csvtext = csvtext[:-1]
+
+	for filename in filenames:
+		with open(filename,'w',encoding='utf-8') as FILE:
+			FILE.write(csvtext)
+
 
 
 def waiting_effects(function):

@@ -24,6 +24,10 @@ class Main_InputWindow(Ui_InputWindow):
 		self.FileLines = None
 		self.filename = None
 
+		self.s1Info_fields = mdl.get_s1Info_fields()
+		item = cu.TableWidgetFieldItem( self.s1Info_fields[5], False )
+		self.s1Info_tableWidget.setItem(5, 0, item)
+
 		self.wellboreOuterStageDataIsUpdatable = True
 		self.wellboreInnerStageDataIsUpdatable = True
 		self.wellboreInnerStageDataIsEnabled = True
@@ -48,6 +52,7 @@ class Main_InputWindow(Ui_InputWindow):
 
 		self.actionOne_Span_Analysis.triggered.connect(self.open_oneSpanAnalysisDialog)
 		self.actionStar_Calculation.triggered.connect(self.open_outputWindow)
+		self.s1SelectDirectory_pushButton.clicked.connect(self.open_selectWorkingDirectoryDialog)
 		self.s1UnitSetting_pushButton.clicked.connect(self.open_unitSettingsDialog)
 		
 		set_workUnits_as_us = lambda: self.set_workUnits_as('us')
@@ -177,6 +182,14 @@ class Main_InputWindow(Ui_InputWindow):
 		self._PipeCentralizationStageAdjusting_isEnabled = True
 
 
+	def open_selectWorkingDirectoryDialog(self):
+		
+		self.workingDirectory = QtGui.QFileDialog.getExistingDirectory( self.s1Info_tableWidget, 'Select the working directory', 'c:\\' )
+		print(self.workingDirectory)
+		item = self.s1Info_tableWidget.item( 5,0 )
+		item.setText( self.workingDirectory )
+
+
 	def open_unitSettingsDialog(self):
 		dialog = QtGui.QDialog(self.s1UnitSetting_pushButton)
 		Main_UnitSettings(dialog)
@@ -189,22 +202,78 @@ class Main_InputWindow(Ui_InputWindow):
 
 
 	def open_outputWindow(self):
-		from mpl_toolkits.mplot3d import Axes3D
-		import matplotlib.pyplot as plt
+		
 
-		fig = plt.figure()
-		ax = fig.gca(projection='3d')
-		ax.plot( self.s2DataSurvey_fields.EW, self.s2DataSurvey_fields.NS, self.s2DataSurvey_fields.TVD )
-		tl.get_centralizersLocations(self, ax)
-		ax.set_xlabel( self.s2DataSurvey_fields.EW.headerName )
-		ax.set_ylabel( self.s2DataSurvey_fields.NS.headerName )
-		ax.set_zlabel( self.s2DataSurvey_fields.TVD.headerName )
-		ax.set_zlim( max(self.s2DataSurvey_fields.TVD), min(self.s2DataSurvey_fields.TVD) )
-		plt.show()
+		cu.savetable( 	self.s1Info_tableWidget,
+						self.s1Info_fields,
+						["tmp/GeneralInformation.csv",
+						self.workingDirectory+"/GeneralInformation.csv"],
+						orientation='v' )
 
-		##window = QtGui.QMainWindow(self.iw_toolBar)
-		##Main_OutputWindow(window)
-		##window.show()
+		cu.savetable( 	self.s2DataSurvey_tableWidget,
+						self.s2DataSurvey_fields,
+						["tmp/DataSurvey.csv",
+						self.workingDirectory+"/DataSurvey.csv"] )
+
+		cu.savetable( 	self.s2SurveyTortuosity_tableWidget,
+						self.s2SurveyTortuosity_fields,
+						["tmp/SurveyTortuosity.csv",
+						self.workingDirectory+"/SurveyTortuosity.csv"] )
+		
+		self.s2SectionView_graphicsView.figure.savefig( "tmp/SectionView.png", dpi=300 )
+
+		self.s2PlanView_graphicsView.figure.savefig( "tmp/PlanView.png", dpi=300 )
+
+		self.s2TriDView_graphicsView.figure.savefig( "tmp/TriDView.png", dpi=300 )
+
+		self.s2Dogleg_graphicsView.figure.savefig( "tmp/Dogleg.png", dpi=300 )
+
+		self.s2SectionView_graphicsView.figure.savefig( self.workingDirectory+"/SectionView.png", dpi=300 )
+
+		self.s2PlanView_graphicsView.figure.savefig( self.workingDirectory+"/PlanView.png", dpi=300 )
+
+		self.s2TriDView_graphicsView.figure.savefig( self.workingDirectory+"/TriDView.png", dpi=300 )
+
+		self.s2Dogleg_graphicsView.figure.savefig( self.workingDirectory+"/Dogleg.png", dpi=300 )
+
+		cu.savetable( 	self.s3WellboreIntervals_tableWidget,
+						self.s3WellboreIntervals_fields,
+						["tmp/WellboreOuterStages.csv",
+						self.workingDirectory+"/WellboreOuterStages.csv"] )
+
+		cu.savetable( 	self.s3PipeCentralizationStage_tableWidget,
+						self.s3PipeCentralizationStage_fields,
+						["tmp/WellboreInnerStages.csv",
+						self.workingDirectory+"/WellboreInnerStages.csv"] )
+
+		cu.savetable( 	self.s3PipeProperties_tableWidget,
+						self.s3PipeProperties_fields,
+						["tmp/PipeProperties.csv",
+						self.workingDirectory+"/PipeProperties.csv"],
+						orientation='v' )
+
+		cu.savetable( 	self.s3CentralizerProperties_tableWidget_A,
+						self.s3CentralizerProperties_fields_A,
+						["tmp/CentralizerProperties_A.csv",
+						self.workingDirectory+"/CentralizerProperties_A.csv"],
+						orientation='v' )
+
+		cu.savetable( 	self.s3CentralizerProperties_tableWidget_B,
+						self.s3CentralizerProperties_fields_B,
+						["tmp/CentralizerProperties_B.csv",
+						self.workingDirectory+"/CentralizerProperties_B.csv"],
+						orientation='v' )
+
+		cu.savetable( 	self.s3CentralizerProperties_tableWidget_C,
+						self.s3CentralizerProperties_fields_C,
+						["tmp/CentralizerProperties_C.csv",
+						self.workingDirectory+"/CentralizerProperties_C.csv"],
+						orientation='v' )
+
+		cu.savetable( 	self.s3CentralizerLocation_tableWidget_A,
+						self.s3CentralizerLocation_fields_A,
+						["tmp/CentralizerLocation.csv",
+						self.workingDirectory+"/CentralizerLocation.csv"] )
 
 		
 	def __init__s2DataSurvey_tableWidget(self):
@@ -425,10 +494,12 @@ class Main_InputWindow(Ui_InputWindow):
 		self.setup_s3PipeCentralizationStage_tableWidget()
 
 		select_innerStageRow_and_prepare_innerStageObjects = lambda r,c : wf.select_innerStageRow_and_prepare_innerStageObjects(self, r)
-		adjust_Length_and_MD = lambda item: wf.adjust_Length_and_MD(self, item)
+		#adjust_Length_and_MD = lambda item: wf.adjust_Length_and_MD(self, item)
+		updateMD_wellboreInnerStageData = lambda item: wf.updateMD_wellboreInnerStageData(self, item)
 		self._PipeCentralizationStageAdjusting_isEnabled = True
 		self.s3PipeCentralizationStage_tableWidget.cellPressed.connect(select_innerStageRow_and_prepare_innerStageObjects)
-		self.s3PipeCentralizationStage_tableWidget.itemChanged.connect(adjust_Length_and_MD)
+		#self.s3PipeCentralizationStage_tableWidget.itemChanged.connect(adjust_Length_and_MD)
+		self.s3PipeCentralizationStage_tableWidget.itemChanged.connect(updateMD_wellboreInnerStageData)
 
 		self.s3PipeCentralizationStage_tableWidget.resizeColumnsToContents()
 

@@ -17,6 +17,31 @@ def set_workUnits_as(unitSystem):
 	dbUtils.execute_query(query)
 
 
+def get_s1Info_fields():
+
+	WellName   = Field(2055, altBg=True, altFg=True)
+	Location   = Field(2055, altBg=True, altFg=True)
+	Operator   = Field(2055, altBg=True, altFg=True)
+	Contractor = Field(2055, altBg=True, altFg=True)
+	Date       = Field(2055, altBg=True, altFg=True)
+	Directory  = Field(2055, altBg=True, altFg=True)
+	WellName.set_abbreviation('WellName')
+	Location.set_abbreviation('Location')
+	Operator.set_abbreviation('Operator')
+	Contractor.set_abbreviation('Contractor')
+	Date.set_abbreviation('Date')
+	Directory.set_abbreviation('Directory')
+	s1Info_fields = FieldList()
+	s1Info_fields.append( WellName )
+	s1Info_fields.append( Location )
+	s1Info_fields.append( Operator )
+	s1Info_fields.append( Contractor )
+	s1Info_fields.append( Date )
+	s1Info_fields.append( Directory )
+	
+	return s1Info_fields
+
+
 def get_s2DataSurvey_fields():
 
 	MD   = Field(2001)
@@ -113,13 +138,17 @@ def get_s3WellboreIntervals_fields():
 
 def get_s3PipeCentralizationStage_fields():
 
-	Desc   = Field(2055, altBg=True, altFg=True)
-	Length = Field(2080)
-	MD     = Field(2001)
+	Desc  = Field(2055, altBg=True, altFg=True)
+	MDtop = Field(2001)
+	MDbot = Field(2001)
+	MDbot.set_abbreviation('MDbot')
+	MDtop.set_abbreviation('MDtop')
+	MDbot.set_representation('bottom MD')
+	MDtop.set_representation('top MD')
 	s3PipeCentralizationStage_fields = FieldList()
-	s3PipeCentralizationStage_fields.append( Desc   )
-	s3PipeCentralizationStage_fields.append( Length )
-	s3PipeCentralizationStage_fields.append( MD     )
+	s3PipeCentralizationStage_fields.append( Desc  )
+	s3PipeCentralizationStage_fields.append( MDtop )
+	s3PipeCentralizationStage_fields.append( MDbot )
 
 	return s3PipeCentralizationStage_fields
 
@@ -1442,8 +1471,8 @@ class WellboreInnerStageDataItem( dict ):
 		super().__init__()
 		
 		self['row'] = row
-		self['Length'] = None
-		self['MD'] = None
+		self['MDtop'] = None
+		self['MDbot'] = None
 		self['PipeBase'] = None
 		self['Centralization'] = {	'A':{'CentralizerBase':None},
 									'B':{'CentralizerBase':None},
