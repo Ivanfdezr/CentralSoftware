@@ -493,12 +493,12 @@ class Main_InputWindow(Ui_InputWindow):
 		
 		self.setup_s3WellboreInnerStages_tableWidget()
 
-		select_innerStageRow_and_prepare_innerStageObjects = lambda r,c : wf.select_innerStageRow_and_prepare_innerStageObjects(self, r)
-		#adjust_Length_and_MD = lambda item: wf.adjust_Length_and_MD(self, item)
-		updateMD_wellboreInnerStageData = lambda item: wf.updateMD_wellboreInnerStageData(self, item)
 		self._PipeCentralizationStageAdjusting_isEnabled = True
+
+		select_innerStageRow_and_prepare_innerStageObjects = lambda r,c : wf.select_innerStageRow_and_prepare_innerStageObjects(self, r)
 		self.s3WellboreInnerStages_tableWidget.cellPressed.connect(select_innerStageRow_and_prepare_innerStageObjects)
-		#self.s3WellboreInnerStages_tableWidget.itemChanged.connect(adjust_Length_and_MD)
+
+		updateMD_wellboreInnerStageData = lambda item: wf.updateMD_wellboreInnerStageData(self, item)
 		self.s3WellboreInnerStages_tableWidget.itemChanged.connect(updateMD_wellboreInnerStageData)
 
 		self.s3WellboreInnerStages_tableWidget.resizeColumnsToContents()
@@ -689,17 +689,3 @@ class Main_InputWindow(Ui_InputWindow):
 				item = cu.TableWidgetFieldItem( field, i%2==0 )
 				self.s4TorqueDragSideforce_tableWidget.setItem(i, field.pos, item)
 
-"""
-def main():
-	app = QtGui.QApplication([])
-	window = QtGui.QMainWindow()
-	#window.setMinimumSize(400, 300)
-	main_iw = Main_InputWindow(window)
-	
-	window.show()
-	app.exec_()
-
-
-if __name__ == "__main__":
-	main()
-"""

@@ -624,7 +624,7 @@ def calculate_axialForce_field(self):
 	self must to point to Main_InputWindow
 	"""
 	print('Calculating Axial Forces...')
-	self.msg_label.setText( 'Calculating Axial Forces...' )
+	#self.msg_label.setText( 'Calculating Axial Forces...' )
 
 	self.s3Forces_fields.AxialF.clear()
 	self.s3Forces_fields.MD_AxF.clear()
@@ -665,7 +665,7 @@ def calculate_axialForce_field(self):
 	self.s3UpdateInnerStages_pushButton.setEnabled(False)
 	self.s3InnerStageToolkit_tabWidget.setEnabled(True)
 
-	self.msg_label.setText( '' )
+	#self.msg_label.setText( '' )
 	print('Finish')
 
 

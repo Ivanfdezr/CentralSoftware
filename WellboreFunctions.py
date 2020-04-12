@@ -309,7 +309,6 @@ def select_innerStageRow_and_prepare_innerStageObjects(self, row):
 	self.currentWellboreInnerStageDataItem = None
 
 	cu.select_tableWidgetRow(self.s3WellboreInnerStages_tableWidget, row)
-	self.s3UpdateInnerStages_pushButton.setEnabled(True)
 	self.s3InnerStageToolkit_tabWidget.setEnabled(False)
 
 	clear_wellboreInnerStageToolkit(self)
@@ -834,6 +833,7 @@ def set_row_as_free(self): #, description):
 def updateMD_wellboreInnerStageData(self, item):
 
 	cu.update_fieldItem(item)
+	self.s3UpdateInnerStages_pushButton.setEnabled(True)
 
 	row = self.s3WellboreInnerStages_tableWidget.selectedRow
 
