@@ -195,11 +195,11 @@ def update_wellboreInnerStageData(self):
 			if stage['PipeProps']==None:
 				del stage
 
-		if self.s3SpecifySpacingCentralization_radioButton.isChecked():
-			label = 'by Spacing'
+		#if self.s3SpecifySpacingCentralization_radioButton.isChecked():
+		#	label = 'by Spacing'
 		
-		elif self.s3SpecifyLocationCentralization_radioButton.isChecked():
-			label = 'by Location'
+		#elif self.s3SpecifyLocationCentralization_radioButton.isChecked():
+		#	label = 'by Location'
 
 		#elif self.s3SpecifyStandoffCentralization_radioButton.isChecked():
 		#	label = 'by Standoff'
@@ -676,17 +676,17 @@ def open_CDB_dialog(self, tab):
 
 
 def open_specifyCentralization_dialog(self):
-		if self.s3SpecifySpacingCentralization_radioButton.isChecked():
-			open_SS_dialog(self)
-		elif self.s3SpecifyLocationCentralization_radioButton.isChecked():
-			open_LS_dialog(self)
+		#if self.s3SpecifySpacingCentralization_radioButton.isChecked():
+		#	open_SS_dialog(self)
+		#elif self.s3SpecifyLocationCentralization_radioButton.isChecked():
+		open_LS_dialog(self)
 
 
 @updateByBlock_currentWellboreInnerStageDataItem
 def open_LS_dialog(self):
 
 	importlib.reload(ls)
-	dialog = QtGui.QDialog(self.s3SpecifyCentralization_pushButton)
+	dialog = QtGui.QDialog(self.s3ManageLocations_pushButton)
 	LS = ls.Main_LocationSetup(dialog, self)
 	self.currentWellboreInnerStageDataItem['Centralization']['Fields'] = LS.fields
 
@@ -715,7 +715,7 @@ def open_LS_dialog(self):
 def open_SS_dialog(self):
 
 	importlib.reload(ss)
-	dialog = QtGui.QDialog(self.s3SpecifyCentralization_pushButton)
+	dialog = QtGui.QDialog(self.s3ManageLocations_pushButton)
 	SS = ss.Main_SpacingSetup(dialog, self)
 	self.currentWellboreInnerStageDataItem['Centralization']['Fields'] = SS.fields
 

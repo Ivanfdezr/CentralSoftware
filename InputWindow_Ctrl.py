@@ -84,7 +84,7 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s3ODWt_pushButton.clicked.connect(adjust_ID)
 
 		open_specifyCentralization_dialog = lambda: wf.open_specifyCentralization_dialog(self)
-		self.s3SpecifyCentralization_pushButton.clicked.connect(open_specifyCentralization_dialog)
+		self.s3ManageLocations_pushButton.clicked.connect(open_specifyCentralization_dialog)
 
 		open_CDB_dialog_A = lambda: wf.open_CDB_dialog(self, 'A')
 		open_CDB_dialog_B = lambda: wf.open_CDB_dialog(self, 'B')
@@ -93,15 +93,15 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s3CentralizerDB_pushButton_B.clicked.connect(open_CDB_dialog_B)
 		self.s3CentralizerDB_pushButton_C.clicked.connect(open_CDB_dialog_C)
 
-		setEnabled_specifySpacingToolkit = lambda: wf.setEnabled_specifySpacingToolkit(self)
-		setEnabled_specifyStandoffToolkit = lambda: wf.setEnabled_specifyStandoffToolkit(self)
-		setEnabled_specifyLocationToolkit = lambda: wf.setEnabled_specifyLocationToolkit(self)
-		setDisabled_ABC_tabWidget = lambda: self.ABC_tabWidget.setEnabled(False)
-		setDisabled_ABC_tabWidget()
-		self.s3SpecifySpacingCentralization_radioButton.toggled.connect(setEnabled_specifySpacingToolkit)
+		#setEnabled_specifySpacingToolkit = lambda: wf.setEnabled_specifySpacingToolkit(self)
+		#setEnabled_specifyStandoffToolkit = lambda: wf.setEnabled_specifyStandoffToolkit(self)
+		#setEnabled_specifyLocationToolkit = lambda: wf.setEnabled_specifyLocationToolkit(self)
+		#setDisabled_ABC_tabWidget = lambda: self.ABC_tabWidget.setEnabled(False)
+		#setDisabled_ABC_tabWidget()
+		#self.s3SpecifySpacingCentralization_radioButton.toggled.connect(setEnabled_specifySpacingToolkit)
 		#self.s3SpecifyStandoffCentralization_radioButton.clicked.connect(setEnabled_specifyStandoffToolkit)
-		self.s3SpecifyLocationCentralization_radioButton.toggled.connect(setEnabled_specifyLocationToolkit)
-		self.s3NoneCentralization_radioButton.clicked.connect(setDisabled_ABC_tabWidget)
+		#self.s3SpecifyLocationCentralization_radioButton.toggled.connect(setEnabled_specifyLocationToolkit)
+		#self.s3NoneCentralization_radioButton.clicked.connect(setDisabled_ABC_tabWidget)
 
 		setEnabled_bowSpringToolkit_A = lambda: wf.setEnabled_bowSpringToolkit(self, 'A')
 		setEnabled_rigidToolkit_A = lambda: wf.setEnabled_rigidToolkit(self, 'A')

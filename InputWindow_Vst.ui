@@ -2596,9 +2596,9 @@ p, li { white-space: pre-wrap; }
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>10</y>
+           <y>50</y>
            <width>611</width>
-           <height>411</height>
+           <height>371</height>
           </rect>
          </property>
          <property name="font">
@@ -6304,6 +6304,19 @@ p, li { white-space: pre-wrap; }
           <zorder>s3CentralizerLocation_tableWidget_C</zorder>
           <zorder>s3NoneCentralizer_radioButton_C</zorder>
          </widget>
+        </widget>
+        <widget class="QCheckBox" name="s3EnableCentralization_checkBox">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>20</y>
+           <width>191</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>enable centralization</string>
+         </property>
         </widget>
        </widget>
       </widget>
