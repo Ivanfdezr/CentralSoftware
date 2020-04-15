@@ -195,20 +195,11 @@ def update_wellboreInnerStageData(self):
 			if stage['PipeProps']==None:
 				del stage
 
-		#if self.s3SpecifySpacingCentralization_radioButton.isChecked():
-		#	label = 'by Spacing'
-		
-		#elif self.s3SpecifyLocationCentralization_radioButton.isChecked():
-		#	label = 'by Location'
-
-		#elif self.s3SpecifyStandoffCentralization_radioButton.isChecked():
-		#	label = 'by Standoff'
-
-		elif self.s3NoneCentralization_radioButton.isChecked():
+		if not self.s3EnableCentralization_checkBox.isChecked():
 			descriptionItem.set_text( self.s3PipeProperties_fields.Desc[0] +'\nwithout Centralization'  )
 			return
 
-		self.currentWellboreInnerStageDataItem['Centralization']['Mode'] = label
+		self.currentWellboreInnerStageDataItem['Centralization']['Mode'] = True
 		descriptionItem.set_text( self.s3PipeProperties_fields.Desc[0] +'\nwith Centralization '+label  )
 
 		for tab in ['A','B','C']:
@@ -351,7 +342,7 @@ def delete_innerStageObjects(self):
 def clear_wellboreInnerStageToolkit(self):
 
 	cu.clear_tableWidgetContent(self.s3PipeProperties_tableWidget)
-	self.s3NoneCentralization_radioButton.setChecked(True)
+	self.s3EnableCentralization_checkBox.setChecked(False)
 	self.s3BowSpringCentralizer_radioButton_A.setChecked(True)
 	self.s3NoneCentralizer_radioButton_B.setChecked(True)
 	self.s3NoneCentralizer_radioButton_C.setChecked(True)
@@ -375,15 +366,10 @@ def load_wellboreInnerStageToolkit(self, dataItem):
 	
 	if dataItem['Centralization']['Mode']:
 		
-		if dataItem['Centralization']['Mode'] == 'by Spacing':
-			self.s3SpecifySpacingCentralization_radioButton.setChecked(True)
-			setEnabled_specifySpacingToolkit(self)
-		#elif dataItem['Centralization']['Mode'] == 'by Standoff':
-		#	self.s3SpecifyStandoffCentralization_radioButton.setChecked(True)
-		#	setEnabled_specifyStandoffToolkit(self)
-		elif dataItem['Centralization']['Mode'] == 'by Location':
-			self.s3SpecifyLocationCentralization_radioButton.setChecked(True)
-			setEnabled_specifyLocationToolkit(self)
+		self.s3EnableCentralization_checkBox.setChecked(True)
+		self.ABC_tabWidget.setEnabled(True)
+		#setEnabled_specifySpacingToolkit(self)
+		#setEnabled_specifyLocationToolkit(self)
 
 		for tab in ['A','B','C']:
 
@@ -417,7 +403,7 @@ def load_wellboreInnerStageToolkit(self, dataItem):
 				setDisabled_centralizerToolkit(self, tab)
 				continue
 	else:
-		self.s3NoneCentralization_radioButton.setChecked(True)
+		self.s3EnableCentralization_checkBox.setChecked(False)
 		self.ABC_tabWidget.setEnabled(False)
 
 
@@ -529,46 +515,8 @@ def setEnabled_specifySpacingToolkit(self):
 
 	for tab in ['A','B','C']:
 
-		#s3CentralizerProperties_tableWidget = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
-		#s3CentralizerProperties_fields      = eval( 'self.s3CentralizerProperties_fields_{tab}'.format(tab=tab) )
 		s3CentralizerLocation_tableWidget   = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
-
 		s3CentralizerLocation_tableWidget.setEnabled(True)
-		"""
-		field = s3CentralizerProperties_fields.Spacing
-		item = s3CentralizerProperties_tableWidget.item(field.pos,0)
-		item.set_text()
-		item.alt_backgroundColor(False)
-		item.alt_flags(False)
-		field = s3CentralizerProperties_fields.SO_midSpan
-		item = s3CentralizerProperties_tableWidget.item(field.pos,0)
-		item.set_text()
-		item.alt_backgroundColor()
-		item.alt_flags()
-		"""
-
-@updateByBlock_currentWellboreInnerStageDataItem
-def setEnabled_specifyStandoffToolkit(self):
-
-	self.ABC_tabWidget.setEnabled(True)
-
-	for tab in ['A','B','C']:
-
-		s3CentralizerProperties_tableWidget = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
-		s3CentralizerProperties_fields      = eval( 'self.s3CentralizerProperties_fields_{tab}'.format(tab=tab) )
-		s3CentralizerLocation_tableWidget   = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
-
-		s3CentralizerLocation_tableWidget.setEnabled(False)
-		field = s3CentralizerProperties_fields.Spacing
-		item = s3CentralizerProperties_tableWidget.item(field.pos,0)
-		item.set_text()
-		item.alt_backgroundColor()
-		item.alt_flags()
-		field = s3CentralizerProperties_fields.SO_midSpan
-		item = s3CentralizerProperties_tableWidget.item(field.pos,0)
-		item.set_text()
-		item.alt_backgroundColor(False)
-		item.alt_flags(False)
 
 
 @updateByBlock_currentWellboreInnerStageDataItem
@@ -578,8 +526,6 @@ def setEnabled_specifyLocationToolkit(self):
 
 	for tab in ['A','B','C']:
 
-		#s3CentralizerProperties_tableWidget = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
-		#s3CentralizerProperties_fields      = eval( 'self.s3CentralizerProperties_fields_{tab}'.format(tab=tab) )
 		s3CentralizerLocation_tableWidget   = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
 		s3BowSpringCentralizer_radioButton  = eval( 'self.s3BowSpringCentralizer_radioButton_{tab}'.format(tab=tab) )
 		s3RigidCentralizer_radioButton      = eval( 'self.s3RigidCentralizer_radioButton_{tab}'.format(tab=tab) )
@@ -587,18 +533,6 @@ def setEnabled_specifyLocationToolkit(self):
 		if s3BowSpringCentralizer_radioButton.isChecked() or s3RigidCentralizer_radioButton.isChecked():
 			s3CentralizerLocation_tableWidget.setEnabled(True)
 
-		"""
-		field = s3CentralizerProperties_fields.Spacing
-		item = s3CentralizerProperties_tableWidget.item(field.pos,0)
-		item.set_text()
-		item.alt_backgroundColor()
-		item.alt_flags()
-		field = s3CentralizerProperties_fields.SO_midSpan
-		item = s3CentralizerProperties_tableWidget.item(field.pos,0)
-		item.set_text()
-		item.alt_backgroundColor()
-		item.alt_flags()
-		"""
 
 @updateByBlock_currentWellboreInnerStageDataItem
 def open_TDB_dialog_for_innerStages(self):

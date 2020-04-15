@@ -26,8 +26,6 @@ class Main_CaliperImport(Ui_CaliperImport):
 		i = self.unitRepresentations.index( self.ciLASData_fields.MD.unit )
 		self.ciMDvalueUnit_comboBox.setCurrentIndex(i)
 		self.ciIDvalueUnit_comboBox.addItems( self.unitRepresentations )
-		i = self.unitRepresentations.index( self.ciLASData_fields.BS.unit )
-		self.ciIDvalueUnit_comboBox.setCurrentIndex(i)
 		self.ciApplyAndDraw_pushButton.clicked.connect( self.applyAndDraw_caliperData )
 		self.ciCommaDelimiter_checkBox.stateChanged.connect( self.setNumberPattern )
 		self.ciHoleIDsmoothing_slider.valueChanged.connect( self.update_ciHoleIDsmoothing_label )
@@ -152,7 +150,6 @@ class Main_CaliperImport(Ui_CaliperImport):
 		fileTextMDcolumnIndex = (self.ciMDcolumnIndex_spinBox.value()-1)#%99
 		fileTextH1columnIndex = (self.ciH1columnIndex_spinBox.value()-1)#%99
 		fileTextH2columnIndex = (self.ciH2columnIndex_spinBox.value()-1)#%99
-		fileTextBScolumnIndex = (self.ciBScolumnIndex_spinBox.value()-1)#%99
 
 		self.ciCALData_fields = mdl.get_ciCALData_fields(fileTextH2columnIndex-fileTextH1columnIndex+1)
 		MDUnitRepresentation = self.ciMDvalueUnit_comboBox.currentText()
@@ -161,13 +158,11 @@ class Main_CaliperImport(Ui_CaliperImport):
 		for field in self.ciCALData_fields:
 			field.set_unit(  IDUnitRepresentation )
 		#self.ciLASData_fields.CD.set_unit(  IDUnitRepresentation )
-		self.ciLASData_fields.BS.set_unit(  IDUnitRepresentation )
 		self.ciLASData_fields.selectedMD.set_unit( MDUnitRepresentation )
 		self.ciLASData_fields.clear_content()
 		self.ciCALData_fields.clear_content()
 
 		self.feasibleDrawFlagMDID = True
-		self.feasibleDrawFlagBS   = True
 		self.feasibleDrawFlagOD  = True
 
 		try:
@@ -240,17 +235,6 @@ class Main_CaliperImport(Ui_CaliperImport):
 				except IndexError:
 					self.feasibleDrawFlagMDID = False
 
-				try:
-					BSvalue = self.text2float( matches[fileTextBScolumnIndex].group() )
-					mu.create_physicalValue_and_appendTo_field( BSvalue, self.ciLASData_fields.BS )
-				except IndexError:
-					self.feasibleDrawFlagBS = False
-
-				#try:
-				#	ODvalue = self.text2float( matches[fileTextODcolumnIndex].group() )
-				#	mu.create_physicalValue_and_appendTo_field( ODvalue, self.ciLASData_fields.CD )
-				#except IndexError:
-				#	self.feasibleDrawFlagOD = False
 
 			except AssertionError:
 				continue
@@ -260,11 +244,6 @@ class Main_CaliperImport(Ui_CaliperImport):
 				cu.idleFunction()
 
 		self.ciStatus_label.setText('')
-
-		if self.feasibleDrawFlagBS:
-			self.BS = mu.array(self.ciLASData_fields.BS)
-		#if self.feasibleDrawFlagOD:
-		#	self.OD = mu.array(self.ciLASData_fields.CD)
 
 		if self.check_conditionsForDraw(): #True
 			self.wasPushedApplyAndDrawButton = True
@@ -282,7 +261,6 @@ class Main_CaliperImport(Ui_CaliperImport):
 			return True
 		except AssertionError:
 			self.feasibleDrawFlagMDID = False
-			self.feasibleDrawFlagBS   = False
 			self.feasibleDrawFlagOD  = False
 			return False
 	
@@ -318,8 +296,6 @@ class Main_CaliperImport(Ui_CaliperImport):
 		self.ciHoleIDsmoothing_graphicsView.axes.fill_betweenx( MD_array, +self.DLM.IDminOrig, +self.DLM.IDmaxOrig, alpha=0.6, color='C0')
 		self.ciHoleIDsmoothing_graphicsView.axes.plot( -self.DLM.IDmax, self.ciLASData_fields.MD, 'C1', lw=1.5 )
 		self.ciHoleIDsmoothing_graphicsView.axes.plot( +self.DLM.IDmax, self.ciLASData_fields.MD, 'C1', lw=1.5 )
-		self.ciHoleIDsmoothing_graphicsView.axes.plot( -self.BS, self.ciLASData_fields.MD, 'C2--', lw=1.5 )
-		self.ciHoleIDsmoothing_graphicsView.axes.plot( +self.BS, self.ciLASData_fields.MD, 'C2--', lw=1.5 )
 
 		#if self.feasibleDrawFlagOD:
 		#	self.ciHoleIDsmoothing_graphicsView.axes.plot( -self.OD, self.ciLASData_fields.MD, 'C4' )
@@ -368,10 +344,8 @@ class Main_CaliperImport(Ui_CaliperImport):
 		max_MD = max(self.ciLASData_fields.MD)
 		min_MD = min(self.ciLASData_fields.MD)
 
-		bs_mean = mu.make_cleanAverage( self.BS )
 		mu.create_physicalValue_and_appendTo_field( 'DR-CAL', self.ciCaliperReport_fields.Desc    )
 		mu.create_physicalValue_and_appendTo_field( id_mean,  self.ciCaliperReport_fields.ID      )
-		mu.create_physicalValue_and_appendTo_field( bs_mean,  self.ciCaliperReport_fields.DriftID )
 		mu.create_physicalValue_and_appendTo_field( min_MD,   self.ciCaliperReport_fields.MDtop   )
 		mu.create_physicalValue_and_appendTo_field( max_MD,   self.ciCaliperReport_fields.MDbot   )
 

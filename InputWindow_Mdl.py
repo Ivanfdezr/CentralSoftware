@@ -1488,7 +1488,7 @@ class WellboreInnerStageDataItem( dict ):
 		CentralizationFields = self['Centralization']['Fields']
 
 		self['PipeProps'] = None 
-		self['Centralization'] = {	'Mode':None,
+		self['Centralization'] = {	'Mode':False,
 									'A':{	'Type':None,
 											'CentralizerBase':CentralizerA,
 											'CentralizerProps':None,
