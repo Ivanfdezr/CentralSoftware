@@ -103,6 +103,9 @@ class Main_InputWindow(Ui_InputWindow):
 		#self.s3SpecifyLocationCentralization_radioButton.toggled.connect(setEnabled_specifyLocationToolkit)
 		#self.s3NoneCentralization_radioButton.clicked.connect(setDisabled_ABC_tabWidget)
 
+		setEnabled_specifySpacingToolkit = lambda: wf.setEnabled_specifySpacingToolkit(self)
+		self.s3EnableCentralization_checkBox.toggled.connect(setEnabled_specifySpacingToolkit)
+
 		setEnabled_bowSpringToolkit_A = lambda: wf.setEnabled_bowSpringToolkit(self, 'A')
 		setEnabled_rigidToolkit_A = lambda: wf.setEnabled_rigidToolkit(self, 'A')
 		self.s3BowSpringCentralizer_radioButton_A.clicked.connect(setEnabled_bowSpringToolkit_A)

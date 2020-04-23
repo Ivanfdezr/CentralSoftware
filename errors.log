@@ -1,15 +1,36 @@
-Traceback (most recent call last):
-  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\InputWindow_Ctrl.py", line 486, in <lambda>
-    adjust_MD_to_wellboreDeep = lambda: wf.adjust_MD_to_wellboreDeep(self)
-  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\WellboreFunctions.py", line 849, in adjust_MD_to_wellboreDeep
-    item = self.s3WellboreInnerStages_tableWidget.item(row, self.s3WellboreInnerStages_fields.MD.pos)
-AttributeError: 'FieldList' object has no attribute 'MD'
 
 
-Calculating Axial Forces...
 Traceback (most recent call last):
-  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\InputWindow_Ctrl.py", line 77, in <lambda>
-    calculate_axialForce_field = lambda: mdl.calculate_axialForce_field(self)
-  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\InputWindow_Mdl.py", line 654, in calculate_axialForce_field
-    stageBottomMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
+  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\CentralizerDatabase_Ctrl.py", line 148, in <lambda>
+    edit_centralizer = lambda: self.edit_centralizer(CDB_tableWidget)
+  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\CentralizerDatabase_Ctrl.py", line 172, in edit_centralizer
+    item = CDB_tableWidget.item(CDB_tableWidget.selectedRow,CDB_tableWidget.selectedColumn)
+AttributeError: 'QTableWidget' object has no attribute 'selectedColumn'
+
+
+
+
+Traceback (most recent call last):
+  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\InputWindow_Ctrl.py", line 86, in <lambda>
+    open_specifyCentralization_dialog = lambda: wf.open_specifyCentralization_dialog(self)
+  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\WellboreFunctions.py", line 622, in open_specifyCentralization_dialog
+    open_LS_dialog(self)
+  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\WellboreFunctions.py", line 134, in wrap_function
+    function(*args, **kwargs)
+  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\WellboreFunctions.py", line 630, in open_LS_dialog
+    LS = ls.Main_LocationSetup(dialog, self)
+  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\CtrlUtilities.py", line 74, in wrap_function
+    raise e
+  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\CtrlUtilities.py", line 72, in wrap_function
+    function(*args, **kwargs)
+  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\LocationSetup_Ctrl.py", line 35, in __init__
+    self.max_MD = self.stage['MD']
 KeyError: 'MD'
+
+
+
+ICI Thru-0700-0834  (4) Rigid   7 8.625 8 3/4 8.5 4 16.0  0.8125  7.33  2.13  0.089 251.0
+
+ICI Thru-0700-0834 (3)
+
+ICI Thru-0700-0834 (3)  Rigid   7 8.625 8 1/4 8.5 3 16.0  0.8125  7.33  2.83  0.089 251.0

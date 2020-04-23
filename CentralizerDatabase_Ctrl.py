@@ -80,7 +80,9 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 		self._update_CDBBowSpring_tableWidget = cu.handle_sorting_table(self, self.CDBBowSpring_tableWidget, __update_CDBBowSpring_tableWidget )
 		self.CDBBowSpring_tableWidget.resizeColumnsToContents()
 		
-		__fetch_selectedPosition = lambda r,c: self.fetch_selectedPosition(self.CDBBowSpring_tableWidget,r,c)
+		#select_row = lambda r,c : cu.select_tableWidgetRow(self.CDBBowSpring_tableWidget,r,True)
+		#self.CDBBowSpring_tableWidget.cellPressed.connect(select_row)
+		__fetch_selectedPosition = lambda r, c: self.fetch_selectedPosition(self.CDBBowSpring_tableWidget, r, c)
 		self.CDBBowSpring_tableWidget.cellPressed.connect(__fetch_selectedPosition)
 		self.CDBBowSpring_tableWidget.itemChanged.connect(cu.update_fieldItem)
 		
@@ -105,7 +107,9 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 		self._update_CDBRigid_tableWidget = cu.handle_sorting_table(self, self.CDBRigid_tableWidget, __update_CDBRigid_tableWidget )
 		self.CDBRigid_tableWidget.resizeColumnsToContents()
 		
-		__fetch_selectedPosition = lambda r,c: self.fetch_selectedPosition(self.CDBRigid_tableWidget,r,c)
+		#select_row = lambda r,c : cu.select_tableWidgetRow(self.CDBRigid_tableWidget,r,True)
+		#self.CDBRigid_tableWidget.cellPressed.connect(select_row)
+		__fetch_selectedPosition = lambda r, c: self.fetch_selectedPosition(self.CDBRigid_tableWidget, r, c)
 		self.CDBRigid_tableWidget.cellPressed.connect(__fetch_selectedPosition)
 		self.CDBRigid_tableWidget.itemChanged.connect(cu.update_fieldItem)
 		
@@ -132,7 +136,7 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 		except AttributeError:
 			ready = False
 
-		item = CDB_tableWidget.item(CDB_tableWidget.selectedRow,CDB_tableWidget.selectedColumn)
+		#item = CDB_tableWidget.item(CDB_tableWidget.selectedRow,CDB_tableWidget.selectedColumn)
 
 		C = cu.CopySelectedCells_action(CDB_tableWidget)
 		menu.addAction(C)
@@ -159,7 +163,7 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 
 	def export_centralizer(self, CDB_tableWidget, CDB_fields):
 		
-		cu.select_tableWidgetRow(CDB_tableWidget, CDB_tableWidget.selectedRow)
+		cu.select_tableWidgetRow(CDB_tableWidget, CDB_tableWidget.selectedRow, True)
 		cu.sleep(0.25)
 		self.data = CDB_fields.extract_data_from_row( CDB_tableWidget.selectedRow, representation=True )
 		self.fields = CDB_fields.extract_fields_from_row( CDB_tableWidget.selectedRow )

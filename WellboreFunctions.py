@@ -1,9 +1,14 @@
 from PyQt4 import QtCore, QtGui
-from TubularDatabase_Ctrl import Main_TubularDatabase
-from CentralizerDatabase_Ctrl import Main_CentralizerDatabase
-from CaliperImport_Ctrl import Main_CaliperImport
-from CaliperInsertion_Ctrl import Main_CaliperInsertion
+#from TubularDatabase_Ctrl import Main_TubularDatabase
+#from CentralizerDatabase_Ctrl import Main_CentralizerDatabase
+#from CaliperImport_Ctrl import Main_CaliperImport
+#from CaliperInsertion_Ctrl import Main_CaliperInsertion
 #from LocationSetup_Ctrl import Main_LocationSetup
+
+import TubularDatabase_Ctrl as tdb
+import CentralizerDatabase_Ctrl as cdb
+import CaliperImport_Ctrl as cim
+import CaliperInsertion_Ctrl as cin
 import LocationSetup_Ctrl as ls
 import SpacingSetup_Ctrl as ss
 from functools import wraps
@@ -197,10 +202,11 @@ def update_wellboreInnerStageData(self):
 
 		if not self.s3EnableCentralization_checkBox.isChecked():
 			descriptionItem.set_text( self.s3PipeProperties_fields.Desc[0] +'\nwithout Centralization'  )
+			self.ABC_tabWidget.setEnabled(False)
 			return
 
 		self.currentWellboreInnerStageDataItem['Centralization']['Mode'] = True
-		descriptionItem.set_text( self.s3PipeProperties_fields.Desc[0] +'\nwith Centralization '+label  )
+		descriptionItem.set_text( self.s3PipeProperties_fields.Desc[0] +'\nwith Centralization'  )
 
 		for tab in ['A','B','C']:
 
@@ -300,7 +306,7 @@ def select_innerStageRow_and_prepare_innerStageObjects(self, row):
 	self.currentWellboreInnerStageDataItem = None
 
 	cu.select_tableWidgetRow(self.s3WellboreInnerStages_tableWidget, row)
-	self.s3InnerStageToolkit_tabWidget.setEnabled(False)
+	#self.s3InnerStageToolkit_tabWidget.setEnabled(False)
 
 	clear_wellboreInnerStageToolkit(self)
 	if row in self.wellboreInnerStageData:
@@ -421,8 +427,7 @@ def setEnabled_bowSpringToolkit(self, tab):
 	s3CentralizerDB_pushButton.setEnabled(True)
 	s3CentralizerProperties_tableWidget.setEnabled(True)
 	s3CentralizerRunningForce_tableWidget.setEnabled(True)
-	if self.s3SpecifyLocationCentralization_radioButton.isChecked():
-		s3CentralizerLocation_tableWidget.setEnabled(True)
+	s3CentralizerLocation_tableWidget.setEnabled(True)
 
 	field = s3CentralizerProperties_fields.FF
 	item = s3CentralizerProperties_tableWidget.item(field.pos,0)
@@ -464,8 +469,7 @@ def setEnabled_rigidToolkit(self, tab):
 	s3CentralizerDB_pushButton.setEnabled(True)
 	s3CentralizerProperties_tableWidget.setEnabled(True)
 	s3CentralizerRunningForce_tableWidget.setEnabled(False)
-	if self.s3SpecifyLocationCentralization_radioButton.isChecked():
-		s3CentralizerLocation_tableWidget.setEnabled(True)
+	s3CentralizerLocation_tableWidget.setEnabled(True)
 
 	field = s3CentralizerProperties_fields.FF
 	item = s3CentralizerProperties_tableWidget.item(field.pos,0)
@@ -515,7 +519,7 @@ def setEnabled_specifySpacingToolkit(self):
 
 	for tab in ['A','B','C']:
 
-		s3CentralizerLocation_tableWidget   = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
+		s3CentralizerLocation_tableWidget = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
 		s3CentralizerLocation_tableWidget.setEnabled(True)
 
 
@@ -537,8 +541,10 @@ def setEnabled_specifyLocationToolkit(self):
 @updateByBlock_currentWellboreInnerStageDataItem
 def open_TDB_dialog_for_innerStages(self):
 	
+	importlib.reload(tdb)
+
 	dialog = QtGui.QDialog(self.s3PipeProperties_tableWidget)
-	TDB = Main_TubularDatabase(dialog)
+	TDB = tdb.Main_TubularDatabase(dialog)
 	if 'fields' not in dir(TDB): return
 	self.currentWellboreInnerStageDataItem['PipeBase'] = TDB.fields
 
@@ -557,6 +563,8 @@ def open_TDB_dialog_for_innerStages(self):
 @updateByBlock_currentWellboreInnerStageDataItem
 def open_CDB_dialog(self, tab):
 	
+	importlib.reload(cdb)
+
 	s3BowSpringCentralizer_radioButton    = eval( 'self.s3BowSpringCentralizer_radioButton_{tab}'.format(tab=tab) )
 	s3RigidCentralizer_radioButton        = eval( 'self.s3RigidCentralizer_radioButton_{tab}'.format(tab=tab) )
 	s3CentralizerProperties_tableWidget   = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
@@ -567,9 +575,9 @@ def open_CDB_dialog(self, tab):
 	dialog = QtGui.QDialog(self.ABC_tabWidget)
 	
 	if s3BowSpringCentralizer_radioButton.isChecked():
-		CDB = Main_CentralizerDatabase(dialog, 'Bow Spring' )
+		CDB = cdb.Main_CentralizerDatabase(dialog, 'Bow Spring' )
 	elif s3RigidCentralizer_radioButton.isChecked():
-		CDB = Main_CentralizerDatabase(dialog, 'Rigid' )
+		CDB = cdb.Main_CentralizerDatabase(dialog, 'Rigid' )
 	
 	if 'fields' not in dir(CDB): return
 	self.currentWellboreInnerStageDataItem['Centralization'][tab]['CentralizerBase'] = CDB.fields
@@ -620,6 +628,7 @@ def open_specifyCentralization_dialog(self):
 def open_LS_dialog(self):
 
 	importlib.reload(ls)
+
 	dialog = QtGui.QDialog(self.s3ManageLocations_pushButton)
 	LS = ls.Main_LocationSetup(dialog, self)
 	self.currentWellboreInnerStageDataItem['Centralization']['Fields'] = LS.fields
@@ -649,6 +658,7 @@ def open_LS_dialog(self):
 def open_SS_dialog(self):
 
 	importlib.reload(ss)
+	
 	dialog = QtGui.QDialog(self.s3ManageLocations_pushButton)
 	SS = ss.Main_SpacingSetup(dialog, self)
 	self.currentWellboreInnerStageDataItem['Centralization']['Fields'] = SS.fields
@@ -677,8 +687,10 @@ def open_SS_dialog(self):
 @updateByBlock_currentWellboreOuterStageDataItem
 def open_caliper_dialog(self):
 
+	importlib.reload(cim)
+
 	dialog = QtGui.QDialog(self.s3WellboreOuterStages_tableWidget)
-	CI = Main_CaliperImport(dialog, self)
+	CI = cim.Main_CaliperImport(dialog, self)
 	if 'data' not in dir(CI): return
 
 	row = self.s3WellboreOuterStages_tableWidget.selectedRow
@@ -704,8 +716,10 @@ def open_caliper_dialog(self):
 @updateByBlock_currentWellboreOuterStageDataItem
 def open_csv_dialog(self):
 
+	importlib.reload(cin)
+
 	dialog = QtGui.QDialog(self.s3WellboreOuterStages_tableWidget)
-	CI = Main_CaliperInsertion(dialog)
+	CI = cin.Main_CaliperInsertion(dialog)
 	if 'data' not in dir(CI): return
 
 	row = self.s3WellboreOuterStages_tableWidget.selectedRow
@@ -731,8 +745,10 @@ def open_csv_dialog(self):
 @updateByBlock_currentWellboreOuterStageDataItem
 def open_TDB_dialog_for_outerStages(self):
 	
+	importlib.reload(tdb)
+
 	dialog = QtGui.QDialog(self.s3WellboreOuterStages_tableWidget)
-	TDB = Main_TubularDatabase(dialog)
+	TDB = tdb.Main_TubularDatabase(dialog)
 	row = self.s3WellboreOuterStages_tableWidget.selectedRow
 	self.currentWellboreOuterStageDataItem['PipeBase'] = TDB.fields
 
@@ -846,7 +862,7 @@ def adjust_MD_to_wellboreDeep(self):
 		return
 
 	row  = self.s3WellboreInnerStages_tableWidget.selectedRow
-	item = self.s3WellboreInnerStages_tableWidget.item(row, self.s3WellboreInnerStages_fields.MD.pos)
+	item = self.s3WellboreInnerStages_tableWidget.item(row, self.s3WellboreInnerStages_fields.MDbot.pos)
 	item.set_text( deepestMD )
 
 

@@ -435,22 +435,31 @@ class TableClipboard():
 	
 			therow	= min(index.row()	for index in self.selection)
 			thecolumn = min(index.column() for index in self.selection)
+
+			print('----------------',therow,thecolumn,'----------------')
 		
 			self.text = self.sys_clip.text()
+
+			print('text:',self.text)
 				
-			for i,line in enumerate(re.split('[\n\r]+',self.text)[:-1]):
-				for j,value in enumerate(re.split('\t',line)):
-					item = self.tableWidget.item(therow+i,thecolumn+j)
-					if item:
-						try:
-							if not item.field._altFg_:
-								item.set_text(str(value))
-						except AttributeError:
-							item.setText(str(value))
-					else:
-						item = QtGui.QTableWidgetItem(str(value))
-						self.tableWidget.setItem(therow+i,thecolumn+j, item)
-					self.tableWidget.setItemSelected(item, True)
+			for i,line in enumerate(re.split('[\n\r]+',self.text)):
+				if line:
+					for j,value in enumerate(re.split('\t',line)):
+						item = self.tableWidget.item(therow+i,thecolumn+j)
+						print(item,value)
+						if item:
+							print(type(item))
+							print(item.field._altFg_)
+							print(str(value))
+							try:
+								if not item.field._altFg_:
+									item.set_text(str(value))
+							except AttributeError:
+								item.setText(str(value))
+						else:
+							item = QtGui.QTableWidgetItem(str(value))
+							self.tableWidget.setItem(therow+i,thecolumn+j, item)
+						self.tableWidget.setItemSelected(item, True)
 
 
 class CopySelectedCells_action(QtGui.QAction):

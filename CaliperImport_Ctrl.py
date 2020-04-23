@@ -21,11 +21,18 @@ class Main_CaliperImport(Ui_CaliperImport):
 		self.ciOpenFile_pushButton.clicked.connect(self.open_file)
 		self.ciValueDecimalPoint_radioButton.clicked.connect(self.setup_valueDecimalPoint)
 		self.ciValueDecimalComma_radioButton.clicked.connect(self.setup_valueDecimalComma)
+
 		self.unitRepresentations = mdl.get_lengthUnits()
+
 		self.ciMDvalueUnit_comboBox.addItems( self.unitRepresentations )
 		i = self.unitRepresentations.index( self.ciLASData_fields.MD.unit )
 		self.ciMDvalueUnit_comboBox.setCurrentIndex(i)
+
 		self.ciIDvalueUnit_comboBox.addItems( self.unitRepresentations )
+		print('uuuuuuuuuu', self.ciLASData_fields.CD.unit)
+		i = self.unitRepresentations.index( self.ciLASData_fields.CD.unit )
+		self.ciIDvalueUnit_comboBox.setCurrentIndex(i)
+
 		self.ciApplyAndDraw_pushButton.clicked.connect( self.applyAndDraw_caliperData )
 		self.ciCommaDelimiter_checkBox.stateChanged.connect( self.setNumberPattern )
 		self.ciHoleIDsmoothing_slider.valueChanged.connect( self.update_ciHoleIDsmoothing_label )
