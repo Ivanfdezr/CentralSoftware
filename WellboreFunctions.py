@@ -50,7 +50,7 @@ def setup_s3CentralizerProperties_tableWidget(self, tab):
 		item = cu.TableWidgetFieldItem( field, False )
 		s3CentralizerProperties_tableWidget.setItem(field.pos, 0, item)
 
-
+"""
 def init_s3CentralizerRunningForce_tableWidget(self, tab):
 
 	s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )
@@ -73,8 +73,8 @@ def init_s3CentralizerRunningForce_tableWidget(self, tab):
 	s3CentralizerRunningForce_tableWidget.itemChanged.connect(_update_fieldItem_and_wellboreInnerStageData)
 	select_row = lambda r,c : cu.select_tableWidgetRow(s3CentralizerRunningForce_tableWidget,r)
 	s3CentralizerRunningForce_tableWidget.cellPressed.connect(select_row)
-
-
+"""
+"""
 def setup_s3CentralizerRunningForce_tableWidget(self, tab):
 
 	s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )
@@ -87,7 +87,7 @@ def setup_s3CentralizerRunningForce_tableWidget(self, tab):
 		for i in range(s3CentralizerRunningForce_tableWidget.rowCount()):
 			item = cu.TableWidgetFieldItem( field, i%2==0 )
 			s3CentralizerRunningForce_tableWidget.setItem(i, field.pos, item)
-
+"""
 
 def init_s3CentralizerLocation_tableWidget(self, tab):
 
@@ -206,6 +206,7 @@ def update_wellboreInnerStageData(self):
 			return
 
 		self.currentWellboreInnerStageDataItem['Centralization']['Mode'] = True
+		self.currentWellboreInnerStageDataItem['Centralization']['Pattern'] = self.s3CentralizationPattern_spinBox.value()
 		descriptionItem.set_text( self.s3PipeProperties_fields.Desc[0] +'\nwith Centralization'  )
 
 		for tab in ['A','B','C']:
@@ -230,6 +231,7 @@ def update_wellboreInnerStageData(self):
 
 			self.currentWellboreInnerStageDataItem['Centralization'][tab]['CentralizerProps'] = copy.deepcopy(s3CentralizerProperties_fields)
 
+			"""
 			s3CentralizerRunningForce_fields = eval( 'self.s3CentralizerRunningForce_fields_{tab}'.format(tab=tab) )
 			s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )
 			s3CentralizerRunningForce_fields.clear_content()
@@ -241,7 +243,6 @@ def update_wellboreInnerStageData(self):
 
 			self.currentWellboreInnerStageDataItem['Centralization'][tab]['RunningForce'] = copy.deepcopy(s3CentralizerRunningForce_fields)
 
-			"""
 			s3CentralizerLocation_fields = eval( 'self.s3CentralizerLocation_fields_{tab}'.format(tab=tab) )
 			s3CentralizerLocation_tableWidget = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
 			s3CentralizerLocation_fields.clear_content()
@@ -357,7 +358,7 @@ def clear_wellboreInnerStageToolkit(self):
 	for tab in ['A','B','C']:
 
 		cu.clear_tableWidgetContent( eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab)) )
-		cu.clear_tableWidgetContent( eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab)) )
+		#cu.clear_tableWidgetContent( eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab)) )
 		cu.clear_tableWidgetContent( eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab)) )
 
 
@@ -374,6 +375,7 @@ def load_wellboreInnerStageToolkit(self, dataItem):
 		
 		self.s3EnableCentralization_checkBox.setChecked(True)
 		self.ABC_tabWidget.setEnabled(True)
+		self.s3CentralizationPattern_spinBox.setValue( dataItem['Centralization']['Pattern'] )
 		#setEnabled_specifySpacingToolkit(self)
 		#setEnabled_specifyLocationToolkit(self)
 
@@ -393,24 +395,29 @@ def load_wellboreInnerStageToolkit(self, dataItem):
 						item = eval( 'self.s3CentralizerProperties_tableWidget_{tab}.item(field.pos,0)'.format(tab=tab) )
 						item.set_text( field[0], field[0].unit )
 
+				if dataItem['Centralization']['Fields']:
+					for i,value in enumerate(dataItem['Centralization']['Fields'].MD):
+						item = eval( 'self.s3CentralizerLocation_tableWidget_{tab}.item(i,0)'.format(tab=tab) )
+						item.set_text( value, value.unit )
+
+				"""
 				if dataItem['Centralization'][tab]['RunningForce']:
 					for field in dataItem['Centralization'][tab]['RunningForce']:	
 						for i,value in enumerate(field):
 							item = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}.item(i,field.pos)'.format(tab=tab) )
-							item.set_text( value, value.unit )
-
-				if dataItem['Centralization']['Fields']:
-					for i,value in enumerate(dataItem['Centralization']['Fields'].MD):
-						item = eval( 'self.s3CentralizerLocation_tableWidget_{tab}.item(i,0)'.format(tab=tab) )
-						item.set_text( value, value.unit )	
+							item.set_text( value, value.unit )	
+				"""
 
 			else: 
 				eval( 'self.s3NoneCentralizer_radioButton_{tab}.setChecked(True)'.format(tab=tab) )
 				setDisabled_centralizerToolkit(self, tab)
 				continue
+
 	else:
 		self.s3EnableCentralization_checkBox.setChecked(False)
+		self.s3CentralizationPattern_spinBox.setValue( 0 )
 		self.ABC_tabWidget.setEnabled(False)
+
 
 
 @updateByBlock_currentWellboreInnerStageDataItem
@@ -419,14 +426,14 @@ def setEnabled_bowSpringToolkit(self, tab):
 	s3CentralizerDB_pushButton            = eval( 'self.s3CentralizerDB_pushButton_{tab}'.format(tab=tab) )
 	s3CentralizerProperties_tableWidget   = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
 	s3CentralizerProperties_fields        = eval( 'self.s3CentralizerProperties_fields_{tab}'.format(tab=tab) )
-	s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )
+	#s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )
 	s3CentralizerLocation_tableWidget     = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
 
 	cu.clear_tableWidgetContent(s3CentralizerProperties_tableWidget)
 
 	s3CentralizerDB_pushButton.setEnabled(True)
 	s3CentralizerProperties_tableWidget.setEnabled(True)
-	s3CentralizerRunningForce_tableWidget.setEnabled(True)
+	#s3CentralizerRunningForce_tableWidget.setEnabled(True)
 	s3CentralizerLocation_tableWidget.setEnabled(True)
 
 	field = s3CentralizerProperties_fields.FF
@@ -461,14 +468,14 @@ def setEnabled_rigidToolkit(self, tab):
 	s3CentralizerDB_pushButton            = eval( 'self.s3CentralizerDB_pushButton_{tab}'.format(tab=tab) )
 	s3CentralizerProperties_tableWidget   = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
 	s3CentralizerProperties_fields        = eval( 'self.s3CentralizerProperties_fields_{tab}'.format(tab=tab) )
-	s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )
+	#s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )
 	s3CentralizerLocation_tableWidget     = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
 
 	cu.clear_tableWidgetContent(s3CentralizerProperties_tableWidget)
 
 	s3CentralizerDB_pushButton.setEnabled(True)
 	s3CentralizerProperties_tableWidget.setEnabled(True)
-	s3CentralizerRunningForce_tableWidget.setEnabled(False)
+	#s3CentralizerRunningForce_tableWidget.setEnabled(False)
 	s3CentralizerLocation_tableWidget.setEnabled(True)
 
 	field = s3CentralizerProperties_fields.FF
@@ -502,13 +509,13 @@ def setDisabled_centralizerToolkit(self, tab):
 
 	s3CentralizerDB_pushButton             = eval( 'self.s3CentralizerDB_pushButton_{tab}'.format(tab=tab) )
 	s3CentralizerProperties_tableWidget    = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
-	s3CentralizerRunningForce_tableWidget  = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )
+	#s3CentralizerRunningForce_tableWidget  = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )
 	s3CentralizerLocation_tableWidget      = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
 
 	cu.clear_tableWidgetContent(s3CentralizerProperties_tableWidget)
 	s3CentralizerDB_pushButton.setEnabled(False)
 	s3CentralizerProperties_tableWidget.setEnabled(False)
-	s3CentralizerRunningForce_tableWidget.setEnabled(False)
+	#s3CentralizerRunningForce_tableWidget.setEnabled(False)
 	s3CentralizerLocation_tableWidget.setEnabled(False)
 
 
@@ -536,6 +543,12 @@ def setEnabled_specifyLocationToolkit(self):
 
 		if s3BowSpringCentralizer_radioButton.isChecked() or s3RigidCentralizer_radioButton.isChecked():
 			s3CentralizerLocation_tableWidget.setEnabled(True)
+
+
+@updateByBlock_currentWellboreInnerStageDataItem
+def valueChangedAction(self, value):
+	
+	pass
 
 
 @updateByBlock_currentWellboreInnerStageDataItem
@@ -569,8 +582,8 @@ def open_CDB_dialog(self, tab):
 	s3RigidCentralizer_radioButton        = eval( 'self.s3RigidCentralizer_radioButton_{tab}'.format(tab=tab) )
 	s3CentralizerProperties_tableWidget   = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
 	s3CentralizerProperties_fields        = eval( 'self.s3CentralizerProperties_fields_{tab}'.format(tab=tab) )
-	s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )	
-	s3CentralizerRunningForce_fields      = eval( 'self.s3CentralizerRunningForce_fields_{tab}'.format(tab=tab) )
+	#s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )	
+	#s3CentralizerRunningForce_fields      = eval( 'self.s3CentralizerRunningForce_fields_{tab}'.format(tab=tab) )
 
 	dialog = QtGui.QDialog(self.ABC_tabWidget)
 	
@@ -600,6 +613,7 @@ def open_CDB_dialog(self, tab):
 			item.set_text()
 			s3CentralizerProperties_tableWidget.editItem(item)
 
+	"""
 	if s3BowSpringCentralizer_radioButton.isChecked():
 
 		for field in s3CentralizerRunningForce_fields:
@@ -615,6 +629,7 @@ def open_CDB_dialog(self, tab):
 					item.set_text( value, value.unit )
 			else:
 				break
+	"""
 
 
 def open_specifyCentralization_dialog(self):
@@ -794,7 +809,6 @@ def updateMD_wellboreInnerStageData(self, item):
 		self.wellboreInnerStageData[row]['MDbot'] = item.realValue
 
 	print_wellboreInnerStageData(self)
-
 
 
 def adjust_Length_and_MD(self, item):

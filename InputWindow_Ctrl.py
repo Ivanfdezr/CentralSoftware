@@ -42,7 +42,7 @@ class Main_InputWindow(Ui_InputWindow):
 		#self.__init__s3CentralizerSpacing_tableWidget()
 		self.__init__s3PipeProperties_tableWidget()
 		self.__init__s3CentralizerProperties_tableWidgets()
-		self.__init__s3CentralizerRunningForce_tableWidgets()
+		#self.__init__s3CentralizerRunningForce_tableWidgets()
 		self.__init__s3CentralizerLocation_tableWidgets()
 		self.__init__s4Settings_tableWidget()
 		self.__init__s4TorqueDragSideforce_tableWidget()
@@ -85,6 +85,9 @@ class Main_InputWindow(Ui_InputWindow):
 
 		open_specifyCentralization_dialog = lambda: wf.open_specifyCentralization_dialog(self)
 		self.s3ManageLocations_pushButton.clicked.connect(open_specifyCentralization_dialog)
+
+		valueChangedAction = lambda v: wf.valueChangedAction(self, v)
+		self.s3CentralizationPattern_spinBox.valueChanged.connect(valueChangedAction)
 
 		open_CDB_dialog_A = lambda: wf.open_CDB_dialog(self, 'A')
 		open_CDB_dialog_B = lambda: wf.open_CDB_dialog(self, 'B')

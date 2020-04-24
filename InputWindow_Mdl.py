@@ -1477,6 +1477,7 @@ class WellboreInnerStageDataItem( dict ):
 		self['Centralization'] = {	'A':{'CentralizerBase':None},
 									'B':{'CentralizerBase':None},
 									'C':{'CentralizerBase':None},
+									'Pattern':None,
 									'Fields':None	}
 		self.setup()
 
@@ -1485,7 +1486,8 @@ class WellboreInnerStageDataItem( dict ):
 		CentralizerA = self['Centralization']['A']['CentralizerBase']
 		CentralizerB = self['Centralization']['B']['CentralizerBase']
 		CentralizerC = self['Centralization']['C']['CentralizerBase']
-		CentralizationFields = self['Centralization']['Fields']
+		CentralizationFields  = self['Centralization']['Fields']
+		CentralizationPattern = self['Centralization']['Pattern']
 
 		self['PipeProps'] = None 
 		self['Centralization'] = {	'Mode':False,
@@ -1501,6 +1503,7 @@ class WellboreInnerStageDataItem( dict ):
 											'CentralizerBase':CentralizerC,
 											'CentralizerProps':None,
 											'RunningForce':None},
+									'Pattern':CentralizationPattern,
 									'Fields':CentralizationFields}
 
 
