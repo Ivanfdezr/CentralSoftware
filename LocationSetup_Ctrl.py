@@ -220,59 +220,6 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.dialog.done(0)
 
 
-	def remove_location(self):
-
-		for field in self.lsCentralization_fields:
-			print('br:',field.abbreviation,len(field))
-
-		r = self.lsCentralizerLocations_tableWidget.selectedRow
-		self.lsCentralizerLocations_tableWidget.removeRow(r)
-		
-		if r<self.centralizerCount:
-
-			self.lsCentralization_fields.MD.pop(r)
-			self.lsCentralization_fields.Inc.pop(r)
-			#self.lsCentralization_fields.SOatC.pop(r)
-			#self.lsCentralization_fields.SOatM.pop(r)
-			#self.lsCentralization_fields.ClatC.pop(r)
-			#self.lsCentralization_fields.ClatM.pop(r)
-			#self.lsCentralization_fields.LatC.pop(r)
-			self.lsCentralization_fields.EW.pop(r)
-			self.lsCentralization_fields.NS.pop(r)
-			self.lsCentralization_fields.TVD.pop(r)
-			self.lsCentralization_fields.DL.pop(r)
-			self.lsCentralization_fields.ID.pop(r)
-			self.lsCentralization_fields.avgID.pop(r)
-			self.lsCentralization_fields.Azi.pop(r)
-			self.lsCentralization_fields.Stage.pop(r)
-
-			self.centralizerCount-=1
-
-			self.lsCentralization_fields.SOatC.clear()
-			self.lsCentralization_fields.SOatM.clear()
-			self.lsCentralization_fields.ClatC.clear()
-			self.lsCentralization_fields.ClatM.clear()
-			self.lsCentralization_fields.LatC.clear()
-
-			r = r-1 if (r>0) else 0
-
-			if self.centralizerCount>0:
-				MD = self.lsCentralization_fields.MD[r]
-				EW = self.lsCentralization_fields.EW[r]
-				NS = self.lsCentralization_fields.NS[r]
-				VD = self.lsCentralization_fields.TVD[r]
-
-				cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,r)
-				self.update_calculations()
-				self.draw_MDlocations(MD, EW, NS, VD)
-
-			else:
-				self.draw_MDlocations()
-
-		for field in self.lsCentralization_fields:
-			print('ar:',field.abbreviation,len(field))
-
-
 	def select_row(self, r, c, alltherow=False ):
 
 		cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget, r, alltherow)
@@ -286,7 +233,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 			self.draw_MDlocations(MD, EW, NS, VD, created=False)
 
 
-	def update_calculations(self, around=None):
+	def update_calculations(self, indexes=None):
 		
 		locations = self.lsCentralization_fields.MD
 		SOatC_field = self.lsCentralization_fields.SOatC
@@ -299,8 +246,14 @@ class Main_LocationSetup(Ui_LocationSetup):
 		#mdl2.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field, LatC_field)
 		#mdl2.calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field, Inc_field)
 
-		mdl.calculate_standOff_at_Centralizers(self)
-		mdl.calculate_standOff_at_Midspans(self)
+		if indexes==None:
+			mdl.calculate_standOff_at_Centralizers(self)
+			mdl.calculate_standOff_at_Midspans(self)
+		else:
+			for jth in indexes['@c']:
+				mdl.calculate_standOff_at_jthCentralizer(self, jth)
+			for ith in indexes['@m']:
+				mdl.calculate_standOff_at_ithMidspan(self, ith)
 
 		for i in range(self.lsCentralizerLocations_tableWidget.rowCount()):
 
@@ -332,7 +285,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 																						unit=SOatM_field.unit ) )
 		cu.idleFunction()
 
-
+	"""
 	@cu.waiting_effects
 	def choose_MDlocation(self, MD, overwrite=False):
 
@@ -390,7 +343,127 @@ class Main_LocationSetup(Ui_LocationSetup):
 				self.centralizerCount = len(self.lsCentralization_fields.MD)
 				self.update_calculations()
 				return
-			self.draw_MDlocations(MD, EW, NS, VD)	
+			self.draw_MDlocations(MD, EW, NS, VD)
+	"""
+
+	def choose_MDlocation(self, MD, overwrite=False):
+
+		if MD<self.min_MD or MD>self.max_MD:
+			return
+
+		if overwrite:
+			r = self.lsCentralizerLocations_tableWidget.selectedRow
+			#if r<len(self.lsCentralization_fields.MD):
+				#self.lsCentralization_fields.MD.pop(r)
+				#self.lsCentralization_fields.Inc.pop(r)
+				#self.lsCentralization_fields.SOatC.pop(r)
+				#self.lsCentralization_fields.SOatM.pop(r)
+				#self.lsCentralization_fields.ClatC.pop(r)
+				#self.lsCentralization_fields.ClatM.pop(r)
+				#self.lsCentralization_fields.LatC.pop(r)
+				#self.lsCentralization_fields.EW.pop(r)
+				#self.lsCentralization_fields.NS.pop(r)
+				#self.lsCentralization_fields.TVD.pop(r)
+				#self.lsCentralization_fields.DL.pop(r)
+				#self.lsCentralization_fields.ID.pop(r)
+				#self.lsCentralization_fields.avgID.pop(r)
+				#self.lsCentralization_fields.Azi.pop(r)
+				#self.lsCentralization_fields.Stage.pop(r)
+
+			mdl.put_location_to_CentralizationFields(self, r, MD)
+			
+		else:
+			r = mu.np.where(mu.np.array(self.lsCentralization_fields.MD)>MD)[0][0]
+			mdl.insert_location_to_CentralizationFields(self, r, MD)
+			self.lsCentralization_fields.SOatC.pop(r)
+
+		try:
+			indexes = mdl.get_indexes_for_shoosing(self, r)
+			self.update_calculations(indexes=indexes)
+			cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget, r, alltherow=True)
+		except mu.LogicalError:
+			msg = "There is a logical error between centralizer locations and length.\nThe last entered location will be removed."
+			QtGui.QMessageBox.critical(self.ssCentralizerLocations_tableWidget, 'Error', msg)
+			self.lsCentralization_fields.MD.pop(r)
+			self.lsCentralization_fields.Inc.pop(r)
+			self.lsCentralization_fields.SOatC.pop(r)
+			self.lsCentralization_fields.SOatM.pop(r)
+			self.lsCentralization_fields.ClatC.pop(r)
+			self.lsCentralization_fields.ClatM.pop(r)
+			self.lsCentralization_fields.LatC.pop(r)
+			self.lsCentralization_fields.EW.pop(r)
+			self.lsCentralization_fields.NS.pop(r)
+			self.lsCentralization_fields.TVD.pop(r)
+			self.lsCentralization_fields.DL.pop(r)
+			self.lsCentralization_fields.ID.pop(r)
+			self.lsCentralization_fields.avgID.pop(r)
+			self.lsCentralization_fields.Azi.pop(r)
+			self.lsCentralization_fields.Stage.pop(r)
+			self.centralizerCount = len(self.lsCentralization_fields.MD)
+			self.update_calculations()
+			return
+
+		MD = self.lsCentralization_fields.MD[r]
+		EW = self.lsCentralization_fields.EW[r]
+		NS = self.lsCentralization_fields.NS[r]
+		VD = self.lsCentralization_fields.TVD[r]
+		self.draw_MDlocations(MD, EW, NS, VD)	
+
+
+	def remove_location(self):
+
+		#for field in self.lsCentralization_fields:
+		#	print('br:',field.abbreviation,len(field))
+
+		r = self.lsCentralizerLocations_tableWidget.selectedRow
+		self.lsCentralizerLocations_tableWidget.removeRow(r)
+
+		print('removed',r)
+		
+		if r<self.centralizerCount:
+
+			self.lsCentralization_fields.MD.pop(r)
+			self.lsCentralization_fields.Inc.pop(r)
+			self.lsCentralization_fields.SOatC.pop(r)
+			self.lsCentralization_fields.SOatM.pop(r)
+			self.lsCentralization_fields.ClatC.pop(r)
+			self.lsCentralization_fields.ClatM.pop(r)
+			self.lsCentralization_fields.LatC.pop(r)
+			self.lsCentralization_fields.EW.pop(r)
+			self.lsCentralization_fields.NS.pop(r)
+			self.lsCentralization_fields.TVD.pop(r)
+			self.lsCentralization_fields.DL.pop(r)
+			self.lsCentralization_fields.ID.pop(r)
+			self.lsCentralization_fields.avgID.pop(r)
+			self.lsCentralization_fields.Azi.pop(r)
+			self.lsCentralization_fields.Stage.pop(r)
+
+			self.centralizerCount-=1
+
+			#self.lsCentralization_fields.SOatC.clear()
+			#self.lsCentralization_fields.SOatM.clear()
+			#self.lsCentralization_fields.ClatC.clear()
+			#self.lsCentralization_fields.ClatM.clear()
+			#self.lsCentralization_fields.LatC.clear()
+
+			s = r-1 if (r>0) else 0
+
+			if self.centralizerCount>0:
+				MD = self.lsCentralization_fields.MD[s]
+				EW = self.lsCentralization_fields.EW[s]
+				NS = self.lsCentralization_fields.NS[s]
+				VD = self.lsCentralization_fields.TVD[s]
+
+				cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,s)
+				indexes = mdl.get_indexes_for_removing(self, r)
+				self.update_calculations(indexes=indexes)
+				self.draw_MDlocations(MD, EW, NS, VD)
+
+			else:
+				self.draw_MDlocations()
+
+		#for field in self.lsCentralization_fields:
+		#	print('ar:',field.abbreviation,len(field))
 
 
 	def highlight_MDlocation(self, MD):
@@ -400,6 +473,12 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 
 	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None, created=True, initial=False ):
+
+		fieldlen = len(self.lsCentralization_fields.MD)
+		print( ':MD', fieldlen )
+		for field in self.lsCentralization_fields[1:]:
+			print( field.abbreviation, len(field) )
+			#assert( fieldlen==len(field) )
 
 		xlim = self.lsCaliperMap_graphicsView.axes.get_xlim()	
 
