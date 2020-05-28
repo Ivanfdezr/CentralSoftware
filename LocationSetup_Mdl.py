@@ -921,12 +921,10 @@ def insert_location_to_CentralizationFields(self, pos, MD):
 	ID = mdl.get_wellboreID_at_MD(self.parent, MD) 
 	outerStage = mdl.get_outerStage_at_MD(self.parent, MD)
 	innerStage = mdl.get_innerStage_at_MD(self.parent, MD)
+	if not innerStage['Centralization']['Mode']:
+		return False
 	avgID = outerStage['WellboreProps'].ID[0]
 	row = mu.physicalValue(innerStage['row'],'1')
-
-	print('<<<<<<<<<<<<<<<<')
-	for field in self.lsCentralization_fields:
-		print(field.abbreviation,len(field))
 
 	self.lsCentralization_fields.MD.insert( pos, MD )
 	self.lsCentralization_fields.Inc.insert( pos, Inc )
@@ -944,10 +942,7 @@ def insert_location_to_CentralizationFields(self, pos, MD):
 	self.lsCentralization_fields.avgID.insert( pos, avgID )
 	self.lsCentralization_fields.Stage.insert( pos, row )
 
-	print('----------------')
-	for field in self.lsCentralization_fields:
-		print(field.abbreviation,len(field))
-	print('>>>>>>>>>>>>>>>>')
+	return True
 
 
 def put_location_to_CentralizationFields(self, pos, MD):
@@ -959,6 +954,8 @@ def put_location_to_CentralizationFields(self, pos, MD):
 	ID = mdl.get_wellboreID_at_MD(self.parent, MD) 
 	outerStage = mdl.get_outerStage_at_MD(self.parent, MD)
 	innerStage = mdl.get_innerStage_at_MD(self.parent, MD)
+	if not innerStage['Centralization']['Mode']:
+		return False
 	avgID = outerStage['WellboreProps'].ID[0]
 	row = mu.physicalValue(innerStage['row'],'1')
 
@@ -972,6 +969,8 @@ def put_location_to_CentralizationFields(self, pos, MD):
 	self.lsCentralization_fields.ID.put( pos, ID )
 	self.lsCentralization_fields.avgID.put( pos, avgID )
 	self.lsCentralization_fields.Stage.put( pos, row )
+
+	return True
 
 
 def get_indexes_for_shoosing(self, r):

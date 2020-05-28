@@ -353,37 +353,20 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 		if overwrite:
 			r = self.lsCentralizerLocations_tableWidget.selectedRow
-			#if r<len(self.lsCentralization_fields.MD):
-				#self.lsCentralization_fields.MD.pop(r)
-				#self.lsCentralization_fields.Inc.pop(r)
-				#self.lsCentralization_fields.SOatC.pop(r)
-				#self.lsCentralization_fields.SOatM.pop(r)
-				#self.lsCentralization_fields.ClatC.pop(r)
-				#self.lsCentralization_fields.ClatM.pop(r)
-				#self.lsCentralization_fields.LatC.pop(r)
-				#self.lsCentralization_fields.EW.pop(r)
-				#self.lsCentralization_fields.NS.pop(r)
-				#self.lsCentralization_fields.TVD.pop(r)
-				#self.lsCentralization_fields.DL.pop(r)
-				#self.lsCentralization_fields.ID.pop(r)
-				#self.lsCentralization_fields.avgID.pop(r)
-				#self.lsCentralization_fields.Azi.pop(r)
-				#self.lsCentralization_fields.Stage.pop(r)
-
-			mdl.put_location_to_CentralizationFields(self, r, MD)
+			gooD = mdl.put_location_to_CentralizationFields(self, r, MD)
 			
 		else:
 			r = mu.np.where(mu.np.array(self.lsCentralization_fields.MD)>MD)[0][0]
-			mdl.insert_location_to_CentralizationFields(self, r, MD)
-			self.lsCentralization_fields.SOatC.pop(r)
+			gooD = mdl.insert_location_to_CentralizationFields(self, r, MD)
 
 		try:
+			assert( gooD )
 			indexes = mdl.get_indexes_for_shoosing(self, r)
 			self.update_calculations(indexes=indexes)
 			cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget, r, alltherow=True)
 		except mu.LogicalError:
 			msg = "There is a logical error between centralizer locations and length.\nThe last entered location will be removed."
-			QtGui.QMessageBox.critical(self.ssCentralizerLocations_tableWidget, 'Error', msg)
+			QtGui.QMessageBox.critical(self.lsCentralizerLocations_tableWidget, 'Error', msg)
 			self.lsCentralization_fields.MD.pop(r)
 			self.lsCentralization_fields.Inc.pop(r)
 			self.lsCentralization_fields.SOatC.pop(r)
@@ -401,6 +384,10 @@ class Main_LocationSetup(Ui_LocationSetup):
 			self.lsCentralization_fields.Stage.pop(r)
 			self.centralizerCount = len(self.lsCentralization_fields.MD)
 			self.update_calculations()
+			return
+		except AssertionError:
+			msg = "There are not centralizers defined in this region. \nThis action is going to be ignored."
+			QtGui.QMessageBox.critical(self.lsCentralizerLocations_tableWidget, 'Error', msg)
 			return
 
 		MD = self.lsCentralization_fields.MD[r]

@@ -2,15 +2,17 @@
 -x	Save/Open functionality (very important)
 -!	Installation stuffs / DB installation (very important)
 -x	@ABC: dont accept B or C without A
--	Centralizer CID instead PID @OSA
--	Manage frictions
+-x	Centralizer CID instead PID @OSA
+-x	Manage frictions
 -x	Modification of ABC ensemble length considerations
--	All centralization stages together.
+-x	All centralization stages together.
 -	T&D check
 -	Include Sideforces @LS and SS
 -x	Remove BS from import caliper
 -x	Insert stage numeration in pipe properties or label
--	Check if sorting by row is congruent at stages.
+-x	Check if sorting by row is congruent at stages.
+
+
 
 
 =========================================================
