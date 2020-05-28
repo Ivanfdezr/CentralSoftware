@@ -20,30 +20,21 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.setupUi(dialog)
 		self.dialog = dialog
 		self.parent = parent
-		self.centralizerCount = 0
 
 		self.lsAccept_pushButton.clicked.connect( self.makeResults_and_done )
-
-		self.lsCentralizerLocations_fields = mdl.get_lsCentralizerLocations_fields()
-		#mdl.calculate_axialForce_field(self)	
-
+		self.lsCentralization_fields = mdl.get_lsCentralization_fields()
 		self.__init__lsCentralizerLocations_tableWidget()
-		#self.lsCalculate_pushButton.clicked.connect( self.calculate_SO )
 
-		self.stage = parent.currentWellboreInnerStageDataItem
+		self.MD = self.parent.v3WorkWellboreMD
+		self.ID = self.parent.v3WorkWellboreID
+		self.max_MD = mu.np.max( self.MD )
+		self.min_MD = mu.np.min( self.MD )
+		self.lim_ID = mu.np.max( self.ID )*1.2
 
-		self.max_MD = self.stage['MD']
-		self.min_MD = self.max_MD-self.stage['Length']
-		self.IPOD = self.stage['PipeProps'].OD[0]
-
-		self.centralizers = copy.deepcopy(self.stage['Centralization'])
-		del self.centralizers['Mode']
-		del self.centralizers['Fields']
-
-		MD, ID, mean_ID, lim_ID = mdl.get_LASMDandCALID_intoInterval(self)
-		self.MD = MD
-		self.ID = ID
-		self.mean_ID = mean_ID
+		self.numofStages = mdl.cat_locations(self)
+		self.centralizerCount = len(self.lsCentralization_fields.MD)
+		self.update_calculations()
+		
 
 		#-------------------------------------------------
 
@@ -68,33 +59,39 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 		#-------------------------------------------------
 
-		self.lsCaliperMap_graphicsView.axes.fill_betweenx( MD, -ID, +ID, alpha=0.5, color='C0')
-		factors = mu.np.linspace(1,2,11)
-		for factor in factors[1:]:
-			IPOD = self.IPOD*factor
-			self.lsCaliperMap_graphicsView.axes.fill_betweenx( MD, +IPOD, +ID, where=IPOD<ID, alpha=0.05, color='C3')
-			self.lsCaliperMap_graphicsView.axes.fill_betweenx( MD, -IPOD, -ID, where=IPOD<ID, alpha=0.05, color='C3')
+		self.lsCaliperMap_graphicsView.axes.fill_betweenx( self.MD, -self.ID, +self.ID, alpha=0.5, color='C0')
+		factors = mu.np.linspace(1.2,1.6,8)
 
-		self.lsCaliperMap_graphicsView.axes.plot( [ -self.IPOD, -self.IPOD], [MD[0],MD[-1]], 'C1', lw=2 )
-		self.lsCaliperMap_graphicsView.axes.plot( [ +self.IPOD, +self.IPOD], [MD[0],MD[-1]], 'C1', lw=2 )
+		for stage in self.parent.v3WellboreInnerStageData.values():
+			
+			MDstage,IDstage = mdl.get_LASMDandCALID_intoStage(self, stage)
+			IPODstage = stage['PipeProps'].OD[0]
 
-		MDHeaderName = self.lsCentralizerLocations_fields.MD.headerName
-		IDHeaderName = self.lsCentralizerLocations_fields.ID.headerName
+			for factor in factors[1:]:
+				IPOD = IPODstage*factor
+				self.lsCaliperMap_graphicsView.axes.fill_betweenx( MDstage, +IPOD, +IDstage, where=IPOD<IDstage, alpha=0.15, color='C3')
+				self.lsCaliperMap_graphicsView.axes.fill_betweenx( MDstage, -IPOD, -IDstage, where=IPOD<IDstage, alpha=0.15, color='C3')
+
+			self.lsCaliperMap_graphicsView.axes.plot( [ -IPODstage, -IPODstage], [MDstage[0],MDstage[-1]], 'C1', lw=2 )
+			self.lsCaliperMap_graphicsView.axes.plot( [ +IPODstage, +IPODstage], [MDstage[0],MDstage[-1]], 'C1', lw=2 )
+
+		MDHeaderName = self.lsCentralization_fields.MD.headerName
+		IDHeaderName = self.lsCentralization_fields.ID.headerName
 
 		self.lsCaliperMap_graphicsView.axes.set_xlabel( IDHeaderName )
 		self.lsCaliperMap_graphicsView.axes.set_ylabel( MDHeaderName )
-		self.lsCaliperMap_graphicsView.axes.set_xlim( -lim_ID, lim_ID )
+		self.lsCaliperMap_graphicsView.axes.set_xlim( -self.lim_ID, self.lim_ID )
 		self.lsCaliperMap_graphicsView.axes.set_ylim( self.max_MD, self.min_MD ) 
-		self.lsCaliperMap_graphicsView.draw()
+		#self.lsCaliperMap_graphicsView.draw()
 
 		#-------------------------------------------------
 
-		SOHeaderName = self.lsCentralizerLocations_fields.SOatC.headerName +'  &  '+ self.lsCentralizerLocations_fields.SOatM.headerName
-		if self.lsCentralizerLocations_fields.SOatC.unit=='%':
+		SOHeaderName = self.lsCentralization_fields.SOatC.headerName +'  &  '+ self.lsCentralization_fields.SOatM.headerName
+		if self.lsCentralization_fields.SOatC.unit=='%':
 			self.max_SO = 100
 			self.min_SO = 67
 			self.ΔSO = 10
-		elif self.lsCentralizerLocations_fields.SOatC.unit=='1':
+		elif self.lsCentralization_fields.SOatC.unit=='1':
 			self.max_SO = 1
 			self.min_SO = 0.67
 			self.ΔSO = 0.1
@@ -107,33 +104,24 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.lsSOVisualization_graphicsView.axes.plot( [self.min_SO, self.min_SO], [self.max_MD, self.min_MD], 'C3--', lw=2 )
 		self.lsSOVisualization_graphicsView.axes.plot( [0, 0], [self.max_MD, self.min_MD], 'k-', lw=1, alpha=0.3 )
 		self.lsSOVisualization_graphicsView.axes.plot( [self.max_SO, self.max_SO], [self.max_MD, self.min_MD], 'k-', lw=1, alpha=0.3 ) 
-		self.lsSOVisualization_graphicsView.draw()
+		#self.lsSOVisualization_graphicsView.draw()
 
 		#-------------------------------------------------
-
-		min_EW,min_NS,min_VD,min_index = mdl2.get_ASCCoordinates_from_MD(parent, self.min_MD, unit=parent.s2DataSurvey_fields.MD.unit)
-		max_EW,max_NS,max_VD,max_index = mdl2.get_ASCCoordinates_from_MD(parent, self.max_MD, unit=parent.s2DataSurvey_fields.MD.unit)
-		EW = parent.s2DataSurvey_fields.EW[min_index:max_index+1]
-		NS = parent.s2DataSurvey_fields.NS[min_index:max_index+1]
-		VD = parent.s2DataSurvey_fields.TVD[min_index:max_index+1]
 		
-		EW[0] = min_EW
-		NS[0] = min_NS
-		VD[0] = min_VD
-		EW[-1] = max_EW
-		NS[-1] = max_NS
-		VD[-1] = max_VD
+		EW = parent.v2ASCComplements_fields.EW
+		NS = parent.v2ASCComplements_fields.NS
+		VD = parent.v2ASCComplements_fields.TVD
 
 		curve, = self.lsWellbore3D_graphicsView.axes.plot( EW, NS, VD )
 
-		self.lsWellbore3D_graphicsView.axes.set_xlabel( parent.s2DataSurvey_fields.EW.headerName )
-		self.lsWellbore3D_graphicsView.axes.set_ylabel( parent.s2DataSurvey_fields.NS.headerName )
-		self.lsWellbore3D_graphicsView.axes.set_zlabel( parent.s2DataSurvey_fields.TVD.headerName )
+		self.lsWellbore3D_graphicsView.axes.set_xlabel( EW.headerName )
+		self.lsWellbore3D_graphicsView.axes.set_ylabel( NS.headerName )
+		self.lsWellbore3D_graphicsView.axes.set_zlabel( VD.headerName )
 
-		max_EW = max(parent.s2DataSurvey_fields.EW)
-		min_EW = min(parent.s2DataSurvey_fields.EW)
-		max_NS = max(parent.s2DataSurvey_fields.NS)
-		min_NS = min(parent.s2DataSurvey_fields.NS)
+		max_EW = max(EW)
+		min_EW = min(EW)
+		max_NS = max(NS)
+		min_NS = min(NS)
 		ΔEW = max_EW - min_EW
 		ΔNS = max_NS - min_NS
 
@@ -153,15 +141,12 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.lsWellbore3D_graphicsView.axes.mouse_init()
 		#zp.point3D_factory(self.s2TriDView_graphicsView.axes, dot, curve)
 		zp.zoom3D_factory( self.lsWellbore3D_graphicsView.axes, curve )
-		self.lsWellbore3D_graphicsView.draw()
+		#self.lsWellbore3D_graphicsView.draw()
 		
 		#-------------------------------------------------
 
-		if self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields']!=None:
-			for MD in self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields'].MD[:-1]:
-				mu.create_physicalValue_and_appendTo_field( MD, self.lsCentralizerLocations_fields.MD )
-			MD = self.parent.currentWellboreInnerStageDataItem['Centralization']['Fields'].MD[-1]
-			self.choose_MDlocation(MD)
+		
+		self.draw_MDlocations( initial=True )
 
 		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 		dialog.exec_()
@@ -183,7 +168,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 		#select_row = lambda r,c : cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,r)
 
-		for field in self.lsCentralizerLocations_fields[:4]:
+		for field in self.lsCentralization_fields[:4]:
 			#
 			item = self.lsCentralizerLocations_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( field.headerName )
@@ -205,7 +190,7 @@ class Main_LocationSetup(Ui_LocationSetup):
 	def makeResults_and_done(self):
 
 		cu.savetable( 	self.lsCentralizerLocations_tableWidget,
-						self.lsCentralizerLocations_fields[:4],
+						self.lsCentralization_fields[:4],
 						["tmp/CentralizerLocationsAndSO_'{stagerow}'.csv"
 						.format(stagerow=self.stage['row']),
 						self.parent.workingDirectory+"/CentralizerLocationsAndSO_'{stagerow}'.csv"
@@ -229,37 +214,53 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.lsWellbore3D_graphicsView.figure.savefig( self.parent.workingDirectory+"/Wellbore3D_'{stagerow}'.png"
 			.format(stagerow=self.stage['row']), dpi=300 )
 
-		self.fields = self.lsCentralizerLocations_fields
+		self.fields = self.lsCentralization_fields
+		self.parent.centralizationChanged_flag = False
+
 		self.dialog.done(0)
 
 
 	def remove_location(self):
 
-		self.lsCentralizerLocations_fields.Inc.clear()
-		self.lsCentralizerLocations_fields.SOatC.clear()
-		self.lsCentralizerLocations_fields.SOatM.clear()
-		self.lsCentralizerLocations_fields.ClatC.clear()
-		self.lsCentralizerLocations_fields.ClatM.clear()
-		self.lsCentralizerLocations_fields.LatC.clear()
+		for field in self.lsCentralization_fields:
+			print('br:',field.abbreviation,len(field))
 
 		r = self.lsCentralizerLocations_tableWidget.selectedRow
 		self.lsCentralizerLocations_tableWidget.removeRow(r)
 		
 		if r<self.centralizerCount:
-			del self.lsCentralizerLocations_fields.MD[r]
-			del self.lsCentralizerLocations_fields.EW[r]
-			del self.lsCentralizerLocations_fields.NS[r]
-			del self.lsCentralizerLocations_fields.TVD[r]
-			del self.lsCentralizerLocations_fields.DL[r]
+
+			self.lsCentralization_fields.MD.pop(r)
+			self.lsCentralization_fields.Inc.pop(r)
+			#self.lsCentralization_fields.SOatC.pop(r)
+			#self.lsCentralization_fields.SOatM.pop(r)
+			#self.lsCentralization_fields.ClatC.pop(r)
+			#self.lsCentralization_fields.ClatM.pop(r)
+			#self.lsCentralization_fields.LatC.pop(r)
+			self.lsCentralization_fields.EW.pop(r)
+			self.lsCentralization_fields.NS.pop(r)
+			self.lsCentralization_fields.TVD.pop(r)
+			self.lsCentralization_fields.DL.pop(r)
+			self.lsCentralization_fields.ID.pop(r)
+			self.lsCentralization_fields.avgID.pop(r)
+			self.lsCentralization_fields.Azi.pop(r)
+			self.lsCentralization_fields.Stage.pop(r)
+
 			self.centralizerCount-=1
+
+			self.lsCentralization_fields.SOatC.clear()
+			self.lsCentralization_fields.SOatM.clear()
+			self.lsCentralization_fields.ClatC.clear()
+			self.lsCentralization_fields.ClatM.clear()
+			self.lsCentralization_fields.LatC.clear()
 
 			r = r-1 if (r>0) else 0
 
 			if self.centralizerCount>0:
-				MD = self.lsCentralizerLocations_fields.MD[r]
-				EW = self.lsCentralizerLocations_fields.EW[r]
-				NS = self.lsCentralizerLocations_fields.NS[r]
-				VD = self.lsCentralizerLocations_fields.TVD[r]
+				MD = self.lsCentralization_fields.MD[r]
+				EW = self.lsCentralization_fields.EW[r]
+				NS = self.lsCentralization_fields.NS[r]
+				VD = self.lsCentralization_fields.TVD[r]
 
 				cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,r)
 				self.update_calculations()
@@ -268,49 +269,59 @@ class Main_LocationSetup(Ui_LocationSetup):
 			else:
 				self.draw_MDlocations()
 
+		for field in self.lsCentralization_fields:
+			print('ar:',field.abbreviation,len(field))
+
 
 	def select_row(self, r, c, alltherow=False ):
 
 		cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget, r, alltherow)
 		
 		if r<self.centralizerCount:
-			MD = self.lsCentralizerLocations_fields.MD[r]
-			EW = self.lsCentralizerLocations_fields.EW[r]
-			NS = self.lsCentralizerLocations_fields.NS[r]
-			VD = self.lsCentralizerLocations_fields.TVD[r]
+			MD = self.lsCentralization_fields.MD[r]
+			EW = self.lsCentralization_fields.EW[r]
+			NS = self.lsCentralization_fields.NS[r]
+			VD = self.lsCentralization_fields.TVD[r]
 
-			self.draw_MDlocations(MD, EW, NS, VD, False)
+			self.draw_MDlocations(MD, EW, NS, VD, created=False)
 
 
-	def update_calculations(self):
+	def update_calculations(self, around=None):
 		
-		locations = self.lsCentralizerLocations_fields.MD
-		SOatC_field = self.lsCentralizerLocations_fields.SOatC
-		ClatC_field = self.lsCentralizerLocations_fields.ClatC
-		SOatM_field = self.lsCentralizerLocations_fields.SOatM
-		ClatM_field = self.lsCentralizerLocations_fields.ClatM
-		LatC_field = self.lsCentralizerLocations_fields.LatC
-		Inc_field = self.lsCentralizerLocations_fields.Inc
+		locations = self.lsCentralization_fields.MD
+		SOatC_field = self.lsCentralization_fields.SOatC
+		#ClatC_field = self.lsCentralization_fields.ClatC
+		SOatM_field = self.lsCentralization_fields.SOatM
+		#ClatM_field = self.lsCentralization_fields.ClatM
+		#LatC_field = self.lsCentralization_fields.LatC
+		Inc_field = self.lsCentralization_fields.Inc
 
-		mdl2.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field, LatC_field)
-		mdl2.calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field, Inc_field)
+		#mdl2.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field, LatC_field)
+		#mdl2.calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field, Inc_field)
+
+		mdl.calculate_standOff_at_Centralizers(self)
+		mdl.calculate_standOff_at_Midspans(self)
 
 		for i in range(self.lsCentralizerLocations_tableWidget.rowCount()):
 
 			try:
-				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.Inc.pos )
-				item.set_text( self.lsCentralizerLocations_fields.Inc[i] )
-				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatC.pos )
-				item.set_text( self.lsCentralizerLocations_fields.SOatC[i] )
-				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatM.pos )
-				item.set_text( self.lsCentralizerLocations_fields.SOatM[i] )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralization_fields.MD.pos )
+				item.set_text( self.lsCentralization_fields.MD[i] )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralization_fields.Inc.pos )
+				item.set_text( self.lsCentralization_fields.Inc[i] )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralization_fields.SOatC.pos )
+				item.set_text( self.lsCentralization_fields.SOatC[i] )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralization_fields.SOatM.pos )
+				item.set_text( self.lsCentralization_fields.SOatM[i] )
 
 			except IndexError:
-				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.Inc.pos )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralization_fields.MD.pos )
 				item.set_text()
-				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatC.pos )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralization_fields.Inc.pos )
 				item.set_text()
-				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.SOatM.pos )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralization_fields.SOatC.pos )
+				item.set_text()
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralization_fields.SOatM.pos )
 				item.set_text()
 
 		self.meanSOatC = mu.np.round( mu.np.mean(SOatC_field), 1 )
@@ -329,35 +340,35 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 			if overwrite:
 				r = self.lsCentralizerLocations_tableWidget.selectedRow
-				if r<len(self.lsCentralizerLocations_fields.MD):
-					del self.lsCentralizerLocations_fields.MD[r]
+				if r<len(self.lsCentralization_fields.MD):
+					del self.lsCentralization_fields.MD[r]
 
-			mu.create_physicalValue_and_appendTo_field( MD, self.lsCentralizerLocations_fields.MD )
-			MD = self.lsCentralizerLocations_fields.MD[-1]
-			self.lsCentralizerLocations_fields.MD.sort()
-			self.lsCentralizerLocations_fields.EW.clear()
-			self.lsCentralizerLocations_fields.NS.clear()
-			self.lsCentralizerLocations_fields.TVD.clear()
-			self.lsCentralizerLocations_fields.DL.clear()
-			self.lsCentralizerLocations_fields.Inc.clear()
-			self.lsCentralizerLocations_fields.SOatC.clear()
-			self.lsCentralizerLocations_fields.SOatM.clear()
-			self.lsCentralizerLocations_fields.ClatC.clear()
-			self.lsCentralizerLocations_fields.ClatM.clear()
-			self.lsCentralizerLocations_fields.LatC.clear()
-			self.centralizerCount = len(self.lsCentralizerLocations_fields.MD)
+			mu.create_physicalValue_and_appendTo_field( MD, self.lsCentralization_fields.MD )
+			MD = self.lsCentralization_fields.MD[-1]
+			self.lsCentralization_fields.MD.sort()
+			self.lsCentralization_fields.EW.clear()
+			self.lsCentralization_fields.NS.clear()
+			self.lsCentralization_fields.TVD.clear()
+			self.lsCentralization_fields.DL.clear()
+			self.lsCentralization_fields.Inc.clear()
+			self.lsCentralization_fields.SOatC.clear()
+			self.lsCentralization_fields.SOatM.clear()
+			self.lsCentralization_fields.ClatC.clear()
+			self.lsCentralization_fields.ClatM.clear()
+			self.lsCentralization_fields.LatC.clear()
+			self.centralizerCount = len(self.lsCentralization_fields.MD)
 
-			for i, MDi in enumerate(self.lsCentralizerLocations_fields.MD):
+			for i, MDi in enumerate(self.lsCentralization_fields.MD):
 					
 				EWi,NSi,VDi,_ = mdl2.get_ASCCoordinates_from_MD(self.parent, MDi)
 				DLi = mdl2.get_ASCDogleg_from_MD(self.parent, MDi)
 				
-				mu.create_physicalValue_and_appendTo_field( EWi, self.lsCentralizerLocations_fields.EW )
-				mu.create_physicalValue_and_appendTo_field( NSi, self.lsCentralizerLocations_fields.NS )
-				mu.create_physicalValue_and_appendTo_field( VDi, self.lsCentralizerLocations_fields.TVD )
-				mu.create_physicalValue_and_appendTo_field( DLi, self.lsCentralizerLocations_fields.DL )
+				#mu.create_physicalValue_and_appendTo_field( EWi, self.lsCentralization_fields.EW )
+				#mu.create_physicalValue_and_appendTo_field( NSi, self.lsCentralization_fields.NS )
+				#mu.create_physicalValue_and_appendTo_field( VDi, self.lsCentralization_fields.TVD )
+				#mu.create_physicalValue_and_appendTo_field( DLi, self.lsCentralization_fields.DL )
 
-				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralizerLocations_fields.MD.pos )
+				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralization_fields.MD.pos )
 				item.set_text( MDi )
 				if MD==MDi:
 					EW = EWi
@@ -371,12 +382,12 @@ class Main_LocationSetup(Ui_LocationSetup):
 			except mu.LogicalError:
 				msg = "There is a logical error between centralizer locations and length.\nThe last entered location will be removed."
 				QtGui.QMessageBox.critical(self.ssCentralizerLocations_tableWidget, 'Error', msg)
-				self.lsCentralizerLocations_fields.MD.remove(MD)
-				self.lsCentralizerLocations_fields.EW.remove(EW)
-				self.lsCentralizerLocations_fields.NS.remove(NS)
-				self.lsCentralizerLocations_fields.TVD.remove(VD)
-				self.lsCentralizerLocations_fields.DL.remove(LD)
-				self.centralizerCount = len(self.lsCentralizerLocations_fields.MD)
+				self.lsCentralization_fields.MD.remove(MD)
+				self.lsCentralization_fields.EW.remove(EW)
+				self.lsCentralization_fields.NS.remove(NS)
+				self.lsCentralization_fields.TVD.remove(VD)
+				self.lsCentralization_fields.DL.remove(LD)
+				self.centralizerCount = len(self.lsCentralization_fields.MD)
 				self.update_calculations()
 				return
 			self.draw_MDlocations(MD, EW, NS, VD)	
@@ -384,48 +395,48 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 	def highlight_MDlocation(self, MD):
 
-		index = mu.np.argmin( abs(mu.array(self.lsCentralizerLocations_fields.MD)-MD) )
+		index = mu.np.argmin( abs(mu.array(self.lsCentralization_fields.MD)-MD) )
 		self.select_row( index, 0, alltherow=True )
 
 
-	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None, created=True):
+	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None, created=True, initial=False ):
 
-		xlim = self.lsCaliperMap_graphicsView.axes.get_xlim()
-
-		del self.lsCaliperMap_graphicsView.axes.lines[2:]
-		del self.lsWellbore3D_graphicsView.axes.lines[1:]
-		del self.lsSOVisualization_graphicsView.axes.lines[3:]
+		xlim = self.lsCaliperMap_graphicsView.axes.get_xlim()	
 
 		if MD!=None:
 
-			for MDi in self.lsCentralizerLocations_fields.MD:
+			del self.lsCaliperMap_graphicsView.axes.lines[2*self.numofStages:]
+			del self.lsWellbore3D_graphicsView.axes.lines[1:]
+			del self.lsSOVisualization_graphicsView.axes.lines[3:]
+
+			for MDi in self.lsCentralization_fields.MD:
 				self.lsCaliperMap_graphicsView.axes.plot( xlim, [MDi, MDi], color='C3', lw=1 )
 
 			self.lsCaliperMap_graphicsView.axes.plot( xlim, [MD, MD], color='C3', lw=4, alpha=0.4 )
 			
-			self.lsWellbore3D_graphicsView.axes.plot( 	self.lsCentralizerLocations_fields.EW,
-														self.lsCentralizerLocations_fields.NS,
-														self.lsCentralizerLocations_fields.TVD, marker='o', color='C3', alpha=0.5, ls='' )
+			self.lsWellbore3D_graphicsView.axes.plot( 	self.lsCentralization_fields.EW,
+														self.lsCentralization_fields.NS,
+														self.lsCentralization_fields.TVD, marker='o', color='C3', alpha=0.5, ls='' )
 			
 			self.lsWellbore3D_graphicsView.axes.plot( [EW],[NS],[VD], marker='o', mec='black', color='C3', ms='8' )
 
 			MD_alt = []
 			SO_alt = []
-			for k in range(2*len(self.lsCentralizerLocations_fields.MD)-1):
+			for k in range(2*len(self.lsCentralization_fields.MD)-1):
 				if k%2==0:
-					MD_alt.append( self.lsCentralizerLocations_fields.MD[k//2] )
-					SO_alt.append( self.lsCentralizerLocations_fields.SOatC[k//2] )
+					MD_alt.append( self.lsCentralization_fields.MD[k//2] )
+					SO_alt.append( self.lsCentralization_fields.SOatC[k//2] )
 				elif k%2==1:
-					MD_alt.append( (self.lsCentralizerLocations_fields.MD[(k+1)//2]+self.lsCentralizerLocations_fields.MD[(k-1)//2])/2 )
-					SO_alt.append( self.lsCentralizerLocations_fields.SOatM[k//2] )
+					MD_alt.append( (self.lsCentralization_fields.MD[(k+1)//2]+self.lsCentralization_fields.MD[(k-1)//2])/2 )
+					SO_alt.append( self.lsCentralization_fields.SOatM[k//2] )
 
 			self.lsSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, marker='s', ms=5, color='C1', lw=1.5, alpha=0.7 )
-			self.lsSOVisualization_graphicsView.axes.plot(	self.lsCentralizerLocations_fields.SOatC, 
-															self.lsCentralizerLocations_fields.MD, marker='o', color='C3', alpha=0.5, ls='' )
+			self.lsSOVisualization_graphicsView.axes.plot(	self.lsCentralization_fields.SOatC, 
+															self.lsCentralization_fields.MD, marker='o', color='C3', alpha=0.5, ls='' )
 				
-			index = mu.np.where( mu.np.isclose(self.lsCentralizerLocations_fields.MD, MD) )[0][0]
-			SOatC = self.lsCentralizerLocations_fields.SOatC[index]
-			#SOatC = self.lsCentralizerLocations_fields.SOatC[self.lsCentralizerLocations_fields.MD.index(MD) ]
+			index = mu.np.where( mu.np.isclose(self.lsCentralization_fields.MD, MD) )[0][0]
+			SOatC = self.lsCentralization_fields.SOatC[index]
+			#SOatC = self.lsCentralization_fields.SOatC[self.lsCentralization_fields.MD.index(MD) ]
 			self.lsSOVisualization_graphicsView.axes.plot(	SOatC, MD, marker='o', mec='black', color='C3', ms='8' )
 			if created:
 				self.lsSOVisualization_graphicsView.axes.plot(	[0, self.max_SO], [MD, MD], color='C3', lw=4, alpha=0.4 )
@@ -439,6 +450,34 @@ class Main_LocationSetup(Ui_LocationSetup):
 				del self.lsSOVisualization_graphicsView.axes.lines[-1]
 				self.lsSOVisualization_graphicsView.draw()
 		
+		elif initial:
+
+			for MDi in self.lsCentralization_fields.MD:
+				self.lsCaliperMap_graphicsView.axes.plot( xlim, [MDi, MDi], color='C3', lw=1 )
+
+			self.lsWellbore3D_graphicsView.axes.plot( 	self.lsCentralization_fields.EW,
+														self.lsCentralization_fields.NS,
+														self.lsCentralization_fields.TVD, marker='o', color='C3', alpha=0.5, ls='' )
+			
+			MD_alt = []
+			SO_alt = []
+			for k in range(2*len(self.lsCentralization_fields.MD)-1):
+				if k%2==0:
+					MD_alt.append( self.lsCentralization_fields.MD[k//2] )
+					SO_alt.append( self.lsCentralization_fields.SOatC[k//2] )
+				elif k%2==1:
+					MD_alt.append( (self.lsCentralization_fields.MD[(k+1)//2]+self.lsCentralization_fields.MD[(k-1)//2])/2 )
+					SO_alt.append( self.lsCentralization_fields.SOatM[k//2] )
+
+			self.lsSOVisualization_graphicsView.axes.plot(	SO_alt, MD_alt, marker='s', ms=5, color='C1', lw=1.5, alpha=0.7 )
+			self.lsSOVisualization_graphicsView.axes.plot(	self.lsCentralization_fields.SOatC, 
+															self.lsCentralization_fields.MD, marker='o', color='C3', alpha=0.5, ls='' )
+				
+			self.lsCaliperMap_graphicsView.draw()
+			self.lsWellbore3D_graphicsView.draw()
+			self.lsSOVisualization_graphicsView.draw()
+
+
 		else:
 			self.lsCaliperMap_graphicsView.draw()
 			self.lsWellbore3D_graphicsView.draw()

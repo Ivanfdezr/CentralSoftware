@@ -149,6 +149,8 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 				item.set_text( value, value.unit )
 			else:
 				item.set_text()
+				item.alt_backgroundColor()
+				item.alt_flags()
 				#self.osaCasing_tableWidget.editItem(item)
 
 
@@ -166,6 +168,8 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 				item.set_text( value, value.unit )
 			else:
 				item.set_text()
+				item.alt_backgroundColor()
+				item.alt_flags()
 				#self.osaCentA_tableWidget.editItem(item)
 
 
@@ -183,6 +187,8 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 				item.set_text( value, value.unit )
 			else:
 				item.set_text()
+				item.alt_backgroundColor()
+				item.alt_flags()
 				#self.osaCentA_tableWidget.editItem(item)
 
 
@@ -373,7 +379,7 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 			self.osaClearanceAnalysisM_graphicsView.draw()
 
 
-		except TypeError:
+		except NameError:
 
 			self.osaCasing_fields.inverseReferenceUnitConvert_fields()
 			self.osaCentA_fields.inverseReferenceUnitConvert_fields()

@@ -5,12 +5,13 @@ from OneSpanAnalysis_Ctrl import Main_OneSpanAnalysis
 from OutputWindow_Ctrl import Main_OutputWindow
 import InputWindow_Mdl as mdl
 import CtrlUtilities as cu
-import MdlUtilities as mu
+#import MdlUtilities as mu
 import SurveyFunctions as sf
 import WellboreFunctions as wf
 import TDSFunctions as tdsf
 import importlib
-import sys
+import sys, copy
+import re, inspect
 
 
 class Main_InputWindow(Ui_InputWindow):
@@ -19,36 +20,36 @@ class Main_InputWindow(Ui_InputWindow):
 		Ui_InputWindow.__init__(self)
 		self.setupUi(window)
 
-		self.wellboreInnerStageData = {}
-		self.wellboreOuterStageData = {}
-		self.FileLines = None
-		self.filename = None
-
-		self.s1Info_fields = mdl.get_s1Info_fields()
-		item = cu.TableWidgetFieldItem( self.s1Info_fields[5], False )
-		self.s1Info_tableWidget.setItem(5, 0, item)
+		self.v1WorkingDirectory = ''
+		self.v1UnitSystem = 'cu'
+		self.v3WellboreInnerStageData = {}
+		self.v3WellboreOuterStageData = {}
+		self.v3WorkWellboreMD = []
+		self.v3WorkWellboreID = []
 
 		self.wellboreOuterStageDataIsUpdatable = True
 		self.wellboreInnerStageDataIsUpdatable = True
 		self.wellboreInnerStageDataIsEnabled = True
 		self._PipeCentralizationStageAdjusting_isEnabled = True
+		self.centralizationChanged_flag = False
 
+		self.__init__s1Info_tableWidget()
 		self.__init__s2DataSurvey_tableWidget()
 		self.__init__s2SurveyTortuosity_tableWidget()
 		self.__init__s2KOP_tableWidget()
 		self.__init__s2TortuosityInterval_tableWidget()
 		self.__init__s3WellboreOuterStages_tableWidget()
 		self.__init__s3WellboreInnerStages_tableWidget()
-		#self.__init__s3CentralizerSpacing_tableWidget()
 		self.__init__s3PipeProperties_tableWidget()
 		self.__init__s3CentralizerProperties_tableWidgets()
-		#self.__init__s3CentralizerRunningForce_tableWidgets()
 		self.__init__s3CentralizerLocation_tableWidgets()
 		self.__init__s4Settings_tableWidget()
 		self.__init__s4TorqueDragSideforce_tableWidget()
 
+		self.actionOpen.triggered.connect(self.load_file)
+		self.actionSave.triggered.connect(self.save_file)
 		self.actionAbout.triggered.connect(self.about)
-		self.objectsSizes = {}
+		#self.objectsSizes = {}
 
 		self.actionOne_Span_Analysis.triggered.connect(self.open_oneSpanAnalysisDialog)
 		self.actionStar_Calculation.triggered.connect(self.open_outputWindow)
@@ -88,6 +89,7 @@ class Main_InputWindow(Ui_InputWindow):
 
 		valueChangedAction = lambda v: wf.valueChangedAction(self, v)
 		self.s3CentralizationPattern_spinBox.valueChanged.connect(valueChangedAction)
+		self.s3CentralizationOffset_spinBox.valueChanged.connect(valueChangedAction)
 
 		open_CDB_dialog_A = lambda: wf.open_CDB_dialog(self, 'A')
 		open_CDB_dialog_B = lambda: wf.open_CDB_dialog(self, 'B')
@@ -131,32 +133,195 @@ class Main_InputWindow(Ui_InputWindow):
 		calculateAndDraw_torque_drag_sideforce = lambda: tdsf.calculateAndDraw_torque_drag_sideforce(self)
 		self.s4Calculate_pushButton.clicked.connect(calculateAndDraw_torque_drag_sideforce)
 
+		# TEST
+		self.load_file()
+
+
+	def save_file(self):
+
+		print('---------------------------------------------------------')
+		filename = QtGui.QFileDialog.getSaveFileName( self.s1Info_tableWidget, 'Save File ...', self.v1WorkingDirectory+'/untitled.csf', 'Central-Soft File (*.csf)' )
+		
+		OBJ = {}
+		for attrname in dir(self):
+
+			if not re.match('v[1234]+',attrname):
+				continue
+
+			OBJ[attrname] = getattr(self,attrname)
+
+		OBJ['v2SurveyTortuosity'] = self.s2SurveyTortuosity_checkBox.isChecked()
+
+		with open(filename,'wb') as File:
+			mdl.save_obj( OBJ, File )
+
+		print(OBJ)
+		print(filename,' saved!')
+		print('---------------------------------------------------------')
+		
+
+	def load_file(self):
+
+		#filename = QtGui.QFileDialog.getOpenFileName( self.s1Info_tableWidget, 'Open File ...', self.v1WorkingDirectory, 'Central-Soft File (*.csf)' )
+		filename = 'C:/Users/arcad/Documents/__WORKS__/AZTECATROL/CENTRAL-SOFTWARE/CentralSoftware/tmp/test1.csf'
+		
+		with open(filename,'rb') as File:
+			OBJ = mdl.load_obj( File )
+
+		print('=========================================================')
+		print(OBJ)
+
+		"""
+		if OBJ['v1UnitSystem'] == 'us':
+			self.s1USOF_radioButton.click()
+		elif OBJ['v1UnitSystem'] == 'si':
+			self.s1Metric_radioButton.click()
+		elif OBJ['v1UnitSystem'] == 'cu':
+			self.s1Customized_radioButton.click()
+		"""
+
+		if OBJ['v2SurveyTortuosity']:
+			self.s2SurveyTortuosity_checkBox.click()
+
+		for attrname, attr in OBJ.items():
+			setattr( self, attrname, attr )
+
+			print(attrname)
+
+		self.load_fields_to_vTableWidget( self.v1Info_fields, self.s1Info_tableWidget )
+		self.load_fields_to_hTableWidget( self.v2DataSurvey_fields, self.s2DataSurvey_tableWidget )
+		self.load_fields_to_vTableWidget( self.v2KOP_fields, self.s2KOP_tableWidget)
+		self.load_fields_to_hTableWidget( self.v2SurveyTortuosity_fields[:-1], self.s2SurveyTortuosity_tableWidget )
+		self.load_fields_to_vTableWidget( self.v2TortuosityInterval_fields, self.s2TortuosityInterval_tableWidget )
+		self.s2Calculate_pushButton.click()
+		self.load_wellboreOuterStages_tableWidget()
+		self.load_wellboreInnerStages_tableWidget()
+		self.s3UpdateInnerStages_pushButton.setEnabled(True)
+		self.s3UpdateInnerStages_pushButton.click()
+
+		"""
+		self.load_fields_to_vTableWidget( self.v3PipeProperties_fields, self.s3PipeProperties_tableWidget )
+		self.load_fields_to_hTableWidget( self.v3CentralizerLocation_fields_A, self.s3CentralizerLocation_tableWidget_A )
+		self.load_fields_to_hTableWidget( self.v3CentralizerLocation_fields_B, self.s3CentralizerLocation_tableWidget_B )
+		self.load_fields_to_hTableWidget( self.v3CentralizerLocation_fields_C, self.s3CentralizerLocation_tableWidget_C )
+		self.load_fields_to_vTableWidget( self.v3CentralizerProperties_fields_A, self.s3CentralizerProperties_tableWidget_A )
+		self.load_fields_to_vTableWidget( self.v3CentralizerProperties_fields_B, self.s3CentralizerProperties_tableWidget_B )
+		self.load_fields_to_vTableWidget( self.v3CentralizerProperties_fields_C, self.s3CentralizerProperties_tableWidget_C )		
+		"""
+
+		self.load_fields_to_vTableWidget( self.v4Settings_fields[:5], self.s4Settings_tableWidget )
+		self.load_fields_to_hTableWidget( self.v4TorqueDragSideforce_fields[:9], self.s4TorqueDragSideforce_tableWidget )
+		print(filename,' loaded!')
+		print('=========================================================')
+
+
+	def load_fields_to_hTableWidget( self, fields, tableWidget ):
+
+		for i in range(len(fields[0])):
+			
+			tableWidget.cellPressed.emit( i, 0 )
+			for field in fields:
+				tableWidget.item(i, field.pos).set_text( field[i] )
+
+
+	def load_fields_to_vTableWidget( self, fields, tableWidget ):
+
+		for i in range(len(fields[0])):
+			
+			tableWidget.cellPressed.emit( 0, i )
+			for field in fields:
+				tableWidget.item(field.pos, i).set_text( field[i] )
+
+
+	def load_wellboreOuterStages_tableWidget( self ):
+
+		for i,stage in self.v3WellboreOuterStageData.items():
+			
+			if stage['WellboreProps'] == None:
+				continue
+
+			else:
+				self.wellboreOuterStageDataIsUpdatable = False
+				self.s3WellboreOuterStages_tableWidget.cellPressed.emit( i, 0 )
+				
+				for field in stage['WellboreProps']:
+					item = self.s3WellboreOuterStages_tableWidget.item(i, field.pos)
+					item.set_text( field[0] )
+					if not field._altFg_:
+						item.alt_backgroundColor()
+						item.alt_flags()
+
+				self.wellboreOuterStageDataIsUpdatable = True
+
+		#print(self.v3WellboreOuterStageData)
+
+
+	def load_wellboreInnerStages_tableWidget( self ):
+
+		for i,stage in self.v3WellboreInnerStageData.items():
+			
+			if stage['PipeBase'] == None:
+				continue
+
+			else:
+				self.wellboreInnerStageDataIsUpdatable = False
+				self.s3WellboreInnerStages_tableWidget.cellPressed.emit( i, 0 )
+				
+				self.s3WellboreInnerStages_tableWidget.item(i, 0).set_text( stage['Desc'] )
+				self.s3WellboreInnerStages_tableWidget.item(i, 1).set_text( stage['MDtop'] )
+				self.s3WellboreInnerStages_tableWidget.item(i, 2).set_text( stage['MDbot'] )
+
+				self.wellboreInnerStageDataIsUpdatable = True
+
+		#print(self.v3WellboreInnerStageData)
+
 
 	def about(self):
 
 		importlib.reload(mdl)
 		importlib.reload(cu)
-		importlib.reload(mu)
 		importlib.reload(wf)
 		importlib.reload(sf)
 		importlib.reload(tdsf)
 
-		print('---------------------------------------------------------')
-		for i,attr in enumerate(dir(self)):
-			size = eval('cu.size_object(self.'+attr+')')
-			if attr in self.objectsSizes and attr!="objectsSizes":
-				#if self.objectsSizes[attr]!=size:
-				eval('cu.count_nestedObjects(self.'+attr+',name="self.'+attr+'")')
-				print( '======================================' )
+		print('=========================================================')
+		
+		for attrname in dir(self):
+
+			#if not re.match('v[1234]+',attrname):
+			#	continue
+
+			attr = getattr(self,attrname)
+			print(type(attr),attrname)
+
+			"""
+			for subattrname in dir(attr):
+
+				subattr = getattr(attr,subattrname)
+				flag = inspect.ismethod(subattr) or inspect.isbuiltin(subattr) or inspect.isroutine(subattr) or inspect.isfunction(subattr) or inspect.ismethoddescriptor(subattr)
+
+				if flag or re.match('__[\w]+__',subattrname):
+					continue
+				else:
+					print('>>  ',type(subattr),' > ',subattrname)
 			
-			self.objectsSizes[attr] = size
+			with open('objfiles/'+attrname+'.obj','wb') as File:
+				mdl.save_obj( attr, File )
+			print(attrname,' saved!')
+
+			print('---------------------------------------------------------')
+			"""		
+
+		print('=========================================================')
 
 
+	@cu.waiting_effects	
 	def set_workUnits_as(self, unitSystem):
 		
+		self.v1UnitSystem = unitSystem
 		mdl.set_workUnits_as(unitSystem)
-		self.wellboreInnerStageData = {}
-		self.wellboreOuterStageData = {}
+		self.v3WellboreInnerStageData = {}
+		self.v3WellboreOuterStageData = {}
 
 		self.wellboreOuterStageDataIsUpdatable = False
 		self.wellboreInnerStageDataIsUpdatable = False
@@ -164,6 +329,7 @@ class Main_InputWindow(Ui_InputWindow):
 		self._PipeCentralizationStageAdjusting_isEnabled = False
 
 		self.setup_s2DataSurvey_tableWidget()
+		self.setup_s2KOP_tableWidget()
 		self.setup_s2SurveyTortuosity_tableWidget()
 		self.setup_s2TortuosityInterval_tableWidget()
 		self.setup_s3WellboreOuterStages_tableWidget()
@@ -179,8 +345,8 @@ class Main_InputWindow(Ui_InputWindow):
 		wf.setup_s3CentralizerLocation_tableWidget(self,'A')
 		wf.setup_s3CentralizerLocation_tableWidget(self,'B')
 		wf.setup_s3CentralizerLocation_tableWidget(self,'C')
-		tdsf.s4Settings_tableWidget()
-		tdsf.s4TorqueDragSideforce_tableWidget()
+		self.setup_s4Settings_tableWidget()
+		self.setup_s4TorqueDragSideforce_tableWidget()
 
 		self.wellboreOuterStageDataIsUpdatable = True
 		self.wellboreInnerStageDataIsUpdatable = True
@@ -190,10 +356,10 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def open_selectWorkingDirectoryDialog(self):
 		
-		self.workingDirectory = QtGui.QFileDialog.getExistingDirectory( self.s1Info_tableWidget, 'Select the working directory', 'c:\\' )
-		print(self.workingDirectory)
+		self.v1WorkingDirectory = QtGui.QFileDialog.getExistingDirectory( self.s1Info_tableWidget, 'Select the working directory', 'c:\\' )
+		print(self.v1WorkingDirectory)
 		item = self.s1Info_tableWidget.item( 5,0 )
-		item.setText( self.workingDirectory )
+		item.setText( self.v1WorkingDirectory )
 
 
 	def open_unitSettingsDialog(self):
@@ -211,20 +377,20 @@ class Main_InputWindow(Ui_InputWindow):
 		
 
 		cu.savetable( 	self.s1Info_tableWidget,
-						self.s1Info_fields,
+						self.v1Info_fields,
 						["tmp/GeneralInformation.csv",
-						self.workingDirectory+"/GeneralInformation.csv"],
+						self.v1WorkingDirectory+"/GeneralInformation.csv"],
 						orientation='v' )
 
 		cu.savetable( 	self.s2DataSurvey_tableWidget,
-						self.s2DataSurvey_fields,
+						self.v2DataSurvey_fields,
 						["tmp/DataSurvey.csv",
-						self.workingDirectory+"/DataSurvey.csv"] )
+						self.v1WorkingDirectory+"/DataSurvey.csv"] )
 
 		cu.savetable( 	self.s2SurveyTortuosity_tableWidget,
-						self.s2SurveyTortuosity_fields,
+						self.v2SurveyTortuosity_fields,
 						["tmp/SurveyTortuosity.csv",
-						self.workingDirectory+"/SurveyTortuosity.csv"] )
+						self.v1WorkingDirectory+"/SurveyTortuosity.csv"] )
 		
 		self.s2SectionView_graphicsView.figure.savefig( "tmp/SectionView.png", dpi=300 )
 
@@ -234,54 +400,88 @@ class Main_InputWindow(Ui_InputWindow):
 
 		self.s2Dogleg_graphicsView.figure.savefig( "tmp/Dogleg.png", dpi=300 )
 
-		self.s2SectionView_graphicsView.figure.savefig( self.workingDirectory+"/SectionView.png", dpi=300 )
+		self.s2SectionView_graphicsView.figure.savefig( self.v1WorkingDirectory+"/SectionView.png", dpi=300 )
 
-		self.s2PlanView_graphicsView.figure.savefig( self.workingDirectory+"/PlanView.png", dpi=300 )
+		self.s2PlanView_graphicsView.figure.savefig( self.v1WorkingDirectory+"/PlanView.png", dpi=300 )
 
-		self.s2TriDView_graphicsView.figure.savefig( self.workingDirectory+"/TriDView.png", dpi=300 )
+		self.s2TriDView_graphicsView.figure.savefig( self.v1WorkingDirectory+"/TriDView.png", dpi=300 )
 
-		self.s2Dogleg_graphicsView.figure.savefig( self.workingDirectory+"/Dogleg.png", dpi=300 )
+		self.s2Dogleg_graphicsView.figure.savefig( self.v1WorkingDirectory+"/Dogleg.png", dpi=300 )
 
 		cu.savetable( 	self.s3WellboreOuterStages_tableWidget,
-						self.s3WellboreOuterStages_fields,
+						self.v3WellboreOuterStages_fields,
 						["tmp/WellboreOuterStages.csv",
-						self.workingDirectory+"/WellboreOuterStages.csv"] )
+						self.v1WorkingDirectory+"/WellboreOuterStages.csv"] )
 
 		cu.savetable( 	self.s3WellboreInnerStages_tableWidget,
-						self.s3WellboreInnerStages_fields,
+						self.v3WellboreInnerStages_fields,
 						["tmp/WellboreInnerStages.csv",
-						self.workingDirectory+"/WellboreInnerStages.csv"] )
+						self.v1WorkingDirectory+"/WellboreInnerStages.csv"] )
 
 		cu.savetable( 	self.s3PipeProperties_tableWidget,
-						self.s3PipeProperties_fields,
+						self.v3PipeProperties_fields,
 						["tmp/PipeProperties.csv",
-						self.workingDirectory+"/PipeProperties.csv"],
+						self.v1WorkingDirectory+"/PipeProperties.csv"],
 						orientation='v' )
 
 		cu.savetable( 	self.s3CentralizerProperties_tableWidget_A,
-						self.s3CentralizerProperties_fields_A,
+						self.v3CentralizerProperties_fields_A,
 						["tmp/CentralizerProperties_A.csv",
-						self.workingDirectory+"/CentralizerProperties_A.csv"],
+						self.v1WorkingDirectory+"/CentralizerProperties_A.csv"],
 						orientation='v' )
 
 		cu.savetable( 	self.s3CentralizerProperties_tableWidget_B,
-						self.s3CentralizerProperties_fields_B,
+						self.v3CentralizerProperties_fields_B,
 						["tmp/CentralizerProperties_B.csv",
-						self.workingDirectory+"/CentralizerProperties_B.csv"],
+						self.v1WorkingDirectory+"/CentralizerProperties_B.csv"],
 						orientation='v' )
 
 		cu.savetable( 	self.s3CentralizerProperties_tableWidget_C,
-						self.s3CentralizerProperties_fields_C,
+						self.v3CentralizerProperties_fields_C,
 						["tmp/CentralizerProperties_C.csv",
-						self.workingDirectory+"/CentralizerProperties_C.csv"],
+						self.v1WorkingDirectory+"/CentralizerProperties_C.csv"],
 						orientation='v' )
 
 		cu.savetable( 	self.s3CentralizerLocation_tableWidget_A,
-						self.s3CentralizerLocation_fields_A,
+						self.v3CentralizerLocation_fields_A,
 						["tmp/CentralizerLocation.csv",
-						self.workingDirectory+"/CentralizerLocation.csv"] )
+						self.v1WorkingDirectory+"/CentralizerLocation.csv"] )
 
+	
+	def __init__s1Info_tableWidget(self):
+
+		self.s1Info_tableWidget.parent = self
+		self.s1Info_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
 		
+		C = cu.CopySelectedCells_action(self.s1Info_tableWidget)
+		self.s1Info_tableWidget.addAction(C)
+		
+		V = cu.PasteToCells_action(self.s1Info_tableWidget)
+		self.s1Info_tableWidget.addAction(V)
+		
+		self.v1Info_fields = mdl.get_v1Info_fields()
+		item = cu.TableWidgetFieldItem( self.v1Info_fields[0], False )
+		self.s1Info_tableWidget.setItem(0, 0, item)
+		item = cu.TableWidgetFieldItem( self.v1Info_fields[1], False )
+		self.s1Info_tableWidget.setItem(1, 0, item)
+		item = cu.TableWidgetFieldItem( self.v1Info_fields[2], False )
+		self.s1Info_tableWidget.setItem(2, 0, item)
+		item = cu.TableWidgetFieldItem( self.v1Info_fields[3], False )
+		self.s1Info_tableWidget.setItem(3, 0, item)
+		item = cu.TableWidgetFieldItem( self.v1Info_fields[4], False )
+		self.s1Info_tableWidget.setItem(4, 0, item)
+		item = cu.TableWidgetFieldItem( self.v1Info_fields[5], False )
+		self.s1Info_tableWidget.setItem(5, 0, item)
+
+		select_row = lambda r,c : cu.select_tableWidgetRow(self.s1Info_tableWidget,r)
+		def update_fieldItem( item ):
+			value = cu.mdl.physicalValue( item.text(), '' )
+			call = lambda : item.field.put( 0, value )
+			cu.update_fieldItem( item, call )
+		self.s1Info_tableWidget.cellPressed.connect(select_row)
+		self.s1Info_tableWidget.itemChanged.connect(update_fieldItem)	
+
+
 	def __init__s2DataSurvey_tableWidget(self):
 		
 		self.s2DataSurvey_tableWidget.parent = self
@@ -293,7 +493,7 @@ class Main_InputWindow(Ui_InputWindow):
 		V = cu.PasteToCells_action(self.s2DataSurvey_tableWidget)
 		self.s2DataSurvey_tableWidget.addAction(V)
 
-		insert_row = lambda: cu.insert_tableWidgetRow(self.s2DataSurvey_tableWidget, self.s2DataSurvey_fields)
+		insert_row = lambda: cu.insert_tableWidgetRow(self.s2DataSurvey_tableWidget, self.v2DataSurvey_fields)
 		I = cu.FunctionToWidget_action(self.s2DataSurvey_tableWidget, insert_row, "Insert above row")
 		self.s2DataSurvey_tableWidget.addAction(I)
 
@@ -316,9 +516,9 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def setup_s2DataSurvey_tableWidget(self):
 
-		self.s2DataSurvey_fields = mdl.get_s2DataSurvey_fields()
-		self.s3Forces_fields = mdl.get_s3Forces_fields()
-		for field in self.s2DataSurvey_fields:
+		self.v2DataSurvey_fields = mdl.get_v2DataSurvey_fields()
+		self.v3Forces_fields     = mdl.get_v3Forces_fields()
+		for field in self.v2DataSurvey_fields:
 			item = self.s2DataSurvey_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( field.headerName )
 			
@@ -347,10 +547,10 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def setup_s2KOP_tableWidget(self):
 
-		self.s2KOP_field = mdl.get_s2KOP_field()
+		self.v2KOP_fields = mdl.get_v2KOP_fields()
 		item = self.s2KOP_tableWidget.verticalHeaderItem( 0 )
-		item.setText( self.s2KOP_field.headerName )
-		item = cu.TableWidgetFieldItem( self.s2KOP_field, True )
+		item.setText( self.v2KOP_fields[0].headerName )
+		item = cu.TableWidgetFieldItem( self.v2KOP_fields[0], True )
 		self.s2KOP_tableWidget.setItem(0, 0, item)
 
 
@@ -378,8 +578,8 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def setup_s2SurveyTortuosity_tableWidget(self):
 
-		self.s2SurveyTortuosity_fields = mdl.get_s2SurveyTortuosity_fields()
-		for field in self.s2SurveyTortuosity_fields[:-1]:
+		self.v2SurveyTortuosity_fields = mdl.get_v2SurveyTortuosity_fields()
+		for field in self.v2SurveyTortuosity_fields[:-1]:
 			item = self.s2SurveyTortuosity_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( field.headerName )
 			
@@ -408,10 +608,10 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def setup_s2TortuosityInterval_tableWidget(self):
 
-		self.s2TortuosityInterval_field = mdl.get_s2TortuosityInterval_field()
+		self.v2TortuosityInterval_fields = mdl.get_v2TortuosityInterval_fields()
 		item = self.s2TortuosityInterval_tableWidget.verticalHeaderItem( 0 )
-		item.setText( self.s2TortuosityInterval_field.headerName )
-		item = cu.TableWidgetFieldItem( self.s2TortuosityInterval_field, True )
+		item.setText( self.v2TortuosityInterval_fields[0].headerName )
+		item = cu.TableWidgetFieldItem( self.v2TortuosityInterval_fields[0], True )
 		self.s2TortuosityInterval_tableWidget.setItem(0, 0, item)
 	
 		
@@ -464,8 +664,8 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def setup_s3WellboreOuterStages_tableWidget(self):
 
-		self.s3WellboreOuterStages_fields = mdl.get_s3WellboreOuterStages_fields()
-		for field in self.s3WellboreOuterStages_fields:
+		self.v3WellboreOuterStages_fields = mdl.get_v3WellboreOuterStages_fields()
+		for field in self.v3WellboreOuterStages_fields:
 			item = self.s3WellboreOuterStages_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( field.headerName )
 			
@@ -512,42 +712,14 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def setup_s3WellboreInnerStages_tableWidget(self):
 
-		self.s3WellboreInnerStages_fields = mdl.get_s3WellboreInnerStages_fields()
-		for size,field in zip([46,20,20], self.s3WellboreInnerStages_fields):
+		self.v3WellboreInnerStages_fields = mdl.get_v3WellboreInnerStages_fields()
+		for size,field in zip([46,20,20], self.v3WellboreInnerStages_fields):
 			item = self.s3WellboreInnerStages_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( cu.extend_text( field.headerName, size, mode='center' ) )
 			
 			for i in range(self.s3WellboreInnerStages_tableWidget.rowCount()):
 				item = cu.TableWidgetFieldItem( field, i%2==0 )
 				self.s3WellboreInnerStages_tableWidget.setItem(i, field.pos, item)
-
-
-	def __init__s3CentralizerSpacing_tableWidget(self):
-
-		self.s3CentralizerSpacing_tableWidget.parent = self
-		self.s3CentralizerSpacing_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-		
-		C = cu.CopySelectedCells_action(self.s3CentralizerSpacing_tableWidget)
-		self.s3CentralizerSpacing_tableWidget.addAction(C)
-		
-		V = cu.PasteToCells_action(self.s3CentralizerSpacing_tableWidget)
-		self.s3CentralizerSpacing_tableWidget.addAction(V)
-		
-		self.setup_s3CentralizerSpacing_tableWidget()
-
-		self.s3CentralizerSpacing_tableWidget.itemChanged.connect(cu.update_fieldItem)
-
-
-	def setup_s3CentralizerSpacing_tableWidget(self):
-
-		self.s3CentralizerSpacing_fields = mdl.get_s3CentralizerSpacing_fields()
-		for field in self.s3CentralizerSpacing_fields:
-			
-			item = QtGui.QTableWidgetItem()
-			self.s3CentralizerSpacing_tableWidget.setVerticalHeaderItem(field.pos, item)
-			item.setText( cu.extend_text( field.headerName, 40 ) )
-			item = cu.TableWidgetFieldItem( field, False )
-			self.s3CentralizerSpacing_tableWidget.setItem(field.pos, 0, item)
 
 
 	def __init__s3PipeProperties_tableWidget(self):
@@ -569,8 +741,8 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def setup_s3PipeProperties_tableWidget(self):
 
-		self.s3PipeProperties_fields = mdl.get_s3PipeProperties_fields()
-		for field in self.s3PipeProperties_fields:
+		self.v3PipeProperties_fields = mdl.get_v3PipeProperties_fields()
+		for field in self.v3PipeProperties_fields:
 			
 			item = QtGui.QTableWidgetItem()
 			self.s3PipeProperties_tableWidget.setVerticalHeaderItem(field.pos, item)
@@ -581,53 +753,35 @@ class Main_InputWindow(Ui_InputWindow):
 	
 	def __init__s3CentralizerProperties_tableWidgets(self):
 
-		self.s3CentralizerProperties_fields_A = mdl.get_s3CentralizerProperties_fields()
+		self.v3CentralizerProperties_fields_A = mdl.get_v3CentralizerProperties_fields()
 		self.s3CentralizerProperties_tableWidget_A.parent = self
 		wf.init_s3CentralizerProperties_tableWidget(self, 'A')
 		#wf.setup2_s3CentralizerProperties_tableWidget(self, 'A')
 
-		self.s3CentralizerProperties_fields_B = mdl.get_s3CentralizerProperties_fields()
+		self.v3CentralizerProperties_fields_B = mdl.get_v3CentralizerProperties_fields()
 		self.s3CentralizerProperties_tableWidget_B.parent = self
 		wf.init_s3CentralizerProperties_tableWidget(self, 'B')
 		#wf.setup2_s3CentralizerProperties_tableWidget(self, 'B')
 
-		self.s3CentralizerProperties_fields_C = mdl.get_s3CentralizerProperties_fields()
+		self.v3CentralizerProperties_fields_C = mdl.get_v3CentralizerProperties_fields()
 		self.s3CentralizerProperties_tableWidget_C.parent = self
 		wf.init_s3CentralizerProperties_tableWidget(self, 'C')
 		#wf.setup2_s3CentralizerProperties_tableWidget(self, 'C')
 
 
-	def __init__s3CentralizerRunningForce_tableWidgets(self):
-
-		self.s3CentralizerRunningForce_fields_A = mdl.get_s3CentralizerRunningForce_fields()
-		self.s3CentralizerRunningForce_tableWidget_A.parent = self
-		wf.init_s3CentralizerRunningForce_tableWidget(self, 'A')
-		#wf.setup2_s3CentralizerRunningForce_tableWidget(self, 'A')
-
-		self.s3CentralizerRunningForce_fields_B = mdl.get_s3CentralizerRunningForce_fields()
-		self.s3CentralizerRunningForce_tableWidget_B.parent = self
-		wf.init_s3CentralizerRunningForce_tableWidget(self, 'B')
-		#wf.setup2_s3CentralizerRunningForce_tableWidget(self, 'B')
-
-		self.s3CentralizerRunningForce_fields_C = mdl.get_s3CentralizerRunningForce_fields()
-		self.s3CentralizerRunningForce_tableWidget_C.parent = self
-		wf.init_s3CentralizerRunningForce_tableWidget(self, 'C')
-		#wf.setup2_s3CentralizerRunningForce_tableWidget(self, 'C')
-
-
 	def __init__s3CentralizerLocation_tableWidgets(self):
 
-		self.s3CentralizerLocation_fields_A = mdl.get_s3CentralizerLocation_fields()
+		self.v3CentralizerLocation_fields_A = mdl.get_v3CentralizerLocation_fields()
 		self.s3CentralizerLocation_tableWidget_A.parent = self
 		wf.init_s3CentralizerLocation_tableWidget(self, 'A')
 		#wf.setup2_s3CentralizerLocation_tableWidget(self, 'A')
 
-		self.s3CentralizerLocation_fields_B = mdl.get_s3CentralizerLocation_fields()
+		self.v3CentralizerLocation_fields_B = mdl.get_v3CentralizerLocation_fields()
 		self.s3CentralizerLocation_tableWidget_B.parent = self
 		wf.init_s3CentralizerLocation_tableWidget(self, 'B')
 		#wf.setup2_s3CentralizerLocation_tableWidget(self, 'B')
 
-		self.s3CentralizerLocation_fields_C = mdl.get_s3CentralizerLocation_fields()
+		self.v3CentralizerLocation_fields_C = mdl.get_v3CentralizerLocation_fields()
 		self.s3CentralizerLocation_tableWidget_C.parent = self
 		wf.init_s3CentralizerLocation_tableWidget(self, 'C')
 		#wf.setup2_s3CentralizerLocation_tableWidget(self, 'C')
@@ -659,8 +813,8 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def setup_s4Settings_tableWidget(self):
 
-		self.s4Settings_fields = mdl.get_s4Settings_fields()
-		for field in self.s4Settings_fields:
+		self.v4Settings_fields = mdl.get_v4Settings_fields()
+		for field in self.v4Settings_fields[:5]:
 			item = QtGui.QTableWidgetItem()
 			self.s4Settings_tableWidget.setVerticalHeaderItem(field.pos, item)
 			item.setText( cu.extend_text( field.headerName, 40 ) )
@@ -686,8 +840,8 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def setup_s4TorqueDragSideforce_tableWidget(self):
 
-		self.s4TorqueDragSideforce_fields = mdl.get_s4TorqueDragSideforce_fields()
-		for size,field in zip([20,20,20,20,20,20,20,20,20], self.s4TorqueDragSideforce_fields):
+		self.v4TorqueDragSideforce_fields = mdl.get_v4TorqueDragSideforce_fields()
+		for size,field in zip([20,20,20,20,20,20,20,20,20], self.v4TorqueDragSideforce_fields):
 			item = self.s4TorqueDragSideforce_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( cu.extend_text( field.headerName, size, mode='center' ) )
 			

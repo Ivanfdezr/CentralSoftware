@@ -107,18 +107,18 @@ class Main_SurveyImport(Ui_SurveyImport):
 	def open_file(self):
 		
 		filepath = QtGui.QFileDialog.getOpenFileName(self.dialog, 'Open file', 'c:\\',"SURVEY files (*.las *.txt)")
-		head,self.filename = os.path.split( filepath )
-		self.siFilename_label.setText( self.filename )
+		head,filename = os.path.split( filepath )
+		self.siFilename_label.setText( filename )
 
 		tic = time.time()
 
 		with open(filepath,'r') as file:
-			self.FileLines = file.readlines()
+			self.lines = file.readlines()
 		
 		toc = time.time(); print('ET: ',toc-tic); tic = time.time()
 
-		self.numofRows = len(self.FileLines)
-		for row, line in enumerate(self.FileLines):
+		self.numofRows = len(self.lines)
+		for row, line in enumerate(self.lines):
 			text = str(row+1)+'\t'+line
 			self.siFileText_textEdit.insertPlainText(text)
 			if row%int(self.numofRows/20)==0:
@@ -213,7 +213,7 @@ class Main_SurveyImport(Ui_SurveyImport):
 
 		#hrt = mdl.HtmlRichText()
 
-		for row, beforeStylingText in enumerate(self.FileLines):
+		for row, beforeStylingText in enumerate(self.lines):
 
 			#widget = self.siFileText_tableWidget.cellWidget(row, 0)
 			

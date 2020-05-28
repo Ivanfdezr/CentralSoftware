@@ -1,38 +1,10 @@
 
-
-Traceback (most recent call last):
-  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\CentralizerDatabase_Ctrl.py", line 148, in <lambda>
-    edit_centralizer = lambda: self.edit_centralizer(CDB_tableWidget)
-  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\CentralizerDatabase_Ctrl.py", line 172, in edit_centralizer
-    item = CDB_tableWidget.item(CDB_tableWidget.selectedRow,CDB_tableWidget.selectedColumn)
-AttributeError: 'QTableWidget' object has no attribute 'selectedColumn'
-
-
+human knowledge bit project
+human knit project
+knit KNIT
 
 
 Traceback (most recent call last):
-  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\InputWindow_Ctrl.py", line 86, in <lambda>
-    open_specifyCentralization_dialog = lambda: wf.open_specifyCentralization_dialog(self)
-  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\WellboreFunctions.py", line 622, in open_specifyCentralization_dialog
-    open_LS_dialog(self)
-  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\WellboreFunctions.py", line 134, in wrap_function
-    function(*args, **kwargs)
-  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\WellboreFunctions.py", line 630, in open_LS_dialog
-    LS = ls.Main_LocationSetup(dialog, self)
-  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\CtrlUtilities.py", line 74, in wrap_function
-    raise e
-  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\CtrlUtilities.py", line 72, in wrap_function
-    function(*args, **kwargs)
-  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\LocationSetup_Ctrl.py", line 35, in __init__
-    self.max_MD = self.stage['MD']
-KeyError: 'MD'
-
-
-
-ICI Thru-0700-0834  (4) Rigid   7 8.625 8 3/4 8.5 4 16.0  0.8125  7.33  2.13  0.089 251.0
-
-ICI Thru-0700-0834 (3)
-
-ICI Thru-0700-0834 (3)  Rigid   7 8.625 8 1/4 8.5 3 16.0  0.8125  7.33  2.83  0.089 251.0
-
-1 514 995-4493
+  File "C:\Users\arcad\Documents\__WORKS__\AZTECATROL\CENTRAL-SOFTWARE\CentralSoftware\CentralizerDatabase_Ctrl.py", line 25, in export_centralizer
+    if self.CDB_tabWidget.currentTabText == "Bow Spring":
+AttributeError: 'QTabWidget' object has no attribute 'currentTabText'

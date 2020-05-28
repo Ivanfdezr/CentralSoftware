@@ -18,34 +18,6 @@
   <property name="windowTitle">
    <string>Tubular Database</string>
   </property>
-  <widget class="QLabel" name="TDBPipes_label">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>16</y>
-     <width>81</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Pipe type:</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="TDBPipes_comboBox">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>15</y>
-     <width>341</width>
-     <height>27</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="TDBPipeOD_label">
    <property name="geometry">
     <rect>
@@ -129,7 +101,7 @@
     <number>200</number>
    </property>
    <property name="columnCount">
-    <number>29</number>
+    <number>28</number>
    </property>
    <attribute name="horizontalHeaderCascadingSectionResizes">
     <bool>false</bool>
@@ -346,7 +318,6 @@
    <row/>
    <row/>
    <row/>
-   <column/>
    <column/>
    <column/>
    <column/>

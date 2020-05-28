@@ -29,7 +29,6 @@ class Main_CaliperImport(Ui_CaliperImport):
 		self.ciMDvalueUnit_comboBox.setCurrentIndex(i)
 
 		self.ciIDvalueUnit_comboBox.addItems( self.unitRepresentations )
-		print('uuuuuuuuuu', self.ciLASData_fields.CD.unit)
 		i = self.unitRepresentations.index( self.ciLASData_fields.CD.unit )
 		self.ciIDvalueUnit_comboBox.setCurrentIndex(i)
 
@@ -113,13 +112,13 @@ class Main_CaliperImport(Ui_CaliperImport):
 	def open_file(self):
 		
 		filepath = QtGui.QFileDialog.getOpenFileName(self.dialog, 'Open file', 'c:\\',"DR-CAL files (*.las *.txt)")
-		head,self.parent.filename = os.path.split( filepath )
-		self.ciFilename_label.setText( self.parent.filename )
+		head,filename = os.path.split( filepath )
+		self.ciFilename_label.setText( filename )
 		with open(filepath,'r') as file:
-			self.parent.FileLines = file.readlines()
+			self.lines = file.readlines()
 
-		self.numofRows = len(self.parent.FileLines)
-		for row, line in enumerate(self.parent.FileLines):
+		self.numofRows = len(self.lines)
+		for row, line in enumerate(self.lines):
 			text = str(row+1)+'\t'+line
 			self.ciFileText_textEdit.insertPlainText(text)
 			self.ciStatus_label.setText( 'Loading ... {val}%'.format(val=int(row/self.numofRows*100)) )
@@ -207,7 +206,7 @@ class Main_CaliperImport(Ui_CaliperImport):
 			delimiterPattern += ','
 		columnPattern = '((?<=['+delimiterPattern+'])'+self.numberPattern+')|('+self.numberPattern+'(?=['+delimiterPattern+']))'
 
-		for row, beforeStylingText in enumerate(self.parent.FileLines):
+		for row, beforeStylingText in enumerate(self.lines):
 			
 			try:
 				assert( row>=fileTextStartingRow and row<=fileTextEndingRow )

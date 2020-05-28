@@ -40,7 +40,7 @@ def init_s3CentralizerProperties_tableWidget(self, tab):
 def setup_s3CentralizerProperties_tableWidget(self, tab):
 
 	s3CentralizerProperties_tableWidget = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
-	s3CentralizerProperties_fields      = eval( 'self.s3CentralizerProperties_fields_{tab}'.format(tab=tab) )
+	s3CentralizerProperties_fields      = eval( 'self.v3CentralizerProperties_fields_{tab}'.format(tab=tab) )
 
 	for field in s3CentralizerProperties_fields:
 		
@@ -78,7 +78,7 @@ def init_s3CentralizerRunningForce_tableWidget(self, tab):
 def setup_s3CentralizerRunningForce_tableWidget(self, tab):
 
 	s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )
-	s3CentralizerRunningForce_fields      = eval( 'self.s3CentralizerRunningForce_fields_{tab}'.format(tab=tab) )
+	s3CentralizerRunningForce_fields      = eval( 'self.v3CentralizerRunningForce_fields_{tab}'.format(tab=tab) )
 
 	for field in s3CentralizerRunningForce_fields:
 		item = s3CentralizerRunningForce_tableWidget.horizontalHeaderItem( field.pos )
@@ -115,7 +115,7 @@ def init_s3CentralizerLocation_tableWidget(self, tab):
 def setup_s3CentralizerLocation_tableWidget(self, tab):
 
 	s3CentralizerLocation_tableWidget = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
-	s3CentralizerLocation_fields      = eval( 'self.s3CentralizerLocation_fields_{tab}'.format(tab=tab) )
+	s3CentralizerLocation_fields      = eval( 'self.v3CentralizerLocation_fields_{tab}'.format(tab=tab) )
 
 	for field in s3CentralizerLocation_fields:
 		item = s3CentralizerLocation_tableWidget.horizontalHeaderItem( field.pos )
@@ -134,7 +134,6 @@ def updateByBlock_currentWellboreInnerStageDataItem(function):
 		function(*args, **kwargs)
 		self.wellboreInnerStageDataIsUpdatable = True
 		update_wellboreInnerStageData(self)
-		print_wellboreInnerStageData(self)
 
 	return wrap_function
 
@@ -158,7 +157,6 @@ def disableByBlock_currentWellboreInnerStageDataItem(function):
 		self.wellboreInnerStageDataIsEnabled = False
 		function(*args, **kwargs)
 		self.wellboreInnerStageDataIsEnabled = True
-		#
 
 	return wrap_function
 
@@ -180,34 +178,37 @@ def update_wellboreInnerStageData(self):
 	if self.wellboreInnerStageDataIsUpdatable and self.wellboreInnerStageDataIsEnabled:
 
 		self.currentWellboreInnerStageDataItem.setup()
-		self.s3PipeProperties_fields.clear_content()
+		self.v3PipeProperties_fields.clear_content()
 
-		for field in self.s3PipeProperties_fields:
+		for field in self.v3PipeProperties_fields:
 
 			item = self.s3PipeProperties_tableWidget.item(field.pos, 0)
 			field.append(item.realValue)
 
 		row = self.s3WellboreInnerStages_tableWidget.selectedRow
-		description = self.s3WellboreInnerStages_fields.Desc
+		description = self.v3WellboreInnerStages_fields.Desc
 		descriptionItem = self.s3WellboreInnerStages_tableWidget.item(row, description.pos)
 
-		self.currentWellboreInnerStageDataItem['PipeProps'] = copy.deepcopy(self.s3PipeProperties_fields)
+		self.currentWellboreInnerStageDataItem['PipeProps'] = copy.deepcopy(self.v3PipeProperties_fields)
 
-		K = list(self.wellboreInnerStageData.keys())
+		K = list(self.v3WellboreInnerStageData.keys())
 		K.sort()
 		for k in K:
-			stage = self.wellboreInnerStageData[k]
+			stage = self.v3WellboreInnerStageData[k]
 			if stage['PipeProps']==None:
 				del stage
 
 		if not self.s3EnableCentralization_checkBox.isChecked():
-			descriptionItem.set_text( self.s3PipeProperties_fields.Desc[0] +'\nwithout Centralization'  )
+			descriptionItem.set_text( self.v3PipeProperties_fields.Desc[0] +'\nwithout Centralization'  )
+			self.currentWellboreInnerStageDataItem['Desc'] = descriptionItem.text()
 			self.ABC_tabWidget.setEnabled(False)
 			return
 
 		self.currentWellboreInnerStageDataItem['Centralization']['Mode'] = True
 		self.currentWellboreInnerStageDataItem['Centralization']['Pattern'] = self.s3CentralizationPattern_spinBox.value()
-		descriptionItem.set_text( self.s3PipeProperties_fields.Desc[0] +'\nwith Centralization'  )
+		self.currentWellboreInnerStageDataItem['Centralization']['Offset'] = self.s3CentralizationOffset_spinBox.value()
+		descriptionItem.set_text( self.v3PipeProperties_fields.Desc[0] +'\nwith Centralization'  )
+		self.currentWellboreInnerStageDataItem['Desc'] = descriptionItem.text()
 
 		for tab in ['A','B','C']:
 
@@ -220,7 +221,7 @@ def update_wellboreInnerStageData(self):
 			else:
 				continue
 
-			s3CentralizerProperties_fields = eval( 'self.s3CentralizerProperties_fields_{tab}'.format(tab=tab) )
+			s3CentralizerProperties_fields = eval( 'self.v3CentralizerProperties_fields_{tab}'.format(tab=tab) )
 			s3CentralizerProperties_tableWidget = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
 			s3CentralizerProperties_fields.clear_content()
 
@@ -231,27 +232,10 @@ def update_wellboreInnerStageData(self):
 
 			self.currentWellboreInnerStageDataItem['Centralization'][tab]['CentralizerProps'] = copy.deepcopy(s3CentralizerProperties_fields)
 
-			"""
-			s3CentralizerRunningForce_fields = eval( 'self.s3CentralizerRunningForce_fields_{tab}'.format(tab=tab) )
-			s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )
-			s3CentralizerRunningForce_fields.clear_content()
-
-			for field in s3CentralizerRunningForce_fields:
-				for i in range(s3CentralizerRunningForce_tableWidget.rowCount()):
-					item = s3CentralizerRunningForce_tableWidget.item(i,field.pos)
-					field.append(item.realValue)
-
-			self.currentWellboreInnerStageDataItem['Centralization'][tab]['RunningForce'] = copy.deepcopy(s3CentralizerRunningForce_fields)
-
-			s3CentralizerLocation_fields = eval( 'self.s3CentralizerLocation_fields_{tab}'.format(tab=tab) )
-			s3CentralizerLocation_tableWidget = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
-			s3CentralizerLocation_fields.clear_content()
-
-			for field in s3CentralizerLocation_fields:
-				for i in range(s3CentralizerLocation_tableWidget.rowCount()):
-					item = s3CentralizerLocation_tableWidget.item(i,field.pos)
-					field.append(item.realValue)
-			"""
+		mdl.setup_ensembles_fromConfiguration( self )
+		self.s3StageEnsemble_label.setText( self.currentWellboreInnerStageDataItem['Centralization']['Ensemble']['label'] )
+		self.centralizationChanged_flag = True
+		#print_wellboreInnerStageData(self)
 
 
 def update_wellboreOuterStageData(self):
@@ -259,24 +243,24 @@ def update_wellboreOuterStageData(self):
 	if self.wellboreOuterStageDataIsUpdatable:
 
 		self.currentWellboreOuterStageDataItem['WellboreProps'] = None
-		self.s3WellboreOuterStages_fields.clear_content()
+		self.v3WellboreOuterStages_fields.clear_content()
 		row = self.s3WellboreOuterStages_tableWidget.selectedRow
 
-		for field in self.s3WellboreOuterStages_fields:
+		for field in self.v3WellboreOuterStages_fields:
 
 			item = self.s3WellboreOuterStages_tableWidget.item(row,field.pos)
 			field.append(item.realValue)
 
-		self.currentWellboreOuterStageDataItem['WellboreProps'] = copy.deepcopy(self.s3WellboreOuterStages_fields)
+		self.currentWellboreOuterStageDataItem['WellboreProps'] = copy.deepcopy(self.v3WellboreOuterStages_fields)
 
 		workWellbore_exist = False
 
-		K = mdl.get_sortedIndexes_of_wellboreOuterStageData(self)
+		#K = mdl.get_sortedIndexes_of_wellboreOuterStageData(self)
 
-		#K = list(self.wellboreOuterStageData.keys())
-		#K.sort()
+		K = list(self.v3WellboreOuterStageData.keys())
+		K.sort()
 		for k in K:
-			stage = self.wellboreOuterStageData[k]
+			stage = self.v3WellboreOuterStageData[k]
 
 			if stage['CaliperData']!=None:
 				MD = stage['CaliperData']['MD_array']
@@ -285,20 +269,20 @@ def update_wellboreOuterStageData(self):
 				MD = cu.mdl.array( [stage['WellboreProps'].MDtop[0], stage['WellboreProps'].MDbot[0]] )
 				ID = cu.mdl.array( [stage['WellboreProps'].DriftID[0], stage['WellboreProps'].DriftID[0]] )
 			else:
-				del self.wellboreOuterStageData[k]
+				del self.v3WellboreOuterStageData[k]
 				MD = cu.mdl.array([])
 				ID = cu.mdl.array([])
 				
 			if workWellbore_exist:
-				self.workWellboreMD = mdl.np.hstack( (self.workWellboreMD, MD) )
-				self.workWellboreID = mdl.np.hstack( (self.workWellboreID, ID) )
+				self.v3WorkWellboreMD = mdl.np.hstack( (self.v3WorkWellboreMD, MD) )
+				self.v3WorkWellboreID = mdl.np.hstack( (self.v3WorkWellboreID, ID) )
 			else:
-				self.workWellboreMD = MD
-				self.workWellboreID = ID
+				self.v3WorkWellboreMD = MD
+				self.v3WorkWellboreID = ID
 				workWellbore_exist = True
 
-		print_wellboreOuterStageData(self)
-		print('>> MD ID =',len(self.workWellboreMD),len(self.workWellboreID))
+		#print_wellboreOuterStageData(self)
+		#print('>> MD ID =',len(self.v3WorkWellboreMD),len(self.v3WorkWellboreID))
 
 
 @disableByBlock_currentWellboreInnerStageDataItem
@@ -310,12 +294,23 @@ def select_innerStageRow_and_prepare_innerStageObjects(self, row):
 	#self.s3InnerStageToolkit_tabWidget.setEnabled(False)
 
 	clear_wellboreInnerStageToolkit(self)
-	if row in self.wellboreInnerStageData:
-		self.currentWellboreInnerStageDataItem = self.wellboreInnerStageData[row]
-		load_wellboreInnerStageToolkit(self, self.wellboreInnerStageData[row])
+	if row in self.v3WellboreInnerStageData:
+		self.currentWellboreInnerStageDataItem = self.v3WellboreInnerStageData[row]
+		load_wellboreInnerStageToolkit(self, self.v3WellboreInnerStageData[row])
 	else:
-		self.wellboreInnerStageData[row] = mdl.WellboreInnerStageDataItem(row)
-		self.currentWellboreInnerStageDataItem = self.wellboreInnerStageData[row]
+		self.v3WellboreInnerStageData[row] = mdl.WellboreInnerStageDataItem(row)
+		self.currentWellboreInnerStageDataItem = self.v3WellboreInnerStageData[row]
+
+	self.s3StageNumber_label1.setText( 'STAGE '+str(row+1) )
+	self.s3StageNumber_label2.setText( 'STAGE '+str(row+1) )
+
+	try:
+		self.s3StageEnsemble_label.setText( self.currentWellboreInnerStageDataItem['Centralization']['Ensemble']['label'] )
+	except (KeyError, TypeError):
+		pass
+
+	cu.idleFunction()
+	print_wellboreInnerStageData(self)
 
 
 def select_outerStageRow_and_prepare_outerStageObjects(self, row):
@@ -323,18 +318,19 @@ def select_outerStageRow_and_prepare_outerStageObjects(self, row):
 	self.currentWellboreOuterStageDataItem = None
 	cu.select_tableWidgetRow(self.s3WellboreOuterStages_tableWidget, row)
 
-	if not row in self.wellboreOuterStageData:
-		self.wellboreOuterStageData[row] = mdl.WellboreOuterStageDataItem(row)
+	if not row in self.v3WellboreOuterStageData:
+		self.v3WellboreOuterStageData[row] = mdl.WellboreOuterStageDataItem(row)
 		
-	self.currentWellboreOuterStageDataItem = self.wellboreOuterStageData[row]
+	self.currentWellboreOuterStageDataItem = self.v3WellboreOuterStageData[row]
+	print_wellboreOuterStageData(self)
 
 
 @updateByBlock_currentWellboreOuterStageDataItem
 def delete_outerStageObjects(self):
 
 	row = cu.clear_tableWidgetRow(self.s3WellboreOuterStages_tableWidget)
-	del self.wellboreOuterStageData[row]
-	#assert( row in self.wellboreOuterStageData )
+	del self.v3WellboreOuterStageData[row]
+	#assert( row in self.v3WellboreOuterStageData )
 
 
 @disableByBlock_currentWellboreInnerStageDataItem 
@@ -342,7 +338,7 @@ def delete_innerStageObjects(self):
 
 	row = cu.clear_tableWidgetRow(self.s3WellboreInnerStages_tableWidget)
 	clear_wellboreInnerStageToolkit(self)
-	del self.wellboreInnerStageData[row]
+	del self.v3WellboreInnerStageData[row]
 
 
 #@updateByBlock_currentWellboreInnerStageDataItem
@@ -376,6 +372,7 @@ def load_wellboreInnerStageToolkit(self, dataItem):
 		self.s3EnableCentralization_checkBox.setChecked(True)
 		self.ABC_tabWidget.setEnabled(True)
 		self.s3CentralizationPattern_spinBox.setValue( dataItem['Centralization']['Pattern'] )
+		self.s3CentralizationOffset_spinBox.setValue( dataItem['Centralization']['Offset'] )
 		#setEnabled_specifySpacingToolkit(self)
 		#setEnabled_specifyLocationToolkit(self)
 
@@ -415,9 +412,9 @@ def load_wellboreInnerStageToolkit(self, dataItem):
 
 	else:
 		self.s3EnableCentralization_checkBox.setChecked(False)
-		self.s3CentralizationPattern_spinBox.setValue( 0 )
+		self.s3CentralizationPattern_spinBox.setValue( 1 )
+		self.s3CentralizationOffset_spinBox.setValue( 0 )
 		self.ABC_tabWidget.setEnabled(False)
-
 
 
 @updateByBlock_currentWellboreInnerStageDataItem
@@ -425,7 +422,7 @@ def setEnabled_bowSpringToolkit(self, tab):
 
 	s3CentralizerDB_pushButton            = eval( 'self.s3CentralizerDB_pushButton_{tab}'.format(tab=tab) )
 	s3CentralizerProperties_tableWidget   = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
-	s3CentralizerProperties_fields        = eval( 'self.s3CentralizerProperties_fields_{tab}'.format(tab=tab) )
+	s3CentralizerProperties_fields        = eval( 'self.v3CentralizerProperties_fields_{tab}'.format(tab=tab) )
 	#s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )
 	s3CentralizerLocation_tableWidget     = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
 
@@ -467,7 +464,7 @@ def setEnabled_rigidToolkit(self, tab):
 
 	s3CentralizerDB_pushButton            = eval( 'self.s3CentralizerDB_pushButton_{tab}'.format(tab=tab) )
 	s3CentralizerProperties_tableWidget   = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
-	s3CentralizerProperties_fields        = eval( 'self.s3CentralizerProperties_fields_{tab}'.format(tab=tab) )
+	s3CentralizerProperties_fields        = eval( 'self.v3CentralizerProperties_fields_{tab}'.format(tab=tab) )
 	#s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )
 	s3CentralizerLocation_tableWidget     = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
 
@@ -561,7 +558,7 @@ def open_TDB_dialog_for_innerStages(self):
 	if 'fields' not in dir(TDB): return
 	self.currentWellboreInnerStageDataItem['PipeBase'] = TDB.fields
 
-	for field in self.s3PipeProperties_fields:
+	for field in self.v3PipeProperties_fields:
 
 		item = self.s3PipeProperties_tableWidget.item(field.pos,0)
 
@@ -581,9 +578,9 @@ def open_CDB_dialog(self, tab):
 	s3BowSpringCentralizer_radioButton    = eval( 'self.s3BowSpringCentralizer_radioButton_{tab}'.format(tab=tab) )
 	s3RigidCentralizer_radioButton        = eval( 'self.s3RigidCentralizer_radioButton_{tab}'.format(tab=tab) )
 	s3CentralizerProperties_tableWidget   = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
-	s3CentralizerProperties_fields        = eval( 'self.s3CentralizerProperties_fields_{tab}'.format(tab=tab) )
+	s3CentralizerProperties_fields        = eval( 'self.v3CentralizerProperties_fields_{tab}'.format(tab=tab) )
 	#s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )	
-	#s3CentralizerRunningForce_fields      = eval( 'self.s3CentralizerRunningForce_fields_{tab}'.format(tab=tab) )
+	#s3CentralizerRunningForce_fields      = eval( 'self.v3CentralizerRunningForce_fields_{tab}'.format(tab=tab) )
 
 	dialog = QtGui.QDialog(self.ABC_tabWidget)
 	
@@ -613,31 +610,19 @@ def open_CDB_dialog(self, tab):
 			item.set_text()
 			s3CentralizerProperties_tableWidget.editItem(item)
 
-	"""
-	if s3BowSpringCentralizer_radioButton.isChecked():
 
-		for field in s3CentralizerRunningForce_fields:
-
-			item = s3CentralizerRunningForce_tableWidget.item(0,field.pos)
-
-			if field.abbreviation in CDB.data:
-				value = CDB.data[field.abbreviation]
-				if value:
-					item.set_text( value, value.unit )
-				else:
-					value = CDB.data[field.substitute]
-					item.set_text( value, value.unit )
-			else:
-				break
-	"""
-
-
+@updateByBlock_currentWellboreInnerStageDataItem
 def open_specifyCentralization_dialog(self):
-		#if self.s3SpecifySpacingCentralization_radioButton.isChecked():
-		#	open_SS_dialog(self)
-		#elif self.s3SpecifyLocationCentralization_radioButton.isChecked():
-		open_LS_dialog(self)
-
+	
+	#try:
+	mdl.get_centralizationLocations( self )
+	print_wellboreInnerStageData(self)
+	self.centralizationChanged_flag = False
+	open_LS_dialog(self)
+	#except (AssertionError, IndexError):
+	#	msg = 'Some Pattern and Offset combinations are not suitable\nfor the number of joins in the stages.'
+	#	QtGui.QMessageBox.critical(self.s3WellboreInnerStages_tableWidget, 'Error', msg)
+	
 
 @updateByBlock_currentWellboreInnerStageDataItem
 def open_LS_dialog(self):
@@ -646,11 +631,15 @@ def open_LS_dialog(self):
 
 	dialog = QtGui.QDialog(self.s3ManageLocations_pushButton)
 	LS = ls.Main_LocationSetup(dialog, self)
+	
+
+
+	"""
 	self.currentWellboreInnerStageDataItem['Centralization']['Fields'] = LS.fields
 
 	for tab in ['A','B','C']:
 		s3CentralizerLocation_tableWidget = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )	
-		s3CentralizerLocation_fields      = eval( 'self.s3CentralizerLocation_fields_{tab}'.format(tab=tab) )
+		s3CentralizerLocation_fields      = eval( 'self.v3CentralizerLocation_fields_{tab}'.format(tab=tab) )
 
 		field = s3CentralizerLocation_fields.MD
 		if self.currentWellboreInnerStageDataItem['Centralization'][tab]['Type']!=None:
@@ -665,6 +654,9 @@ def open_LS_dialog(self):
 	self.msg_label.setText( 'Mean SO at centralizers:   {meanSOatC} {unit} ,   Mean SO at minspan:   {meanSOatM} {unit}'.format(
 							meanSOatC=LS.meanSOatC, meanSOatM=LS.meanSOatM, unit=LS.fields.SOatC.unit ) )
 	cu.idleFunction()
+	"""
+
+
 	self.meanSOatC = LS.meanSOatC
 	self.meanSOatM = LS.meanSOatM
 
@@ -680,7 +672,7 @@ def open_SS_dialog(self):
 
 	for tab in ['A','B','C']:
 		s3CentralizerLocation_tableWidget = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )	
-		s3CentralizerLocation_fields      = eval( 'self.s3CentralizerLocation_fields_{tab}'.format(tab=tab) )
+		s3CentralizerLocation_fields      = eval( 'self.v3CentralizerLocation_fields_{tab}'.format(tab=tab) )
 
 		field = s3CentralizerLocation_fields.MD
 		if self.currentWellboreInnerStageDataItem['Centralization'][tab]['Type']!=None:
@@ -714,18 +706,20 @@ def open_caliper_dialog(self):
 																'CALmax_array': CI.CALID_max,
 																'MD_array': CI.MD 
 															}
-	for field in self.s3WellboreOuterStages_fields:
+	for field in self.v3WellboreOuterStages_fields:
 
 		item = self.s3WellboreOuterStages_tableWidget.item(row, field.pos)
 
 		if field.abbreviation in CI.data:
 			value = CI.data[field.abbreviation]
 			item.set_text( value, value.unit )
+			field._altFg_ = True
 		else:
 			item.set_text()
 			item.alt_backgroundColor()
 			item.alt_flags()
 			self.s3WellboreOuterStages_tableWidget.editItem(item)
+			field._altFg_ = False
 
 
 @updateByBlock_currentWellboreOuterStageDataItem
@@ -743,18 +737,20 @@ def open_csv_dialog(self):
 																'CALmax_array': CI.HID,
 																'MD_array': CI.MD 
 															}
-	for field in self.s3WellboreOuterStages_fields:
+	for field in self.v3WellboreOuterStages_fields:
 
 		item = self.s3WellboreOuterStages_tableWidget.item(row, field.pos)
 
 		if field.abbreviation in CI.data:
 			value = CI.data[field.abbreviation]
 			item.set_text( value, value.unit )
+			field._altFg_ = True
 		else:
 			item.set_text()
 			item.alt_backgroundColor()
 			item.alt_flags()
 			self.s3WellboreOuterStages_tableWidget.editItem(item)
+			field._altFg_ = False
 
 
 @updateByBlock_currentWellboreOuterStageDataItem
@@ -767,18 +763,20 @@ def open_TDB_dialog_for_outerStages(self):
 	row = self.s3WellboreOuterStages_tableWidget.selectedRow
 	self.currentWellboreOuterStageDataItem['PipeBase'] = TDB.fields
 
-	for field in self.s3WellboreOuterStages_fields:
+	for field in self.v3WellboreOuterStages_fields:
 
 		item = self.s3WellboreOuterStages_tableWidget.item(row, field.pos)
 
 		if field.abbreviation in TDB.data:
 			value = TDB.data[field.abbreviation]
 			item.set_text( value, value.unit )
+			field._altFg_ = True
 		else:
 			item.set_text()
 			item.alt_backgroundColor()
 			item.alt_flags()
 			self.s3WellboreOuterStages_tableWidget.editItem(item)
+			field._altFg_ = False
 
 
 def set_row_as_free(self): #, description):
@@ -791,84 +789,34 @@ def set_row_as_free(self): #, description):
 		item.set_text()
 		item.alt_backgroundColor()
 		item.alt_flags()
+		item.field._altFg_ = False
 	
 	self.s3WellboreOuterStages_tableWidget.editItem(item)
 
 
 def updateMD_wellboreInnerStageData(self, item):
 
-	cu.update_fieldItem(item)
-	self.s3UpdateInnerStages_pushButton.setEnabled(True)
+	if self.wellboreInnerStageDataIsUpdatable:
 
-	row = self.s3WellboreInnerStages_tableWidget.selectedRow
+		cu.update_fieldItem(item)
+		self.s3UpdateInnerStages_pushButton.setEnabled(True)
 
-	if item.field.pos == self.s3WellboreInnerStages_fields.MDtop.pos:
-		self.wellboreInnerStageData[row]['MDtop'] = item.realValue
-
-	elif item.field.pos == self.s3WellboreInnerStages_fields.MDbot.pos:
-		self.wellboreInnerStageData[row]['MDbot'] = item.realValue
-
-	print_wellboreInnerStageData(self)
-
-
-def adjust_Length_and_MD(self, item):
-
-	cu.update_fieldItem(item)
-
-	if self._PipeCentralizationStageAdjusting_isEnabled:
-
-		self._PipeCentralizationStageAdjusting_isEnabled = False	
-		
 		row = self.s3WellboreInnerStages_tableWidget.selectedRow
 
-		if item.field.pos == self.s3WellboreInnerStages_fields.L.pos:
-			self.s3WellboreInnerStages_tableWidget.item(row, self.s3WellboreInnerStages_fields.MD.pos).set_text()
+		if item.field.pos == self.v3WellboreInnerStages_fields.MDtop.pos:
+			self.v3WellboreInnerStageData[row]['MDtop'] = item.realValue
 
-		elif item.field.pos == self.s3WellboreInnerStages_fields.MD.pos:
-			self.s3WellboreInnerStages_tableWidget.item(row, self.s3WellboreInnerStages_fields.L.pos).set_text()
-		
-		try:
-			print(self.workWellboreMD)
-			lastMD = min(self.workWellboreMD)
-		except ValueError:
-			msg = "Any top MD has been assigned yet in Wellbore intervals. Can not proceed."
-			QtGui.QMessageBox.critical(self.s3WellboreInnerStages_tableWidget, 'Error', msg)
-			self._PipeCentralizationStageAdjusting_isEnabled = True
-			return
+		elif item.field.pos == self.v3WellboreInnerStages_fields.MDbot.pos:
+			self.v3WellboreInnerStageData[row]['MDbot'] = item.realValue
 
-		cumLT  = 0.0
-
-		for i in range(self.s3WellboreInnerStages_tableWidget.rowCount()):
-			
-			LTitem = self.s3WellboreInnerStages_tableWidget.item(i, self.s3WellboreInnerStages_fields.L.pos)
-			LT = LTitem.realValue
-			MDitem = self.s3WellboreInnerStages_tableWidget.item(i, self.s3WellboreInnerStages_fields.MD.pos)
-			MD = MDitem.realValue
-
-			if LT:
-				lastMD += LT
-				cumLT += LT
-				MDitem.set_text( lastMD )
-				LTitem.set_text( LT )
-				self.wellboreInnerStageData[i]['MD'] = MDitem.realValue
-				self.wellboreInnerStageData[i]['Length'] = LTitem.realValue
-			elif MD:
-				LT = MD -lastMD
-				cumLT += LT
-				lastMD = MD
-				MDitem.set_text( lastMD )
-				LTitem.set_text( LT )
-				self.wellboreInnerStageData[i]['MD'] = MDitem.realValue
-				self.wellboreInnerStageData[i]['Length'] = LTitem.realValue
-		
-		self._PipeCentralizationStageAdjusting_isEnabled = True
-		print_wellboreInnerStageData(self)
+		else:
+			self.v3WellboreInnerStageData[row]['Desc'] = item.text()
 
 
 def adjust_MD_to_wellboreDeep(self):
 
 	try:
-		deepestMD = max(self.workWellboreMD)
+		deepestMD = max(self.v3WorkWellboreMD)
 	except ValueError:
 		msg = "Any bottom MD has been assigned yet in Wellbore intervals. Can not proceed."
 		QtGui.QMessageBox.critical(self.s3WellboreInnerStages_tableWidget, 'Error', msg)
@@ -876,46 +824,46 @@ def adjust_MD_to_wellboreDeep(self):
 		return
 
 	row  = self.s3WellboreInnerStages_tableWidget.selectedRow
-	item = self.s3WellboreInnerStages_tableWidget.item(row, self.s3WellboreInnerStages_fields.MDbot.pos)
+	item = self.s3WellboreInnerStages_tableWidget.item(row, self.v3WellboreInnerStages_fields.MDbot.pos)
 	item.set_text( deepestMD )
 
 
 def adjust_Wt(self):
 
-	OD = self.s3PipeProperties_tableWidget.item(self.s3PipeProperties_fields.OD.pos,0).realValue
-	ID = self.s3PipeProperties_tableWidget.item(self.s3PipeProperties_fields.ID.pos,0).realValue
-	Wt = self.s3PipeProperties_tableWidget.item(self.s3PipeProperties_fields.PipeW.pos,0).realValue
+	OD = self.s3PipeProperties_tableWidget.item(self.v3PipeProperties_fields.OD.pos,0).realValue
+	ID = self.s3PipeProperties_tableWidget.item(self.v3PipeProperties_fields.ID.pos,0).realValue
+	Wt = self.s3PipeProperties_tableWidget.item(self.v3PipeProperties_fields.PipeW.pos,0).realValue
 	Wt = mdl.adjust_Wt( OD, ID, Wt )
-	self.s3PipeProperties_tableWidget.item(self.s3PipeProperties_fields.PipeW.pos,0).set_text(Wt)
+	self.s3PipeProperties_tableWidget.item(self.v3PipeProperties_fields.PipeW.pos,0).set_text(Wt)
 
 
 def adjust_ID(self):
 
-	OD = self.s3PipeProperties_tableWidget.item(self.s3PipeProperties_fields.OD.pos,0).realValue
-	ID = self.s3PipeProperties_tableWidget.item(self.s3PipeProperties_fields.ID.pos,0).realValue
-	Wt = self.s3PipeProperties_tableWidget.item(self.s3PipeProperties_fields.PipeW.pos,0).realValue
+	OD = self.s3PipeProperties_tableWidget.item(self.v3PipeProperties_fields.OD.pos,0).realValue
+	ID = self.s3PipeProperties_tableWidget.item(self.v3PipeProperties_fields.ID.pos,0).realValue
+	Wt = self.s3PipeProperties_tableWidget.item(self.v3PipeProperties_fields.PipeW.pos,0).realValue
 	ID = mdl.adjust_ID( OD, ID, Wt )
-	self.s3PipeProperties_tableWidget.item(self.s3PipeProperties_fields.ID.pos,0).set_text(ID)
+	self.s3PipeProperties_tableWidget.item(self.v3PipeProperties_fields.ID.pos,0).set_text(ID)
 	
 
 
 def print_wellboreInnerStageData(self):
 
 	print('-----------------------------------------')
-	K = list(self.wellboreInnerStageData.keys())
+	K = list(self.v3WellboreInnerStageData.keys())
 	K.sort()
 	for k in K:
-		print('\n',self.wellboreInnerStageData[k],'\n')
+		print('\n',self.v3WellboreInnerStageData[k],'\n')
 	print('-----------------------------------------\n')
 	pass
 
 def print_wellboreOuterStageData(self):
 	
 	print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv')
-	K = list(self.wellboreOuterStageData.keys())
+	K = list(self.v3WellboreOuterStageData.keys())
 	K.sort()
 	for k in K:
-		print('\n',self.wellboreOuterStageData[k],'\n')
+		print('\n',self.v3WellboreOuterStageData[k],'\n')
 	print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n')
 	pass
 

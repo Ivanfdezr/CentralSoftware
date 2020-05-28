@@ -63,7 +63,6 @@ def savetable(table, fields, filenames, orientation='h'):
 			FILE.write(csvtext)
 
 
-
 def waiting_effects(function):
 	@wraps(function)
 	def wrap_function(*args, **kwargs):
@@ -271,27 +270,18 @@ class ValueWarning( Exception ): pass
 
 class TableWidgetFieldItem( QtGui.QTableWidgetItem ):
 	
-	def __init__(self, field, isPar, altBg=False, altTx=False, altFg=False ):
+	def __init__( self, field, isPar ):
 		
 		self.field = field
 		self.isPar = isPar
-		self.altBg = altBg
-		self.altTx = altTx
-		self.altFg = altFg
+		self.altBg = False
+		self.altTx = False
+		self.altFg = False
 		super().__init__('')
 		
-		if altFg:
-			self.setFlags(QtCore.Qt.ItemFlags(field.altFlag))
-		else:
-			self.setFlags(QtCore.Qt.ItemFlags(field.flag))
-		if altTx:
-			self.setTextColor(QtGui.QColor(*field.altTextColor))
-		else:
-			self.setTextColor(QtGui.QColor(*field.textColor))
-		if altBg:	
-			self.setBackgroundColor(QtGui.QColor(*field.altBackgroundColor-isPar*10))
-		else:	
-			self.setBackgroundColor(QtGui.QColor(*field.backgroundColor-isPar*10))
+		self.setFlags(QtCore.Qt.ItemFlags(field.flag))
+		self.setTextColor(QtGui.QColor(*field.textColor))
+		self.setBackgroundColor(QtGui.QColor(*field.backgroundColor-isPar*10))
 		self.realValue = mdl.physicalValue(None, field.unit)
 
 		self.currentChangebyVst = True
@@ -436,21 +426,13 @@ class TableClipboard():
 			therow	= min(index.row()	for index in self.selection)
 			thecolumn = min(index.column() for index in self.selection)
 
-			print('----------------',therow,thecolumn,'----------------')
-		
 			self.text = self.sys_clip.text()
 
-			print('text:',self.text)
-				
 			for i,line in enumerate(re.split('[\n\r]+',self.text)):
 				if line:
 					for j,value in enumerate(re.split('\t',line)):
 						item = self.tableWidget.item(therow+i,thecolumn+j)
-						print(item,value)
 						if item:
-							print(type(item))
-							print(item.field._altFg_)
-							print(str(value))
 							try:
 								if not item.field._altFg_:
 									item.set_text(str(value))

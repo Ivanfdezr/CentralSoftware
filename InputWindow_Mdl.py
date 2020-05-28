@@ -3,11 +3,21 @@ import numpy as np
 import numpy.linalg as la
 import codecs
 import copy
-from MdlUtilities import Field, FieldList
 import MdlUtilities as mu
 import dbUtils
+import pickle
 
 		 
+def save_obj(obj, File):
+
+	pickle.dump(obj ,File)
+
+
+def load_obj(File):
+
+	return pickle.load(File)
+
+
 def set_workUnits_as(unitSystem):
 
 	defaultUnitTable = 'default_{system}_units'.format(system=unitSystem)
@@ -17,21 +27,21 @@ def set_workUnits_as(unitSystem):
 	dbUtils.execute_query(query)
 
 
-def get_s1Info_fields():
+def get_v1Info_fields():
 
-	WellName   = Field(2055, altBg=True, altFg=True)
-	Location   = Field(2055, altBg=True, altFg=True)
-	Operator   = Field(2055, altBg=True, altFg=True)
-	Contractor = Field(2055, altBg=True, altFg=True)
-	Date       = Field(2055, altBg=True, altFg=True)
-	Directory  = Field(2055, altBg=True, altFg=True)
+	WellName   = mu.Field(2055)
+	Location   = mu.Field(2055)
+	Operator   = mu.Field(2055)
+	Contractor = mu.Field(2055)
+	Date       = mu.Field(2055)
+	Directory  = mu.Field(2055, altBg=True, altFg=True)
 	WellName.set_abbreviation('WellName')
 	Location.set_abbreviation('Location')
 	Operator.set_abbreviation('Operator')
 	Contractor.set_abbreviation('Contractor')
 	Date.set_abbreviation('Date')
 	Directory.set_abbreviation('Directory')
-	s1Info_fields = FieldList()
+	s1Info_fields = mu.FieldList()
 	s1Info_fields.append( WellName )
 	s1Info_fields.append( Location )
 	s1Info_fields.append( Operator )
@@ -42,18 +52,18 @@ def get_s1Info_fields():
 	return s1Info_fields
 
 
-def get_s2DataSurvey_fields():
+def get_v2DataSurvey_fields():
 
-	MD   = Field(2001)
-	Inc  = Field(2002)
-	Azi  = Field(2003)
-	TVD  = Field(2004, altBg=True, altFg=True)
-	HD   = Field(2005, altBg=True, altFg=True)
-	NS   = Field(2006, altBg=True, altFg=True)
-	EW   = Field(2007, altBg=True, altFg=True)
-	DL   = Field(2008, altBg=True, altFg=True)
+	MD   = mu.Field(2001)
+	Inc  = mu.Field(2002)
+	Azi  = mu.Field(2003)
+	TVD  = mu.Field(2004, altBg=True, altFg=True)
+	HD   = mu.Field(2005, altBg=True, altFg=True)
+	NS   = mu.Field(2006, altBg=True, altFg=True)
+	EW   = mu.Field(2007, altBg=True, altFg=True)
+	DL   = mu.Field(2008, altBg=True, altFg=True)
 
-	s2DataSurvey_fields = FieldList()
+	s2DataSurvey_fields = mu.FieldList()
 	s2DataSurvey_fields.append( MD  )
 	s2DataSurvey_fields.append( Inc )
 	s2DataSurvey_fields.append( Azi )
@@ -66,21 +76,25 @@ def get_s2DataSurvey_fields():
 	return s2DataSurvey_fields
 
 
-def get_s2KOP_field():
+def get_v2KOP_fields():
 
-	s2KOP_field = Field(2001)
-	s2KOP_field.set_representation('KOP')
-	return s2KOP_field
+	KOP = mu.Field(2001)
+
+	KOP.set_representation('KOP')
+	s2KOP_fields = mu.FieldList()
+	s2KOP_fields.append( KOP )
+
+	return s2KOP_fields
 
 
-def get_s3Forces_fields():
+def get_v3Forces_fields():
 
-	AxF  = Field(2075, altBg=True, altFg=True)
-	SiF  = Field(2074, altBg=True, altFg=True)
-	MD_  = Field(2001, altBg=True, altFg=True)
+	AxF  = mu.Field(2075, altBg=True, altFg=True)
+	SiF  = mu.Field(2074, altBg=True, altFg=True)
+	MD_  = mu.Field(2001, altBg=True, altFg=True)
 	MD_.set_abbreviation('MD_AxF')
 
-	s3Forces_fields = FieldList()
+	s3Forces_fields = mu.FieldList()
 	s3Forces_fields.append( AxF )
 	s3Forces_fields.append( SiF )
 	s3Forces_fields.append( MD_ )
@@ -88,14 +102,14 @@ def get_s3Forces_fields():
 	return s3Forces_fields
 
 
-def get_s2SurveyTortuosity_fields():
+def get_v2SurveyTortuosity_fields():
 
-	From       = Field(2056)
-	To         = Field(2057)
-	Amplitude  = Field(2058)
-	Period     = Field(2059)
-	Interval   = Field(2060)
-	s2SurveyTortuosity_fields = FieldList()
+	From       = mu.Field(2056)
+	To         = mu.Field(2057)
+	Amplitude  = mu.Field(2058)
+	Period     = mu.Field(2059)
+	Interval   = mu.Field(2060)
+	s2SurveyTortuosity_fields = mu.FieldList()
 	s2SurveyTortuosity_fields.append( From )
 	s2SurveyTortuosity_fields.append( To )
 	s2SurveyTortuosity_fields.append( Amplitude )
@@ -105,27 +119,31 @@ def get_s2SurveyTortuosity_fields():
 	return s2SurveyTortuosity_fields
 
 
-def get_s2TortuosityInterval_field():
+def get_v2TortuosityInterval_fields():
 
-	s2TortuosityInterval_field = Field(2060)
-	return s2TortuosityInterval_field
+	Interval = mu.Field(2060)
+
+	s2TortuosityInterval_fields = mu.FieldList()
+	s2TortuosityInterval_fields.append( Interval )
+
+	return s2TortuosityInterval_fields
 	
 	
-def get_s3WellboreOuterStages_fields():
+def get_v3WellboreOuterStages_fields():
 
-	Desc  = Field(2055, altBg=True, altFg=True)
-	ID    = Field(2031, altBg=True, altFg=True)
-	Drift = Field(2046, altBg=True, altFg=True)
-	MDbot = Field(2001, altBg=True, altFg=True)
-	MDtop = Field(2001, altBg=True, altFg=True)
-	FF    = Field(2027, altBg=True, altFg=True)
+	Desc  = mu.Field(2055, altBg=True, altFg=True)
+	ID    = mu.Field(2031, altBg=True, altFg=True)
+	Drift = mu.Field(2046, altBg=True, altFg=True)
+	MDbot = mu.Field(2001, altBg=True, altFg=True)
+	MDtop = mu.Field(2001, altBg=True, altFg=True)
+	FF    = mu.Field(2027, altBg=True, altFg=True)
 	MDbot.set_abbreviation('MDbot')
 	MDtop.set_abbreviation('MDtop')
 	ID.set_representation('ID / <HID>')
 	Drift.set_representation('Drift / BS')
 	MDbot.set_representation('bottom MD')
 	MDtop.set_representation('top MD')
-	s3WellboreOuterStages_fields = FieldList()
+	s3WellboreOuterStages_fields = mu.FieldList()
 	s3WellboreOuterStages_fields.append( Desc  )
 	s3WellboreOuterStages_fields.append( ID    )
 	s3WellboreOuterStages_fields.append( Drift )
@@ -136,16 +154,16 @@ def get_s3WellboreOuterStages_fields():
 	return s3WellboreOuterStages_fields
 
 
-def get_s3WellboreInnerStages_fields():
+def get_v3WellboreInnerStages_fields():
 
-	Desc  = Field(2055, altBg=True, altFg=True)
-	MDtop = Field(2001)
-	MDbot = Field(2001)
+	Desc  = mu.Field(2055, altBg=True, altFg=True)
+	MDtop = mu.Field(2001)
+	MDbot = mu.Field(2001)
 	MDbot.set_abbreviation('MDbot')
 	MDtop.set_abbreviation('MDtop')
 	MDbot.set_representation('bottom MD')
 	MDtop.set_representation('top MD')
-	s3WellboreInnerStages_fields = FieldList()
+	s3WellboreInnerStages_fields = mu.FieldList()
 	s3WellboreInnerStages_fields.append( Desc  )
 	s3WellboreInnerStages_fields.append( MDtop )
 	s3WellboreInnerStages_fields.append( MDbot )
@@ -153,30 +171,19 @@ def get_s3WellboreInnerStages_fields():
 	return s3WellboreInnerStages_fields
 
 
-def get_s3CentralizerSpacing_fields():
+def get_v3CentralizerProperties_fields():
 
-	MinSpacing = Field(2071)
-	MaxSpacing = Field(2072)
-	s3CentralizerSpacing_fields = FieldList()
-	s3CentralizerSpacing_fields.append( MinSpacing )
-	s3CentralizerSpacing_fields.append( MaxSpacing )
-
-	return s3CentralizerSpacing_fields
-	
-
-def get_s3CentralizerProperties_fields():
-
-	ProdNum     = Field(2050)
-	COD         = Field(2011)
-	IPOD        = Field(2009)
-	Length      = Field(2014)
-	FF          = Field(2027, altBg=True, altFg=True)
-	MinPassThru = Field(2020, substitutefieldID=2010)
-	StartF_CH   = Field(2064, substitutefieldID=2015)
-	StartF_OH   = Field(2065)
-	RestF_CH    = Field(2066, substitutefieldID=2018)
-	RestF_OH    = Field(2067)
-	s3CentralizerProperties_fields = FieldList()
+	ProdNum     = mu.Field(2050)
+	COD         = mu.Field(2011)
+	IPOD        = mu.Field(2009)
+	Length      = mu.Field(2014)
+	FF          = mu.Field(2027, altBg=True, altFg=True)
+	MinPassThru = mu.Field(2020, substitutefieldID=2010)
+	StartF_CH   = mu.Field(2064, substitutefieldID=2015)
+	StartF_OH   = mu.Field(2065)
+	RestF_CH    = mu.Field(2066, substitutefieldID=2018)
+	RestF_OH    = mu.Field(2067)
+	s3CentralizerProperties_fields = mu.FieldList()
 	s3CentralizerProperties_fields.append( ProdNum     )
 	s3CentralizerProperties_fields.append( COD         )
 	#s3CentralizerProperties_fields.append( CID         )
@@ -192,24 +199,24 @@ def get_s3CentralizerProperties_fields():
 	return s3CentralizerProperties_fields
 
 
-def get_s3PipeProperties_fields():
+def get_v3PipeProperties_fields():
 
-	Desc            = Field(2055)
-	AdjustedWeight  = Field(2032)
-	OD              = Field(2030)
-	ID              = Field(2031)
-	TensileLim      = Field(2034, altBg=True, altFg=True)
-	TorsionalLim    = Field(2070, altBg=True, altFg=True)
-	Density         = Field(2039, altBg=True, altFg=True)
-	E               = Field(2040, altBg=True, altFg=True)
-	FFReduction     = Field(2028)
-	InnerMudDensity = Field(2077)
-	OuterMudDensity = Field(2077)
+	Desc            = mu.Field(2055)
+	AdjustedWeight  = mu.Field(2032)
+	OD              = mu.Field(2030)
+	ID              = mu.Field(2031)
+	TensileLim      = mu.Field(2034, altBg=True, altFg=True)
+	TorsionalLim    = mu.Field(2070, altBg=True, altFg=True)
+	Density         = mu.Field(2039, altBg=True, altFg=True)
+	E               = mu.Field(2040, altBg=True, altFg=True)
+	FFReduction     = mu.Field(2028)
+	InnerMudDensity = mu.Field(2077)
+	OuterMudDensity = mu.Field(2077)
 	InnerMudDensity.set_abbreviation('InnerMudDensity')
 	InnerMudDensity.set_representation('Inner Mud Density')
 	OuterMudDensity.set_abbreviation('OuterMudDensity')
 	OuterMudDensity.set_representation('Outer Mud Density')
-	s3PipeProperties_fields = FieldList()
+	s3PipeProperties_fields = mu.FieldList()
 	s3PipeProperties_fields.append( Desc            )
 	s3PipeProperties_fields.append( AdjustedWeight  )
 	s3PipeProperties_fields.append( OD              )
@@ -225,39 +232,76 @@ def get_s3PipeProperties_fields():
 	return s3PipeProperties_fields
 
 
-def get_s3CentralizerRunningForce_fields():
+def get_v3CentralizerLocation_fields():
 
-	HoleID    = Field(2020, substitutefieldID=2010)
-	RunForce  = Field(2016)
-	s3CentralizerRunningForce_fields = FieldList()
-	s3CentralizerRunningForce_fields.append( HoleID   )
-	s3CentralizerRunningForce_fields.append( RunForce )
-	
-	s3CentralizerRunningForce_fields[0].set_representation('Hole ID')
-
-	return s3CentralizerRunningForce_fields
-
-
-def get_s3CentralizerLocation_fields():
-
-	MD = Field(2001, altBg=True, altFg=True)
-	s3CentralizerLocation_fields = FieldList()
+	MD = mu.Field(2001, altBg=True, altFg=True)
+	s3CentralizerLocation_fields = mu.FieldList()
 	s3CentralizerLocation_fields.append( MD )
 	
 	return s3CentralizerLocation_fields
 
 
-def get_s4Settings_fields():
+def get_Centralization_fields():
 
-	TAW = Field(2083)
-	WOB = Field(2081)
-	TOB = Field(2082)
-	TrV = Field(2084)
-	RoR = Field(2085)
-	Psi = Field(2086)
-	dMD = Field(2045)
+	MD    = mu.Field(2001)
+	Inc   = mu.Field(2002, altBg=True, altFg=True)
+	SOatC = mu.Field(2078, altBg=True, altFg=True)
+	SOatM = mu.Field(2078, altBg=True, altFg=True)
+	ClatC = mu.Field(2073, altBg=True, altFg=True)
+	ClatM = mu.Field(2073, altBg=True, altFg=True)
+	LatC  = mu.Field(2080, altBg=True, altFg=True)
+	EW    = mu.Field(2007, altBg=True, altFg=True)
+	NS    = mu.Field(2006, altBg=True, altFg=True)
+	TVD   = mu.Field(2004, altBg=True, altFg=True)
+	DL    = mu.Field(2008, altBg=True, altFg=True)
+	ID    = mu.Field(2031, altBg=True, altFg=True)
+	avgID = mu.Field(2031, altBg=True, altFg=True)
+	Azi   = mu.Field(2003, altBg=True, altFg=True)
+
+	SOatC.set_abbreviation('SOatC')
+	SOatM.set_abbreviation('SOatM')
+	ClatC.set_abbreviation('ClatC')
+	ClatM.set_abbreviation('ClatM')
+	LatC.set_abbreviation('LatC')
+	avgID.set_abbreviation('avgID')
+
+	SOatC.set_representation('<SO> @ centr.')
+	SOatM.set_representation('SO @ mid span')
+	ClatC.set_representation('<Cl> @ centr.')
+	ClatM.set_representation('Cl @ mid span')
+	ID.set_representation('Hole ID')
+	avgID.set_representation('Average ID')
+
+	Centralization_fields = mu.FieldList()
+	Centralization_fields.append( MD )
+	Centralization_fields.append( Inc )
+	Centralization_fields.append( SOatC )
+	Centralization_fields.append( SOatM )
+	Centralization_fields.append( ClatC )
+	Centralization_fields.append( ClatM )
+	Centralization_fields.append( LatC )
+	Centralization_fields.append( EW )
+	Centralization_fields.append( NS )
+	Centralization_fields.append( TVD )
+	Centralization_fields.append( DL )
+	Centralization_fields.append( ID )
+	Centralization_fields.append( avgID )
+	Centralization_fields.append( Azi )
+
+	return Centralization_fields
+
+
+def get_v4Settings_fields():
+
+	TAW = mu.Field(2083)
+	WOB = mu.Field(2081)
+	TOB = mu.Field(2082)
+	TrV = mu.Field(2084)
+	RoR = mu.Field(2085)
+	Psi = mu.Field(2086)
+	dMD = mu.Field(2045)
 	dMD.set_abbreviation('dMD')
-	s4Settings_fields = FieldList()
+	s4Settings_fields = mu.FieldList()
 	s4Settings_fields.append( TAW )
 	s4Settings_fields.append( WOB )
 	s4Settings_fields.append( TOB )
@@ -269,27 +313,27 @@ def get_s4Settings_fields():
 	return s4Settings_fields
 
 
-def get_s4TorqueDragSideforce_fields():
+def get_v4TorqueDragSideforce_fields():
 
-	MD       = Field(2001, altBg=True, altFg=True)
-	Inc      = Field(2002, altBg=True, altFg=True)
-	Torque_u = Field(2082, altBg=True, altFg=True)
-	Torque_s = Field(2082, altBg=True, altFg=True)
-	Torque_d = Field(2082, altBg=True, altFg=True)
-	Drag_u   = Field(2075, altBg=True, altFg=True)
-	Drag_s   = Field(2075, altBg=True, altFg=True)
-	Drag_d   = Field(2075, altBg=True, altFg=True)
-	SideF    = Field(2074, altBg=True, altFg=True)
+	MD       = mu.Field(2001, altBg=True, altFg=True)
+	Inc      = mu.Field(2002, altBg=True, altFg=True)
+	Torque_u = mu.Field(2082, altBg=True, altFg=True)
+	Torque_s = mu.Field(2082, altBg=True, altFg=True)
+	Torque_d = mu.Field(2082, altBg=True, altFg=True)
+	Drag_u   = mu.Field(2075, altBg=True, altFg=True)
+	Drag_s   = mu.Field(2075, altBg=True, altFg=True)
+	Drag_d   = mu.Field(2075, altBg=True, altFg=True)
+	SideF    = mu.Field(2074, altBg=True, altFg=True)
 	
-	uncMD       = Field(2001, altBg=True, altFg=True)
-	uncInc      = Field(2002, altBg=True, altFg=True)
-	uncTorque_u = Field(2082, altBg=True, altFg=True)
-	uncTorque_s = Field(2082, altBg=True, altFg=True)
-	uncTorque_d = Field(2082, altBg=True, altFg=True)
-	uncDrag_u   = Field(2075, altBg=True, altFg=True)
-	uncDrag_s   = Field(2075, altBg=True, altFg=True)
-	uncDrag_d   = Field(2075, altBg=True, altFg=True)
-	uncSideF    = Field(2074, altBg=True, altFg=True)
+	uncMD       = mu.Field(2001, altBg=True, altFg=True)
+	uncInc      = mu.Field(2002, altBg=True, altFg=True)
+	uncTorque_u = mu.Field(2082, altBg=True, altFg=True)
+	uncTorque_s = mu.Field(2082, altBg=True, altFg=True)
+	uncTorque_d = mu.Field(2082, altBg=True, altFg=True)
+	uncDrag_u   = mu.Field(2075, altBg=True, altFg=True)
+	uncDrag_s   = mu.Field(2075, altBg=True, altFg=True)
+	uncDrag_d   = mu.Field(2075, altBg=True, altFg=True)
+	uncSideF    = mu.Field(2074, altBg=True, altFg=True)
 	
 	Torque_u.set_representation('Torque raising')
 	Torque_s.set_representation('Torque static')
@@ -315,7 +359,7 @@ def get_s4TorqueDragSideforce_fields():
 	uncDrag_d.set_abbreviation('uncDrag_d')
 	uncSideF.set_abbreviation('uncSideF')
 
-	s4TorqueDragSideforce_fields = FieldList()
+	s4TorqueDragSideforce_fields = mu.FieldList()
 	s4TorqueDragSideforce_fields.append( MD )
 	s4TorqueDragSideforce_fields.append( Inc )
 	s4TorqueDragSideforce_fields.append( Torque_u )
@@ -383,7 +427,6 @@ def calculate_MCMComplements( fields, KOP, tortuosity=None ):
 	fields.TVD.inverseReferenceUnitConvert()
 	fields.HD.inverseReferenceUnitConvert()
 	fields.DL.inverseReferenceUnitConvert()
-
 
 
 def calculate_ASCComplements( fields, KOP, tortuosity=None ):
@@ -501,6 +544,7 @@ def calculate_ASCComplements( fields, KOP, tortuosity=None ):
 
 	fields.clear_content()
 	for i,(Ei,Ni,Vi,Hi) in enumerate(Y):
+		
 		fields.MD.append( mu.physicalValue(x[i], fields.MD.referenceUnit ) )
 		fields.Inc.append( mu.physicalValue(In[i], fields.Inc.referenceUnit ) )
 		fields.Azi.append( mu.physicalValue(Az[i], fields.Azi.referenceUnit ) )
@@ -517,26 +561,27 @@ def calculate_ASCComplements( fields, KOP, tortuosity=None ):
 	fields.TVD.inverseReferenceUnitConvert()
 	fields.HD.inverseReferenceUnitConvert()
 
+
+	MD   = mu.Field(2001)
+	Inc  = mu.Field(2002)
+	Azi  = mu.Field(2003)
+	TVD  = mu.Field(2004)
+	HD   = mu.Field(2005)
+	NS   = mu.Field(2006)
+	EW   = mu.Field(2007)
+	DL   = mu.Field(2008)
+
+	ASCComplements = mu.FieldList()
+	ASCComplements.append( MD )
+	ASCComplements.append( Inc )
+	ASCComplements.append( Azi )
+	ASCComplements.append( TVD )
+	ASCComplements.append( HD )
+	ASCComplements.append( NS )
+	ASCComplements.append( EW )
+	ASCComplements.append( DL )
+
 	if tortuosity:
-
-		MD   = Field(2001)
-		Inc  = Field(2002)
-		Azi  = Field(2003)
-		TVD  = Field(2004)
-		HD   = Field(2005)
-		NS   = Field(2006)
-		EW   = Field(2007)
-		DL   = Field(2008)
-
-		ASCComplements = FieldList()
-		ASCComplements.append( MD )
-		ASCComplements.append( Inc )
-		ASCComplements.append( Azi )
-		ASCComplements.append( TVD )
-		ASCComplements.append( HD )
-		ASCComplements.append( NS )
-		ASCComplements.append( EW )
-		ASCComplements.append( DL )
 
 		for item in tortuosity:
 			value = item['FromMD']
@@ -553,9 +598,13 @@ def calculate_ASCComplements( fields, KOP, tortuosity=None ):
 
 		for i,Yi in enumerate(Y[:-1]):
 			value = mu.physicalValue( la.norm(dT(i,x[i])[:-1]), fields.DL.referenceUnit )
-			#value = mu.physicalValue( DLS[i], fields.DL.referenceUnit )
 			fields.DL.append( value )
-			X_ = np.linspace( x[i], x[i+1], np.floor(x[i+1]-x[i])/dx )[:-1]
+			
+			if i<len(Y)-2:
+				X_ = np.linspace( x[i], x[i+1], np.floor(x[i+1]-x[i])/dx, endpoint=False )
+			else:
+				X_ = np.linspace( x[i], x[i+1], np.floor(x[i+1]-x[i])/dx, endpoint=True )
+
 			if len(X_)==0:
 				X_ = [ x[i] ]
 			
@@ -566,7 +615,8 @@ def calculate_ASCComplements( fields, KOP, tortuosity=None ):
 
 				tangentVector = T(i,X)
 				verticalVector = np.array([0.0,0.0,1.0,0.0])
-				if np.allclose( tangentVector, verticalVector, atol=1e-2 ):
+				if np.allclose( tangentVector, verticalVector, atol=1e-2, rtol=0.0 ):
+					tangentVector = verticalVector
 					enVector = np.array([1.0,0.0,0.0,0.0])
 				else:
 					enVector = np.array([tangentVector[1],-tangentVector[0],0.0,0.0])
@@ -581,9 +631,27 @@ def calculate_ASCComplements( fields, KOP, tortuosity=None ):
 					if X>=item['FromMD'] and X<item['ToMD']:
 						YX += enVector*a*np.sin(w*X)
 						D2YX -= enVector*a*w**2*np.sin(w*X)
-			
+
+				# Block for Inc and Azi calculation
+				inc = np.arccos( tangentVector[2] )
+
+				if inc==0.0:
+					azi = 0.0
+				else:
+					sinazi = tangentVector[0]/np.sin(inc)
+					cosazi = tangentVector[1]/np.sin(inc)
+
+					if sinazi>=0:
+						azi = np.arccos( cosazi )
+					elif sinazi<0:
+						azi = 2*np.pi-np.arccos( cosazi )
+
 				value = mu.physicalValue( X, MD.referenceUnit )
 				MD.append( value )
+				value = mu.physicalValue( inc, Inc.referenceUnit )
+				Inc.append( value )
+				value = mu.physicalValue( azi, Azi.referenceUnit )
+				Azi.append( value )
 				value = mu.physicalValue( YX[0], EW.referenceUnit )
 				EW.append( value )
 				value = mu.physicalValue( YX[1], NS.referenceUnit )
@@ -596,19 +664,28 @@ def calculate_ASCComplements( fields, KOP, tortuosity=None ):
 				DL.append( value )
 
 		value = mu.physicalValue( la.norm(dT(i,x[i+1])[:-1]), fields.DL.referenceUnit )
-		#value = mu.physicalValue( DLS[i], fields.DL.referenceUnit )
 		fields.DL.append( value )
 		fields.DL.inverseReferenceUnitConvert()
 		MD.inverseReferenceUnitConvert()
+		Inc.inverseReferenceUnitConvert()
+		Azi.inverseReferenceUnitConvert()
 		EW.inverseReferenceUnitConvert()
 		NS.inverseReferenceUnitConvert()
 		TVD.inverseReferenceUnitConvert()
 		HD.inverseReferenceUnitConvert()
 		DL.inverseReferenceUnitConvert()
 
-		return ASCComplements, dT, T, sT
+		#MD.append(  fields.MD[-1]  )
+		#Inc.append( fields.Inc[-1] )
+		#Azi.append( fields.Azi[-1] )
+		#EW.append(  fields.EW[-1]  )
+		#NS.append(  fields.NS[-1]  )
+		#TVD.append( fields.TVD[-1] )
+		#HD.append(  fields.HD[-1]  )
+		#DL.append(  fields.DL[-1]  )
 
 	else:
+		
 		for i,xi in enumerate(x[:-1]):
 			value = mu.physicalValue( la.norm(dT(i,xi)[:-1]), fields.DL.referenceUnit )
 			fields.DL.append( value )
@@ -616,7 +693,24 @@ def calculate_ASCComplements( fields, KOP, tortuosity=None ):
 		fields.DL.append( value )
 		fields.DL.inverseReferenceUnitConvert()
 
-		return None, dT, T, sT
+		MD[:]  = fields.MD
+		Inc[:] = fields.Inc
+		Azi[:] = fields.Azi
+		EW[:]  = fields.EW
+		NS[:]  = fields.NS
+		TVD[:] = fields.TVD
+		HD[:]  = fields.HD
+		DL[:]  = fields.DL
+
+	#fmap = lambda x: len(x)
+	#print( list(map(fmap,fields)) )
+	#print(fields)
+	#print( list(map(fmap,ASCComplements)) )
+	#print(ASCComplements)
+	#for j,md in enumerate(ASCComplements.MD):
+	#	print(j,md)
+
+	return ASCComplements, dT, T, sT
 
 
 def calculate_axialForce_field(self):
@@ -626,42 +720,42 @@ def calculate_axialForce_field(self):
 	print('Calculating Axial Forces...')
 	#self.msg_label.setText( 'Calculating Axial Forces...' )
 
-	self.s3Forces_fields.AxialF.clear()
-	self.s3Forces_fields.MD_AxF.clear()
-	MD_array = np.array( self.s2DataSurvey_fields.MD )
-	MD_min = mu.referenceUnitConvert_value( MD_array[ 0], self.s2DataSurvey_fields.MD.unit )
-	MD_max = mu.referenceUnitConvert_value( MD_array[-1], self.s2DataSurvey_fields.MD.unit )
+	self.v3Forces_fields.AxialF.clear()
+	self.v3Forces_fields.MD_AxF.clear()
+	MD_array = np.array( self.v2ASCComplements_fields.MD )
+	MD_min = mu.referenceUnitConvert_value( MD_array[ 0], self.v2ASCComplements_fields.MD.unit )
+	MD_max = mu.referenceUnitConvert_value( MD_array[-1], self.v2ASCComplements_fields.MD.unit )
 	del MD_array
 
 	MDs = np.linspace(MD_min, MD_max, 100)
 	cosIncs = []
 
 	for MD in MDs:
-		MD = mu.physicalValue(MD, self.s3Forces_fields.MD_AxF.referenceUnit )
-		self.s3Forces_fields.MD_AxF.append( MD )
+		MD = mu.physicalValue(MD, self.v3Forces_fields.MD_AxF.referenceUnit )
+		self.v3Forces_fields.MD_AxF.append( MD )
 		cosIncs.append( get_ASCT_from_MD(self, MD, MD.unit)[2] )
 
-	value = mu.physicalValue(0, self.s3Forces_fields.AxialF.referenceUnit )
-	self.s3Forces_fields.AxialF.append( value )
+	value = mu.physicalValue(0, self.v3Forces_fields.AxialF.referenceUnit )
+	self.v3Forces_fields.AxialF.append( value )
 	AxialTension = 0
 	L = MDs[1]-MDs[0]
 
-	K = list(self.wellboreInnerStageData.keys())
+	K = list(self.v3WellboreInnerStageData.keys())
 	K.sort()
 	for i in range(len(MDs)-1):	
 		for k in K:
-			stage = self.wellboreInnerStageData[k]
+			stage = self.v3WellboreInnerStageData[k]
 			stageBottomMD = mu.referenceUnitConvert_value( stage['MDbot'], stage['MDbot'].unit )
 			W = mu.referenceUnitConvert_value( stage['PipeProps'].PW[0], stage['PipeProps'].PW[0].unit )
 			
 			if MDs[-i-2]<stageBottomMD: 
 				AxialTension = AxialTension + W*L*cosIncs[-i-1]
-				value = mu.physicalValue(AxialTension, self.s3Forces_fields.AxialF.referenceUnit )
-				self.s3Forces_fields.AxialF.insert(0, value )
+				value = mu.physicalValue(AxialTension, self.v3Forces_fields.AxialF.referenceUnit )
+				self.v3Forces_fields.AxialF.insert(0, value )
 				break
 
-	self.s3Forces_fields.AxialF.inverseReferenceUnitConvert()
-	self.s3Forces_fields.MD_AxF.inverseReferenceUnitConvert()
+	self.v3Forces_fields.AxialF.inverseReferenceUnitConvert()
+	self.v3Forces_fields.MD_AxF.inverseReferenceUnitConvert()
 	self.s3UpdateInnerStages_pushButton.setEnabled(False)
 	self.s3InnerStageToolkit_tabWidget.setEnabled(True)
 
@@ -672,31 +766,34 @@ def calculate_axialForce_field(self):
 def get_axialTension_below_MD(self, MD, unit=None, referenceUnit=False):
 
 	if unit:
-		MD = mu.unitConvert_value( MD, unit, self.s3Forces_fields.MD_AxF.unit )
+		MD = mu.referenceUnitConvert_value( MD, unit )
 	else:
-		MD = mu.unitConvert_value( MD, MD.unit, self.s3Forces_fields.MD_AxF.unit )
+		MD = mu.referenceUnitConvert_value( MD, MD.unit )
 	
+	self.v3Forces_fields.MD_AxF.referenceUnitConvert()
+	self.v3Forces_fields.AxialF.referenceUnitConvert()
 	cosInc = get_ASCT_from_MD(self, MD)[2]
-	MD_AxF = np.array( self.s3Forces_fields.MD_AxF )
-	AxialF = np.array( self.s3Forces_fields.AxialF )
+	MD_AxF = np.array( self.v3Forces_fields.MD_AxF )
+	AxialF = np.array( self.v3Forces_fields.AxialF )
 	index = np.where(MD_AxF>MD)[0][0]
-
 	MD_AxF_i = MD_AxF[index]
 	AxialF_i = AxialF[index]
 	del MD_AxF
 	del AxialF
+	self.v3Forces_fields.MD_AxF.inverseReferenceUnitConvert()
+	self.v3Forces_fields.AxialF.inverseReferenceUnitConvert()
 
 	stage = self.currentWellboreInnerStageDataItem
-	stageBottomMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
+	stageBottomMD = mu.referenceUnitConvert_value( stage['MDbot'], stage['MDbot'].unit )
 	assert( MD<stageBottomMD )
 	W = mu.referenceUnitConvert_value( stage['PipeProps'].PW[0], stage['PipeProps'].PW[0].unit )
 	L = MD_AxF_i-MD
 
 	AxialTension = AxialF_i + W*L*cosInc
 	if referenceUnit:
-		AxialTension = mu.physicalValue( AxialTension, self.s3Forces_fields.AxialF.referenceUnit )
+		AxialTension = mu.physicalValue( AxialTension, self.v3Forces_fields.AxialF.referenceUnit )
 	else:
-		AxialTension = mu.inverseReferenceUnitConvert_value( AxialTension, self.s3Forces_fields.AxialF.unit )
+		AxialTension = mu.inverseReferenceUnitConvert_value( AxialTension, self.v3Forces_fields.AxialF.unit )
 
 	return AxialTension
 
@@ -737,26 +834,30 @@ def get_ASCCoordinates_from_MD(self, MD, unit=None):
 	self must to point to Main_InputWindow
 	"""
 	if unit:
-		MD = mu.unitConvert_value( MD, unit, self.s2DataSurvey_fields.MD.unit )
+		MD = mu.unitConvert_value( MD, unit, self.v2DataSurvey_fields.MD.unit )
 	else:
-		MD = mu.unitConvert_value( MD, MD.unit, self.s2DataSurvey_fields.MD.unit )
+		MD = mu.unitConvert_value( MD, MD.unit, self.v2DataSurvey_fields.MD.unit )
 
-	MD_array = np.array( self.s2DataSurvey_fields.MD )
-	try:
-		index = np.where(MD_array[:-1]<=MD)[0][-1]
-	except IndexError:
-		index = 0
+	MD_array = np.array( self.v2DataSurvey_fields.MD )
+	#try:
+	index = np.where(MD_array[:-1]<=MD)[0][-1]
+	#except IndexError:
+	#index = 0
 	del MD_array
 
 	MD = mu.referenceUnitConvert_value( MD, MD.unit )
 	sT_value = self.sT( index, MD)
-	EW_rest = mu.inverseReferenceUnitConvert_value( sT_value[0], self.s2DataSurvey_fields.EW.unit  )
-	NS_rest = mu.inverseReferenceUnitConvert_value( sT_value[1], self.s2DataSurvey_fields.NS.unit  )
-	VD_rest = mu.inverseReferenceUnitConvert_value( sT_value[2], self.s2DataSurvey_fields.TVD.unit )
+	EW_rest = mu.inverseReferenceUnitConvert_value( sT_value[0], self.v2DataSurvey_fields.EW.unit  )
+	NS_rest = mu.inverseReferenceUnitConvert_value( sT_value[1], self.v2DataSurvey_fields.NS.unit  )
+	VD_rest = mu.inverseReferenceUnitConvert_value( sT_value[2], self.v2DataSurvey_fields.TVD.unit )
 
-	EW = self.s2DataSurvey_fields.EW[index] + EW_rest
-	NS = self.s2DataSurvey_fields.NS[index] + NS_rest
-	VD = self.s2DataSurvey_fields.TVD[index] + VD_rest
+	EW = self.v2DataSurvey_fields.EW[index] + EW_rest
+	NS = self.v2DataSurvey_fields.NS[index] + NS_rest
+	VD = self.v2DataSurvey_fields.TVD[index] + VD_rest
+
+	EW = mu.physicalValue( EW, self.v2DataSurvey_fields.EW.unit  )
+	NS = mu.physicalValue( NS, self.v2DataSurvey_fields.NS.unit  )
+	VD = mu.physicalValue( VD, self.v2DataSurvey_fields.TVD.unit )
 
 	return EW,NS,VD,index
 
@@ -766,11 +867,11 @@ def get_ASCT_from_MD(self, MD, unit=None):
 	self must to point to Main_InputWindow
 	"""
 	if unit:
-		MD = mu.unitConvert_value( MD, unit, self.s2DataSurvey_fields.MD.unit )
+		MD = mu.unitConvert_value( MD, unit, self.v2ASCComplements_fields.MD.unit )
 	else:
-		MD = mu.unitConvert_value( MD, MD.unit, self.s2DataSurvey_fields.MD.unit )
+		MD = mu.unitConvert_value( MD, MD.unit, self.v2ASCComplements_fields.MD.unit )
 
-	MD_array = np.array( self.s2DataSurvey_fields.MD )
+	MD_array = np.array( self.v2DataSurvey_fields.MD )
 	try:
 		index = np.where(MD_array[:-1]<=MD)[0][-1]
 	except IndexError:
@@ -782,16 +883,51 @@ def get_ASCT_from_MD(self, MD, unit=None):
 	return T_value
 
 
+def get_ASCIncAzi_from_MD(self, MD, unit=None, referenceUnit=False):
+	"""
+	self must to point to Main_InputWindow
+	"""
+	if unit:
+		tangentVector = get_ASCT_from_MD(self, MD, unit)
+	else:
+		tangentVector = get_ASCT_from_MD(self, MD)
+
+	verticalVector = np.array([0.0,0.0,1.0,0.0])
+	if np.allclose( tangentVector, verticalVector, atol=1e-2, rtol=0.0 ):
+		tangentVector = verticalVector
+	inc = np.arccos( tangentVector[2] )
+
+	if inc==0.0:
+		azi = 0.0
+	else:
+		sinazi = tangentVector[0]/np.sin(inc)
+		cosazi = tangentVector[1]/np.sin(inc)
+
+		if sinazi>=0:
+			azi = np.arccos( cosazi )
+		elif sinazi<0:
+			azi = 2*np.pi-np.arccos( cosazi )
+
+	if referenceUnit:
+		inc = mu.physicalValue( inc, self.v2ASCComplements_fields.Inc.referenceUnit )
+		azi = mu.physicalValue( azi, self.v2ASCComplements_fields.Azi.referenceUnit )
+	else:
+		inc = mu.inverseReferenceUnitConvert_value( inc, self.v2ASCComplements_fields.Inc.unit  )
+		azi = mu.inverseReferenceUnitConvert_value( azi, self.v2ASCComplements_fields.Azi.unit  )
+
+	return inc,azi
+
+
 def get_ASCDogleg_from_MD(self, MD, unit=None):
 	"""
 	self must to point to Main_InputWindow
 	"""
 	if unit:
-		MD = mu.unitConvert_value( MD, unit, self.s2DataSurvey_fields.MD.unit )
+		MD = mu.unitConvert_value( MD, unit, self.v2ASCComplements_fields.MD.unit )
 	else:
-		MD = mu.unitConvert_value( MD, MD.unit, self.s2DataSurvey_fields.MD.unit )
+		MD = mu.unitConvert_value( MD, MD.unit, self.v2ASCComplements_fields.MD.unit )
 
-	MD_array = np.array( self.s2DataSurvey_fields.MD )
+	MD_array = np.array( self.v2DataSurvey_fields.MD )
 	try:
 		index = np.where(MD_array[:-1]<=MD)[0][-1]
 	except IndexError:
@@ -800,11 +936,133 @@ def get_ASCDogleg_from_MD(self, MD, unit=None):
 
 	MD = mu.referenceUnitConvert_value( MD, MD.unit )
 	DL = la.norm( self.dT( index, MD )[:-1] )
-	DL = mu.inverseReferenceUnitConvert_value( DL, self.s2DataSurvey_fields.DL.unit  )
+	DL = mu.inverseReferenceUnitConvert_value( DL, self.v2ASCComplements_fields.DL.unit  )
 
 	return DL
 
 
+def get_wellboreID_at_MD(self, MD, unit=None):
+	"""
+	self must to point to Main_InputWindow
+	"""
+	if unit:
+		MD = mu.unitConvert_value( MD, unit, self.v2ASCComplements_fields.MD.unit )
+	else:
+		MD = mu.unitConvert_value( MD, MD.unit, self.v2ASCComplements_fields.MD.unit )
+
+	self.v3WorkWellboreMD
+	self.v3WorkWellboreID
+
+	i = np.where( self.v3WorkWellboreMD<=MD )[0][-1]
+
+	factor = (self.v3WorkWellboreID[i+1]-self.v3WorkWellboreID[i])/(self.v3WorkWellboreMD[i+1]-self.v3WorkWellboreMD[i])
+	ID = factor*(MD-self.v3WorkWellboreMD[i]) + self.v3WorkWellboreID[i]
+	ID = mu.physicalValue( ID, self.v3WellboreOuterStages_fields.ID.unit )
+
+	return ID
+
+
+def get_outerStage_at_MD(self, MD, unit=None):
+	"""
+	self must to point to Main_InputWindow
+	"""
+	if unit:
+		MD = mu.unitConvert_value( MD, unit, self.v2ASCComplements_fields.MD.unit )
+	else:
+		MD = mu.unitConvert_value( MD, MD.unit, self.v2ASCComplements_fields.MD.unit )
+
+	for stage in self.v3WellboreOuterStageData.values():
+
+		if MD>=stage['WellboreProps'].MDtop[0] and MD<=stage['WellboreProps'].MDbot[0]:
+			return stage
+
+	raise( mu.LogicalError )
+
+
+def get_innerStage_at_MD(self, MD, unit=None):
+	"""
+	self must to point to Main_InputWindow
+	"""
+	if unit:
+		MD = mu.unitConvert_value( MD, unit, self.v2ASCComplements_fields.MD.unit )
+	else:
+		MD = mu.unitConvert_value( MD, MD.unit, self.v2ASCComplements_fields.MD.unit )
+
+	for stage in self.v3WellboreInnerStageData.values():
+
+		if MD>=stage['MDtop'] and MD<=stage['MDbot']:
+			return stage
+
+	raise( mu.LogicalError )
+
+
+def get_centralizationLocations( self ):
+
+	PL = mu.unitConvert_value( 480, 'in', self.v2ASCComplements_fields.MD.unit )
+	K = get_sortedIndexes_of_wellboreInnerStageData(self)
+
+	min_MD = min( self.v2ASCComplements_fields.MD )
+	max_MD = max( self.v2ASCComplements_fields.MD )
+	joinMDtops = np.arange( min_MD, max_MD, PL )
+
+	for k in K:
+		innerStage = self.v3WellboreInnerStageData[k]
+
+		if not innerStage['Centralization']['Mode']:
+			continue
+		
+		pattern  = innerStage['Centralization']['Pattern']
+		offset   = innerStage['Centralization']['Offset']
+		ensemble = innerStage['Centralization']['Ensemble']['nest']
+
+		assert( ensemble!=[] )
+
+		fields = innerStage['Centralization']['Fields']
+		if self.centralizationChanged_flag:
+			fields = None
+
+		if fields==None:
+			print(k,'reset fields')
+			fields = innerStage['Centralization']['Fields'] = get_Centralization_fields()
+		else:
+			print(k,'pass fields')
+			continue
+
+		indexes = np.where( np.logical_and( joinMDtops>=innerStage['MDtop'], joinMDtops<innerStage['MDbot'] ) )
+		stageMDtops = joinMDtops[indexes]
+
+		indexes = np.arange( len(stageMDtops) )-offset
+		mask = np.logical_and( indexes%pattern==0, indexes>=0 )
+
+		locationIndexes = indexes[mask]+offset
+		locationMDtops  = stageMDtops[mask]
+
+		for i in range(1,len(ensemble)):
+			assert( not any( mask[locationIndexes+i] ) )
+
+		for md in locationMDtops:
+
+			MD = mu.physicalValue( md, self.v2ASCComplements_fields.MD.unit )
+			Inc, Azi = get_ASCIncAzi_from_MD(self, MD)
+			EW,NS,VD,i = get_ASCCoordinates_from_MD(self, MD)
+			DL = get_ASCDogleg_from_MD(self, MD)
+			ID = get_wellboreID_at_MD(self, MD) 
+			outerStage = get_outerStage_at_MD(self, MD)
+			avgID = outerStage['WellboreProps'].ID[0]
+
+			fields.MD.append(MD)
+			fields.Inc.append(Inc)
+			fields.Azi.append(Azi)
+			fields.EW.append(EW)
+			fields.NS.append(NS)
+			fields.TVD.append(VD)
+			fields.DL.append(DL)
+			fields.ID.append(ID)
+			fields.avgID.append(avgID)
+
+
+
+# DEPRECATED
 def get_inclination_and_azimuth_from_locations(self, locations):
 	"""
 	self must to point to Main_InputWindow
@@ -815,15 +1073,17 @@ def get_inclination_and_azimuth_from_locations(self, locations):
 	Inc = []
 	Azi = []
 	for MD in locations:
-		T_values = get_ASCT_from_MD(self, MD)
-		aux = 1.0 if np.isclose(T_values[2],1.0,rtol=1e-3,atol=0) else T_values[2]
-		inc = np.arccos( aux )
+		tangentVector = get_ASCT_from_MD(self, MD)
+		verticalVector = np.array([0.0,0.0,1.0,0.0])
+		if np.allclose( tangentVector, verticalVector, atol=1e-2, rtol=0.0 ):
+			tangentVector = verticalVector
+		inc = np.arccos( tangentVector[2] )
 
 		if inc==0.0:
 			azi = 0.0
 		else:
-			sinazi = T_values[0]/np.sin(inc)
-			cosazi = T_values[1]/np.sin(inc)
+			sinazi = tangentVector[0]/np.sin(inc)
+			cosazi = tangentVector[1]/np.sin(inc)
 
 			if sinazi>=0:
 				azi = np.arccos( cosazi )
@@ -835,7 +1095,7 @@ def get_inclination_and_azimuth_from_locations(self, locations):
 
 	return np.array(Inc), np.array(Azi)
 
-
+# DEPRECATED
 def get_centralizersEnsembleLength(self):
 
 	gap = mu.referenceUnitConvert_value( 2.0, 'm' )
@@ -849,7 +1109,7 @@ def get_centralizersEnsembleLength(self):
 
 	return CEL
 
-
+# DEPRECATED
 def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field, LatC_field):
 
 	locations.referenceUnitConvert()
@@ -1057,7 +1317,7 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 		LatC_field.inverseReferenceUnitConvert()
 	locations.inverseReferenceUnitConvert()
 
-
+# DEPRECATED
 def calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field, Inc_field):
 
 	locations.referenceUnitConvert()
@@ -1163,30 +1423,31 @@ def calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, Clat
 	Inc_field.inverseReferenceUnitConvert()
 
 
+
 def calculate_psiAngle( self, diameter ):
 
-	self.s4Settings_fields.TrV.referenceUnitConvert()
-	self.s4Settings_fields.RoR.referenceUnitConvert()
+	self.v4Settings_fields.TrV.referenceUnitConvert()
+	self.v4Settings_fields.RoR.referenceUnitConvert()
 	radius = mu.referenceUnitConvert_value( diameter/2, diameter.unit )
 
-	Psi = np.arctan( self.s4Settings_fields.TrV[0]/self.s4Settings_fields.RoR[0]/radius )
-	Psi = mu.physicalValue( Psi, self.s4Settings_fields.Psi.referenceUnit )
-	self.s4Settings_fields.Psi.append( Psi )
+	Psi = np.arctan( self.v4Settings_fields.TrV[0]/self.v4Settings_fields.RoR[0]/radius )
+	Psi = mu.physicalValue( Psi, self.v4Settings_fields.Psi.referenceUnit )
+	self.v4Settings_fields.Psi.append( Psi )
 
-	self.s4Settings_fields.TrV.inverseReferenceUnitConvert()
-	self.s4Settings_fields.RoR.inverseReferenceUnitConvert()
+	self.v4Settings_fields.TrV.inverseReferenceUnitConvert()
+	self.v4Settings_fields.RoR.inverseReferenceUnitConvert()
 
 
 def set_stepMD( self ):
 
-	step = self.wellboreInnerStageData[0]['PipeBase'].PL[0]
+	step = self.v3WellboreInnerStageData[0]['PipeBase'].PL[0]
 	step = mu.referenceUnitConvert_value( step*2, step.unit )
-	self.s4Settings_fields.dMD.append( step )
+	self.v4Settings_fields.dMD.append( step )
 
 
 def calculate_TDS_for_uncentralizedStage(self, stage, FT1=None, MDLims=None, centralizedStage=False ):
 
-	TDS_fields = self.s4TorqueDragSideforce_fields
+	TDS_fields = self.v4TorqueDragSideforce_fields
 
 	PD = stage['PipeProps'].OD[0]
 	Pd = stage['PipeProps'].ID[0]
@@ -1212,12 +1473,12 @@ def calculate_TDS_for_uncentralizedStage(self, stage, FT1=None, MDLims=None, cen
 		stageTopMD = MDLims[0]
 
 	if FT1==None:
-		self.s4Settings_fields.WOB.referenceUnitConvert()
-		self.s4Settings_fields.TOB.referenceUnitConvert()
-		self.s4Settings_fields.TAW.referenceUnitConvert()
+		self.v4Settings_fields.WOB.referenceUnitConvert()
+		self.v4Settings_fields.TOB.referenceUnitConvert()
+		self.v4Settings_fields.TAW.referenceUnitConvert()
 
-		F1 = -self.s4Settings_fields.WOB[0] -self.s4Settings_fields.TAW[0]
-		T1 = self.s4Settings_fields.TOB[0]
+		F1 = -self.v4Settings_fields.WOB[0] -self.v4Settings_fields.TAW[0]
+		T1 = self.v4Settings_fields.TOB[0]
 		Fu = [F1]
 		Fs = [F1]
 		Fd = [F1]
@@ -1225,9 +1486,9 @@ def calculate_TDS_for_uncentralizedStage(self, stage, FT1=None, MDLims=None, cen
 		Ts = [T1]
 		Td = [T1]
 
-		self.s4Settings_fields.WOB.inverseReferenceUnitConvert()
-		self.s4Settings_fields.TOB.inverseReferenceUnitConvert()
-		self.s4Settings_fields.TAW.inverseReferenceUnitConvert()
+		self.v4Settings_fields.WOB.inverseReferenceUnitConvert()
+		self.v4Settings_fields.TOB.inverseReferenceUnitConvert()
+		self.v4Settings_fields.TAW.inverseReferenceUnitConvert()
 	else:
 		Fu = [FT1['Fu']]
 		Fs = [FT1['Fs']]
@@ -1242,7 +1503,7 @@ def calculate_TDS_for_uncentralizedStage(self, stage, FT1=None, MDLims=None, cen
 													stage['PipeProps'].FFReduction[0].unit )
 	ff = ff*(1-ffReduction)
 
-	n = np.ceil( (stageBottomMD-stageTopMD)/self.s4Settings_fields.dMD[0] )
+	n = np.ceil( (stageBottomMD-stageTopMD)/self.v4Settings_fields.dMD[0] )
 	MD = np.linspace( stageTopMD, stageBottomMD, n+1 )
 	MD = list(MD)
 	L = MD[1]-MD[0]
@@ -1255,8 +1516,8 @@ def calculate_TDS_for_uncentralizedStage(self, stage, FT1=None, MDLims=None, cen
 
 	dlThreshold = 1.5/180*np.pi
 	floatedW = buoyancyFactor*L*PW
-	sinPsi = np.sin(self.s4Settings_fields.Psi[0])
-	cosPsi = np.cos(self.s4Settings_fields.Psi[0])
+	sinPsi = np.sin(self.v4Settings_fields.Psi[0])
+	cosPsi = np.cos(self.v4Settings_fields.Psi[0])
 	r = PD/2
 
 	i = 1
@@ -1348,12 +1609,12 @@ def calculate_TDS_for_centralizedStage(self, stage ):
 	stageBottomMD = mu.referenceUnitConvert_value( stage['MD'], stage['MD'].unit )
 	stageTopMD = stageBottomMD - mu.referenceUnitConvert_value( stage['Length'], stage['Length'].unit )
 
-	self.s4Settings_fields.WOB.referenceUnitConvert()
-	self.s4Settings_fields.TOB.referenceUnitConvert()
-	self.s4Settings_fields.TAW.referenceUnitConvert()
+	self.v4Settings_fields.WOB.referenceUnitConvert()
+	self.v4Settings_fields.TOB.referenceUnitConvert()
+	self.v4Settings_fields.TAW.referenceUnitConvert()
 
-	F1 = -self.s4Settings_fields.WOB[0] -self.s4Settings_fields.TAW[0]
-	T1 = self.s4Settings_fields.TOB[0]
+	F1 = -self.v4Settings_fields.WOB[0] -self.v4Settings_fields.TAW[0]
+	T1 = self.v4Settings_fields.TOB[0]
 	FT1 = {	'Fu':F1,
 			'Fs':F1,
 			'Fd':F1,
@@ -1361,9 +1622,9 @@ def calculate_TDS_for_centralizedStage(self, stage ):
 			'Ts':T1,
 			'Td':T1	 }
 
-	self.s4Settings_fields.WOB.inverseReferenceUnitConvert()
-	self.s4Settings_fields.TOB.inverseReferenceUnitConvert()
-	self.s4Settings_fields.TAW.inverseReferenceUnitConvert()
+	self.v4Settings_fields.WOB.inverseReferenceUnitConvert()
+	self.v4Settings_fields.TOB.inverseReferenceUnitConvert()
+	self.v4Settings_fields.TAW.inverseReferenceUnitConvert()
 	
 	SF = [0]
 
@@ -1372,21 +1633,21 @@ def calculate_TDS_for_centralizedStage(self, stage ):
 													stage['PipeProps'].FFReduction[0].unit )
 	ff = ff*(1-ffReduction)
 
-	sinPsi = np.sin(self.s4Settings_fields.Psi[0])
-	cosPsi = np.cos(self.s4Settings_fields.Psi[0])
+	sinPsi = np.sin(self.v4Settings_fields.Psi[0])
+	cosPsi = np.cos(self.v4Settings_fields.Psi[0])
 	r = PD/2
 
-	MD = copy.deepcopy( stage['Centralization']['Fields'].MD )
-	Inc = copy.deepcopy( stage['Centralization']['Fields'].Inc )
-	L  = copy.deepcopy( stage['Centralization']['Fields'].LatC )
-	SO = copy.deepcopy( stage['Centralization']['Fields'].SOatM )
+	MD = copy.deepcopy( stage['Centralization']['mu.Fields'].MD )
+	Inc = copy.deepcopy( stage['Centralization']['mu.Fields'].Inc )
+	L  = copy.deepcopy( stage['Centralization']['mu.Fields'].LatC )
+	SO = copy.deepcopy( stage['Centralization']['mu.Fields'].SOatM )
 	MD.referenceUnitConvert()
 	Inc.referenceUnitConvert()
 	L.referenceUnitConvert()
 	SO.referenceUnitConvert()
 	numofC = len(MD)
 
-	TDS_fields = self.s4TorqueDragSideforce_fields
+	TDS_fields = self.v4TorqueDragSideforce_fields
 
 	MDLims = ( MD[-1], stageBottomMD )
 	calculate_TDS_for_uncentralizedStage(self, stage, FT1=FT1, MDLims=MDLims, centralizedStage=True )
@@ -1452,15 +1713,50 @@ def calculate_TDS_for_centralizedStage(self, stage ):
 
 def get_sortedIndexes_of_wellboreOuterStageData(self):
 
-	stages = list(self.wellboreOuterStageData.values())
-	print('s:',stages)
+	stages = list(self.v3WellboreOuterStageData.values())
 	mapfunction = lambda stage: stage['WellboreProps'].MDtop[0]
 	MDtops = list(map( mapfunction, stages ))
-	print('m:',MDtops)
 	sortedIndexes = np.argsort( MDtops )
-	print('i:',sortedIndexes)
 
 	return sortedIndexes
+
+
+def get_sortedIndexes_of_wellboreInnerStageData(self):
+
+	stages = list(self.v3WellboreInnerStageData.values())
+	mapfunction = lambda stage: stage['MDtop']
+	MDtops = list(map( mapfunction, stages ))
+	sortedIndexes = np.argsort( MDtops )
+
+	return sortedIndexes
+
+
+def setup_ensembles_fromConfiguration( self ):
+
+	def translate(label):
+		if label=='Bow Spring':
+			return 'b'
+		elif label=='Rigid':
+			return 'r'
+		else:
+			return None
+
+	for stage in self.v3WellboreInnerStageData.values():
+
+		if stage['Centralization']['Mode']:
+			
+			ensemble = [	stage['Centralization']['A']['Type'],
+							stage['Centralization']['B']['Type'],
+							stage['Centralization']['C']['Type']	]
+
+			ensembleTuple = ( 	translate(ensemble[0]),
+								translate(ensemble[1]),
+								translate(ensemble[2])	)
+
+			stage['Centralization']['Ensemble'] = mu.configurations[ensembleTuple]
+
+		else:
+			stage['Centralization']['Ensemble'] = {'nest':[],'label':'=\n|\n|\n|\n=','PLfactor':0}
 
 
 
@@ -1473,12 +1769,15 @@ class WellboreInnerStageDataItem( dict ):
 		self['row'] = row
 		self['MDtop'] = None
 		self['MDbot'] = None
+		self['Desc']  = None
 		self['PipeBase'] = None
 		self['Centralization'] = {	'A':{'CentralizerBase':None},
 									'B':{'CentralizerBase':None},
 									'C':{'CentralizerBase':None},
+									'Fields':None,
 									'Pattern':None,
-									'Fields':None	}
+									'Offset':None,
+									'Ensemble':None	}
 		self.setup()
 
 	def setup(self):
@@ -1486,8 +1785,10 @@ class WellboreInnerStageDataItem( dict ):
 		CentralizerA = self['Centralization']['A']['CentralizerBase']
 		CentralizerB = self['Centralization']['B']['CentralizerBase']
 		CentralizerC = self['Centralization']['C']['CentralizerBase']
-		CentralizationFields  = self['Centralization']['Fields']
-		CentralizationPattern = self['Centralization']['Pattern']
+		CentralizationFields   = self['Centralization']['Fields']
+		CentralizationPattern  = self['Centralization']['Pattern']
+		CentralizationOffset   = self['Centralization']['Offset']
+		CentralizationEnsemble = self['Centralization']['Ensemble']
 
 		self['PipeProps'] = None 
 		self['Centralization'] = {	'Mode':False,
@@ -1503,8 +1804,10 @@ class WellboreInnerStageDataItem( dict ):
 											'CentralizerBase':CentralizerC,
 											'CentralizerProps':None,
 											'RunningForce':None},
+									'Fields':CentralizationFields,
 									'Pattern':CentralizationPattern,
-									'Fields':CentralizationFields}
+									'Offset':CentralizationOffset,
+									'Ensemble':CentralizationEnsemble}
 
 
 class WellboreOuterStageDataItem( dict ):

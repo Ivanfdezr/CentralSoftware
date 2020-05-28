@@ -4,9 +4,28 @@ import re
 import copy
 import dbUtils
 import matplotlib.tri as mpltri
+import sys, inspect
 
 
 gravitationalAcceleration = 32.17405*12 #in/s²
+configurations = {	('b', None,None): {'nest':[['A']],'label':'=\n|\nA\n|\n=','PLfactor':0.05},
+					('r', None,None): {'nest':[['A']],'label':'=\n/\nA\n/\n=','PLfactor':1},
+					('b', 'b', None): {'nest':[['A','B']],'label':'=\nA\n|\nB\n=','PLfactor':1},
+					('b', 'r', None): {'nest':[['A'],['B']],'label':'=\n|\nA\n|\n=\n/\nB\n/\n=','PLfactor':1.5},
+					('r', 'b', None): {'nest':[['A'],['B']],'label':'=\n/\nA\n/\n=\n|\nB\n|\n=','PLfactor':1.5},
+					('r', 'r', None): {'nest':[['A'],['B']],'label':'=\n/\nA\n/\n=\n/\nB\n/\n=','PLfactor':2},
+					('b', None,'b' ): {'nest':[['A'],[],['C']],'label':'=\n|\nA\n|\n=\n|\n|\n|\n=\n|\nC\n|\n=','PLfactor':2},
+					('b', None,'r' ): {'nest':[['A'],[],['C']],'label':'=\n|\nA\n|\n=\n|\n|\n|\n=\n/\nC\n/\n=','PLfactor':2.5},
+					('r', None,'b' ): {'nest':[['A'],[],['C']],'label':'=\n/\nA\n/\n=\n|\n|\n|\n=\n|\nC\n|\n=','PLfactor':2.5},
+					('r', None,'r' ): {'nest':[['A'],[],['C']],'label':'=\n/\nA\n/\n=\n|\n|\n|\n=\n/\nC\n/\n=','PLfactor':3},
+					('b', 'b', 'b' ): {'nest':[['A','B','C']],'label':'=\nA\nB\nC\n=','PLfactor':1},
+					('b', 'b', 'r' ): {'nest':[['A','B'],['C']],'label':'=\nA\n|\nB\n=\n/\nC\n/\n=','PLfactor':2},
+					('r', 'b', 'b' ): {'nest':[['A'],['B','C']],'label':'=\n/\nA\n/\n=\nB\n|\nC\n=','PLfactor':2},	
+					('b', 'r', 'b' ): {'nest':[['A'],['B'],['C']],'label':'=\n|\nA\n|\n=\n/\nB\n/\n=\n|\nC\n|\n=','PLfactor':2},
+					('b', 'r', 'r' ): {'nest':[['A'],['B'],['C']],'label':'=\n|\nA\n|\n=\n/\nB\n/\n=\n/\nC\n/\n=','PLfactor':2.5},
+					('r', 'r', 'b' ): {'nest':[['A'],['B'],['C']],'label':'=\n/\nA\n/\n=\n/\nB\n/\n=\n|\nC\n|\n=','PLfactor':2.5},
+					('r', 'b', 'r' ): {'nest':[['A'],['B'],['C']],'label':'=\n/\nA\n/\n=\n|\nB\n|\n=\n/\nC\n/\n=','PLfactor':3},
+					('r', 'r', 'r' ): {'nest':[['A'],['B'],['C']],'label':'=\n/\nA\n/\n=\n/\nB\n/\n=\n/\nC\n/\n=','PLfactor':3}	}
 
 
 def __repr__(self):
@@ -274,7 +293,7 @@ def physicalValue(value, unit):
 	elif isinstance(value, type(None)):
 		entry = __str__('')
 	entry.unit = unit
-	entry.repr = lambda: str(entry._repr_)+' '+entry._repr_.unit
+	#entry.repr = lambda: str(entry._repr_)+' '+entry._repr_.unit
 	
 	return entry
 
@@ -475,7 +494,22 @@ class Field( list ):
 			value = self.dataType(newValue)
 			value = physicalValue(value, unit)
 			value._repr_ = newValue
-		self[pos] = value
+		try:
+			self[pos] = value
+		except IndexError:
+			super().append(value)
+
+
+	def insert(self, pos, newValue):
+		if isNoneEntry(newValue) or newValue==None:
+			value = physicalValue(None, self.unit)
+			value._repr_ = physicalValue(None, self.unit)
+		else:
+			unit = newValue.unit
+			value = self.dataType(newValue)
+			value = physicalValue(value, unit)
+			value._repr_ = newValue
+		super().insert(pos, value)
 
 
 	def referenceUnitConvert(self):

@@ -118,8 +118,8 @@ def get_ssCentralizerLocations_fields():
 
 def get_LASMDandCALID_intoInterval(self):
 
-	MD = self.parent.workWellboreMD
-	ID = self.parent.workWellboreID
+	MD = self.parent.v3WorkWellboreMD
+	ID = self.parent.v3WorkWellboreID
 
 	try:
 		min_index = np.where(MD<=self.min_MD)[0][-1]

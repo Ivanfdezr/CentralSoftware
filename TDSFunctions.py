@@ -6,13 +6,13 @@ import MdlUtilities as mu
 
 def calculateAndDraw_torque_drag_sideforce(self):
 
-	print( '!!!',self.s4Settings_fields )
+	print( '!!!',self.v4Settings_fields )
 
 	calculate_inclination_torque_drag_sideforce( self )
 
-	TDS_fields = self.s4TorqueDragSideforce_fields
+	TDS_fields = self.v4TorqueDragSideforce_fields
 
-	for field in self.s4TorqueDragSideforce_fields[:9]:
+	for field in self.v4TorqueDragSideforce_fields[:9]:
 		for row,value in enumerate(field):
 			item = self.s4TorqueDragSideforce_tableWidget.item( row, field.pos )
 			item.set_text( value, value.unit )
@@ -59,21 +59,21 @@ def calculateAndDraw_torque_drag_sideforce(self):
 	self.s4Sideforce_graphicsView.axes.plot( TDS_fields.uncSideF, TDS_fields.uncMD, 'C0--', lw=2 ) 
 	self.s4Sideforce_graphicsView.draw()
 
-	for field in self.s4TorqueDragSideforce_fields:
+	for field in self.v4TorqueDragSideforce_fields:
 		print(field.headerName, len(field), field)
 
 
 def calculate_inclination_torque_drag_sideforce( self ):
 	
-	self.s4TorqueDragSideforce_fields.clear_content()
-	self.s4Settings_fields.Psi.clear()
-	self.s4Settings_fields.dMD.clear()
+	self.v4TorqueDragSideforce_fields.clear_content()
+	self.v4Settings_fields.Psi.clear()
+	self.v4Settings_fields.dMD.clear()
 
-	#for field in self.s4Settings_fields[:5]:
+	#for field in self.v4Settings_fields[:5]:
 	#	value = self.s4Settings_tableWidget.item(field.pos,0).realValue
 	#	field.append( value )
 
-	K = list(self.wellboreInnerStageData.keys())
+	K = list(self.v3WellboreInnerStageData.keys())
 	if K==[]:
 		msg = "Any inner wellbore stage completed. Can not proceed."
 		QtGui.QMessageBox.critical(self.s4TorqueDragSideforce_tableWidget, 'Error', msg)
@@ -81,10 +81,10 @@ def calculate_inclination_torque_drag_sideforce( self ):
 	K.sort()
 	K.reverse()
 
-	set_initial_TDSConditions_to_fields( self, self.wellboreInnerStageData[K[0]]['PipeProps'].OD[0] )
+	set_initial_TDSConditions_to_fields( self, self.v3WellboreInnerStageData[K[0]]['PipeProps'].OD[0] )
 
 	for k in K:
-		stage = self.wellboreInnerStageData[k]
+		stage = self.v3WellboreInnerStageData[k]
 		
 		if stage['Centralization']['Fields']==None or len(stage['Centralization']['Fields'].MD)==0:
 			mdl.calculate_TDS_for_uncentralizedStage(self, stage)
@@ -92,35 +92,35 @@ def calculate_inclination_torque_drag_sideforce( self ):
 			mdl.calculate_TDS_for_centralizedStage(self, stage)
 			mdl.calculate_TDS_for_uncentralizedStage(self, stage)
 
-	self.s4TorqueDragSideforce_fields.inverseReferenceUnitConvert_fields()
+	self.v4TorqueDragSideforce_fields.inverseReferenceUnitConvert_fields()
 
 
 def set_initial_TDSConditions_to_fields(self, diameter):
 
 	# Verify WOB, TOB, TAW if they are not filled set 0
 	
-	if self.s4Settings_fields.WOB==[]:
-		mu.create_physicalValue_and_appendTo_field( 0, self.s4Settings_fields.WOB )
-	#self.s4Settings_fields.WOB.referenceUnitConvert()
+	if self.v4Settings_fields.WOB==[]:
+		mu.create_physicalValue_and_appendTo_field( 0, self.v4Settings_fields.WOB )
+	#self.v4Settings_fields.WOB.referenceUnitConvert()
 
-	if self.s4Settings_fields.TOB==[]:
-		mu.create_physicalValue_and_appendTo_field( 0, self.s4Settings_fields.TOB )
-	#self.s4Settings_fields.TOB.referenceUnitConvert()
+	if self.v4Settings_fields.TOB==[]:
+		mu.create_physicalValue_and_appendTo_field( 0, self.v4Settings_fields.TOB )
+	#self.v4Settings_fields.TOB.referenceUnitConvert()
 
-	if self.s4Settings_fields.TAW==[]:
-		mu.create_physicalValue_and_appendTo_field( 0, self.s4Settings_fields.TAW )
-	#self.s4Settings_fields.TAW.referenceUnitConvert()
+	if self.v4Settings_fields.TAW==[]:
+		mu.create_physicalValue_and_appendTo_field( 0, self.v4Settings_fields.TAW )
+	#self.v4Settings_fields.TAW.referenceUnitConvert()
 
-	if self.s4Settings_fields.TrV==[]:
-		mu.create_physicalValue_and_appendTo_field( 0, self.s4Settings_fields.TrV )
-	#self.s4Settings_fields.TrV.referenceUnitConvert()
+	if self.v4Settings_fields.TrV==[]:
+		mu.create_physicalValue_and_appendTo_field( 0, self.v4Settings_fields.TrV )
+	#self.v4Settings_fields.TrV.referenceUnitConvert()
 
-	if self.s4Settings_fields.RoR==[]:
-		mu.create_physicalValue_and_appendTo_field( 1e-6, self.s4Settings_fields.RoR )
-	elif self.s4Settings_fields.RoR[0]==0.0:
-		del self.s4Settings_fields.RoR[0]
-		mu.create_physicalValue_and_appendTo_field( 1e-6, self.s4Settings_fields.RoR )
-	#self.s4Settings_fields.RoR.referenceUnitConvert()
+	if self.v4Settings_fields.RoR==[]:
+		mu.create_physicalValue_and_appendTo_field( 1e-6, self.v4Settings_fields.RoR )
+	elif self.v4Settings_fields.RoR[0]==0.0:
+		del self.v4Settings_fields.RoR[0]
+		mu.create_physicalValue_and_appendTo_field( 1e-6, self.v4Settings_fields.RoR )
+	#self.v4Settings_fields.RoR.referenceUnitConvert()
 
 	mdl.calculate_psiAngle( self, diameter )
 	mdl.set_stepMD( self )

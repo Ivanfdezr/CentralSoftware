@@ -1,18 +1,229 @@
 -	Reset-plot button for charts.
--!	Save/Open functionality (very important)
+-x	Save/Open functionality (very important)
 -!	Installation stuffs / DB installation (very important)
--	@ABC: dont accept B or C without A
+-x	@ABC: dont accept B or C without A
 -	Centralizer CID instead PID @OSA
 -	Manage frictions
--	Modification of ABC ensemble length considerations
+-x	Modification of ABC ensemble length considerations
 -	All centralization stages together.
 -	T&D check
 -	Include Sideforces @LS and SS
--	Remove BS from import caliper
--	Insert stage numeration in pipe properties or label
+-x	Remove BS from import caliper
+-x	Insert stage numeration in pipe properties or label
+-	Check if sorting by row is congruent at stages.
 
 
-
-
-
-
+=========================================================
+<class 'PyQt4.QtGui.QTabWidget'> ABC_tabWidget
+<class 'PyQt4.QtGui.QTabWidget'> Menu
+<class 'PyQt4.QtGui.QLabel'> SO_label
+<class 'function'> T
+<class 'method'> _Main_InputWindow__init__s1Info_tableWidget
+<class 'method'> _Main_InputWindow__init__s2DataSurvey_tableWidget
+<class 'method'> _Main_InputWindow__init__s2KOP_tableWidget
+<class 'method'> _Main_InputWindow__init__s2SurveyTortuosity_tableWidget
+<class 'method'> _Main_InputWindow__init__s2TortuosityInterval_tableWidget
+<class 'method'> _Main_InputWindow__init__s3CentralizerLocation_tableWidgets
+<class 'method'> _Main_InputWindow__init__s3CentralizerProperties_tableWidgets
+<class 'method'> _Main_InputWindow__init__s3CentralizerRunningForce_tableWidgets
+<class 'method'> _Main_InputWindow__init__s3CentralizerSpacing_tableWidget
+<class 'method'> _Main_InputWindow__init__s3PipeProperties_tableWidget
+<class 'method'> _Main_InputWindow__init__s3WellboreInnerStages_tableWidget
+<class 'method'> _Main_InputWindow__init__s3WellboreOuterStages_tableWidget
+<class 'method'> _Main_InputWindow__init__s4Settings_tableWidget
+<class 'method'> _Main_InputWindow__init__s4TorqueDragSideforce_tableWidget
+<class 'bool'> _PipeCentralizationStageAdjusting_isEnabled
+<class 'type'> __class__
+<class 'method-wrapper'> __delattr__
+<class 'dict'> __dict__
+<class 'builtin_function_or_method'> __dir__
+<class 'NoneType'> __doc__
+<class 'method-wrapper'> __eq__
+<class 'builtin_function_or_method'> __format__
+<class 'method-wrapper'> __ge__
+<class 'method-wrapper'> __getattribute__
+<class 'method-wrapper'> __gt__
+<class 'method-wrapper'> __hash__
+<class 'method'> __init__
+<class 'builtin_function_or_method'> __init_subclass__
+<class 'method-wrapper'> __le__
+<class 'method-wrapper'> __lt__
+<class 'str'> __module__
+<class 'method-wrapper'> __ne__
+<class 'builtin_function_or_method'> __new__
+<class 'builtin_function_or_method'> __reduce__
+<class 'builtin_function_or_method'> __reduce_ex__
+<class 'method-wrapper'> __repr__
+<class 'method-wrapper'> __setattr__
+<class 'builtin_function_or_method'> __sizeof__
+<class 'method-wrapper'> __str__
+<class 'builtin_function_or_method'> __subclasshook__
+<class 'weakref'> __weakref__
+<class 'method'> about
+<class 'PyQt4.QtGui.QAction'> actionAbbreviation
+<class 'PyQt4.QtGui.QAction'> actionAbout
+<class 'PyQt4.QtGui.QAction'> actionCalculator
+<class 'PyQt4.QtGui.QAction'> actionCopy_Selection
+<class 'PyQt4.QtGui.QAction'> actionDisclaimer
+<class 'PyQt4.QtGui.QAction'> actionExit
+<class 'PyQt4.QtGui.QAction'> actionNew
+<class 'PyQt4.QtGui.QAction'> actionNotepad
+<class 'PyQt4.QtGui.QAction'> actionOne_Span_Analysis
+<class 'PyQt4.QtGui.QAction'> actionOpen
+<class 'PyQt4.QtGui.QAction'> actionPaste
+<class 'PyQt4.QtGui.QAction'> actionPrint
+<class 'PyQt4.QtGui.QAction'> actionPrint_2
+<class 'PyQt4.QtGui.QAction'> actionSave
+<class 'PyQt4.QtGui.QAction'> actionSave_As
+<class 'PyQt4.QtGui.QAction'> actionStar_Calculation
+<class 'PyQt4.QtGui.QAction'> actionUnit_Conversion
+<class 'PyQt4.QtGui.QAction'> actionUnit_Setting
+<class 'PyQt4.QtGui.QWidget'> centralwidget
+<class 'InputWindow_Mdl.WellboreInnerStageDataItem'> currentWellboreInnerStageDataItem
+<class 'InputWindow_Mdl.WellboreOuterStageDataItem'> currentWellboreOuterStageDataItem
+<class 'function'> dT
+<class 'PyQt4.QtGui.QFrame'> frame
+<class 'PyQt4.QtGui.QGroupBox'> groupBox
+<class 'PyQt4.QtGui.QGroupBox'> groupBox_2
+<class 'PyQt4.QtGui.QGroupBox'> groupBox_4
+<class 'PyQt4.QtGui.QGroupBox'> groupBox_5
+<class 'PyQt4.QtGui.QGroupBox'> groupBox_7
+<class 'PyQt4.QtGui.QToolBar'> iw_toolBar
+<class 'PyQt4.QtGui.QLabel'> label
+<class 'method'> load_fields_to_hTableWidget
+<class 'method'> load_fields_to_vTableWidget
+<class 'method'> load_file
+<class 'method'> load_wellboreInnerStages_tableWidget
+<class 'method'> load_wellboreOuterStages_tableWidget
+<class 'PyQt4.QtGui.QLabel'> msg_label
+<class 'method'> open_oneSpanAnalysisDialog
+<class 'method'> open_outputWindow
+<class 'method'> open_selectWorkingDirectoryDialog
+<class 'method'> open_unitSettingsDialog
+<class 'method'> retranslateUi
+<class 'PyQt4.QtGui.QRadioButton'> s1Customized_radioButton
+<class 'PyQt4.QtGui.QTableWidget'> s1Info_tableWidget
+<class 'PyQt4.QtGui.QRadioButton'> s1Metric_radioButton
+<class 'PyQt4.QtGui.QPushButton'> s1SelectDirectory_pushButton
+<class 'PyQt4.QtGui.QRadioButton'> s1USOF_radioButton
+<class 'PyQt4.QtGui.QPushButton'> s1UnitSetting_pushButton
+<class 'PyQt4.QtGui.QPushButton'> s2Calculate_pushButton
+<class 'PyQt4.QtGui.QTableWidget'> s2DataSurvey_tableWidget
+<class 'matplotlibwidget.MatplotlibWidget'> s2Dogleg_graphicsView
+<class 'PyQt4.QtGui.QPushButton'> s2Import_pushButton
+<class 'PyQt4.QtGui.QTableWidget'> s2KOP_tableWidget
+<class 'matplotlibwidget.MatplotlibWidget'> s2PlanView_graphicsView
+<class 'PyQt4.QtGui.QPushButton'> s2Remove_pushButton
+<class 'matplotlibwidget.MatplotlibWidget'> s2SectionView_graphicsView
+<class 'PyQt4.QtGui.QCheckBox'> s2SurveyTortuosity_checkBox
+<class 'PyQt4.QtGui.QGroupBox'> s2SurveyTortuosity_groupBox
+<class 'PyQt4.QtGui.QTableWidget'> s2SurveyTortuosity_tableWidget
+<class 'PyQt4.QtGui.QTableWidget'> s2TortuosityInterval_tableWidget
+<class 'matplotlibwidget.Matplotlib3DWidget'> s2TriDView_graphicsView
+<class 'PyQt4.QtGui.QRadioButton'> s3BowSpringCentralizer_radioButton_A
+<class 'PyQt4.QtGui.QRadioButton'> s3BowSpringCentralizer_radioButton_B
+<class 'PyQt4.QtGui.QRadioButton'> s3BowSpringCentralizer_radioButton_C
+<class 'PyQt4.QtGui.QSpinBox'> s3CentralizationPattern_spinBox
+<class 'PyQt4.QtGui.QPushButton'> s3CentralizerDB_pushButton_A
+<class 'PyQt4.QtGui.QPushButton'> s3CentralizerDB_pushButton_B
+<class 'PyQt4.QtGui.QPushButton'> s3CentralizerDB_pushButton_C
+<class 'PyQt4.QtGui.QTableWidget'> s3CentralizerLocation_tableWidget_A
+<class 'PyQt4.QtGui.QTableWidget'> s3CentralizerLocation_tableWidget_B
+<class 'PyQt4.QtGui.QTableWidget'> s3CentralizerLocation_tableWidget_C
+<class 'PyQt4.QtGui.QTableWidget'> s3CentralizerProperties_tableWidget_A
+<class 'PyQt4.QtGui.QTableWidget'> s3CentralizerProperties_tableWidget_B
+<class 'PyQt4.QtGui.QTableWidget'> s3CentralizerProperties_tableWidget_C
+<class 'PyQt4.QtGui.QTableWidget'> s3CentralizerRunningForce_tableWidget_A
+<class 'PyQt4.QtGui.QTableWidget'> s3CentralizerRunningForce_tableWidget_B
+<class 'PyQt4.QtGui.QTableWidget'> s3CentralizerRunningForce_tableWidget_C
+<class 'PyQt4.QtGui.QCheckBox'> s3EnableCentralization_checkBox
+<class 'PyQt4.QtGui.QTabWidget'> s3InnerStageToolkit_tabWidget
+<class 'PyQt4.QtGui.QLabel'> s3Location_label_A
+<class 'PyQt4.QtGui.QLabel'> s3Location_label_B
+<class 'PyQt4.QtGui.QLabel'> s3Location_label_C
+<class 'PyQt4.QtGui.QPushButton'> s3ManageLocations_pushButton
+<class 'PyQt4.QtGui.QRadioButton'> s3NoneCentralizer_radioButton_B
+<class 'PyQt4.QtGui.QRadioButton'> s3NoneCentralizer_radioButton_C
+<class 'PyQt4.QtGui.QPushButton'> s3ODID_pushButton
+<class 'PyQt4.QtGui.QPushButton'> s3ODWt_pushButton
+<class 'PyQt4.QtGui.QTableWidget'> s3PipeProperties_tableWidget
+<class 'PyQt4.QtGui.QRadioButton'> s3RigidCentralizer_radioButton_A
+<class 'PyQt4.QtGui.QRadioButton'> s3RigidCentralizer_radioButton_B
+<class 'PyQt4.QtGui.QRadioButton'> s3RigidCentralizer_radioButton_C
+<class 'PyQt4.QtGui.QLabel'> s3StageEnsemble_label
+<class 'PyQt4.QtGui.QLabel'> s3StageNumber_label1
+<class 'PyQt4.QtGui.QLabel'> s3StageNumber_label2
+<class 'PyQt4.QtGui.QPushButton'> s3UpdateInnerStages_pushButton
+<class 'PyQt4.QtGui.QTableWidget'> s3WellboreInnerStages_tableWidget
+<class 'PyQt4.QtGui.QTableWidget'> s3WellboreOuterStages_tableWidget
+<class 'PyQt4.QtGui.QPushButton'> s4Calculate_pushButton
+<class 'matplotlibwidget.MatplotlibWidget'> s4Drag_graphicsView
+<class 'PyQt4.QtGui.QTableWidget'> s4Settings_tableWidget
+<class 'matplotlibwidget.MatplotlibWidget'> s4Sideforce_graphicsView
+<class 'PyQt4.QtGui.QTableWidget'> s4TorqueDragSideforce_tableWidget
+<class 'matplotlibwidget.MatplotlibWidget'> s4Torque_graphicsView
+<class 'function'> sT
+<class 'method'> save_file
+<class 'method'> set_workUnits_as
+<class 'method'> setupUi
+<class 'method'> setup_s2DataSurvey_tableWidget
+<class 'method'> setup_s2KOP_tableWidget
+<class 'method'> setup_s2SurveyTortuosity_tableWidget
+<class 'method'> setup_s2TortuosityInterval_tableWidget
+<class 'method'> setup_s3CentralizerSpacing_tableWidget
+<class 'method'> setup_s3PipeProperties_tableWidget
+<class 'method'> setup_s3WellboreInnerStages_tableWidget
+<class 'method'> setup_s3WellboreOuterStages_tableWidget
+<class 'method'> setup_s4Settings_tableWidget
+<class 'method'> setup_s4TorqueDragSideforce_tableWidget
+<class 'PyQt4.QtGui.QWidget'> tab
+<class 'PyQt4.QtGui.QTabWidget'> tabWidget
+<class 'PyQt4.QtGui.QTabWidget'> tabWidget_2
+<class 'PyQt4.QtGui.QWidget'> tab_10
+<class 'PyQt4.QtGui.QWidget'> tab_11
+<class 'PyQt4.QtGui.QWidget'> tab_12
+<class 'PyQt4.QtGui.QWidget'> tab_13
+<class 'PyQt4.QtGui.QWidget'> tab_14
+<class 'PyQt4.QtGui.QWidget'> tab_2
+<class 'PyQt4.QtGui.QWidget'> tab_3
+<class 'PyQt4.QtGui.QWidget'> tab_4
+<class 'PyQt4.QtGui.QWidget'> tab_5
+<class 'PyQt4.QtGui.QWidget'> tab_6
+<class 'PyQt4.QtGui.QWidget'> tab_7
+<class 'PyQt4.QtGui.QWidget'> tab_8
+<class 'PyQt4.QtGui.QWidget'> tab_9
+<class 'PyQt4.QtGui.QWidget'> tab_A
+<class 'PyQt4.QtGui.QWidget'> tab_B
+<class 'PyQt4.QtGui.QWidget'> tab_C
+<class 'list'> tortuosity_data
+<class 'MdlUtilities.FieldList'> v1Info_fields
+<class 'str'> v1UnitSystem
+<class 'str'> v1WorkingDirectory
+<class 'MdlUtilities.FieldList'> v2ASCComplements
+<class 'MdlUtilities.FieldList'> v2DataSurvey_fields
+<class 'MdlUtilities.FieldList'> v2KOP_fields
+<class 'bool'> v2SurveyTortuosity
+<class 'MdlUtilities.FieldList'> v2SurveyTortuosity_fields
+<class 'MdlUtilities.FieldList'> v2TortuosityInterval_fields
+<class 'MdlUtilities.FieldList'> v3CentralizerLocation_fields_A
+<class 'MdlUtilities.FieldList'> v3CentralizerLocation_fields_B
+<class 'MdlUtilities.FieldList'> v3CentralizerLocation_fields_C
+<class 'MdlUtilities.FieldList'> v3CentralizerProperties_fields_A
+<class 'MdlUtilities.FieldList'> v3CentralizerProperties_fields_B
+<class 'MdlUtilities.FieldList'> v3CentralizerProperties_fields_C
+<class 'MdlUtilities.FieldList'> v3Forces_fields
+<class 'MdlUtilities.FieldList'> v3PipeProperties_fields
+<class 'dict'> v3WellboreInnerStageData
+<class 'MdlUtilities.FieldList'> v3WellboreInnerStages_fields
+<class 'dict'> v3WellboreOuterStageData
+<class 'MdlUtilities.FieldList'> v3WellboreOuterStages_fields
+<class 'numpy.ndarray'> v3WorkWellboreID
+<class 'numpy.ndarray'> v3WorkWellboreMD
+<class 'MdlUtilities.FieldList'> v4Settings_fields
+<class 'MdlUtilities.FieldList'> v4TorqueDragSideforce_fields
+<class 'PyQt4.QtGui.QVBoxLayout'> verticalLayout
+<class 'PyQt4.QtGui.QWidget'> verticalLayoutWidget
+<class 'bool'> wellboreInnerStageDataIsEnabled
+<class 'bool'> wellboreInnerStageDataIsUpdatable
+<class 'bool'> wellboreOuterStageDataIsUpdatable
+=========================================================

@@ -168,9 +168,6 @@ def get_casingDeflectionCurve(self):
 	#kA = ResFA/(DA/2-0.335*(DA-D)) # Con esto se calculan los coeficientes de los resortes ( 0.335=0.67/2 )
 	#kB = ResFB/(DB/2-0.335*(DB-D))
 
-	kA = 2*ResFA/( DA-dA-0.67*(dH-D) )
-	kB = 2*ResFB/( DB-dB-0.67*(dH-D) )
-
 	θ = np.pi*self.osaInclination_slider.sliderPosition()/180
 	I = np.pi/64*(D**4-d**4) # [Ref.3] Momento de inercia diferente a momento de inercia polar.
 	F = 30000 # [Ref.1]
@@ -179,10 +176,23 @@ def get_casingDeflectionCurve(self):
 
 	buoyancyFactor = mdl.calculate_buoyancyFactor( OD=D, ID=d, ρs=ρs, ρe=ρe, ρi=ρi ) # [Ref.2]
 	w *= buoyancyFactor
-
 	fC = w*L*np.sin(θ)/2
-	yA = fC/kA
-	yB = fC/kB
+
+	if mdl.isNoneEntry(ResFA):
+		yA = 0
+		dA = d
+	else:
+		kA = 2*ResFA/( DA-dA-0.67*(dH-D) )
+		yA = fC/kA
+		
+
+	if mdl.isNoneEntry(ResFB):
+		yB = 0
+		dB = d
+	else:
+		kB = 2*ResFB/( DB-dB-0.67*(dH-D) )
+		yB = fC/kB
+		
 
 	R = D/2
 	rH = dH/2

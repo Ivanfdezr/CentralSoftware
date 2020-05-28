@@ -114,7 +114,7 @@ class Main_CaliperInsertion(Ui_CaliperInsertion):
 
 	def clear_all(self):
 
-		self.s2DataSurvey_fields.clear_content()
-		for i in range(self.s2DataSurvey_tableWidget.rowCount()):
-			for field in self.s2DataSurvey_fields:
-				self.s2DataSurvey_tableWidget.item(i, field.pos).set_text()
+		self.csvCal_fields.clear_content()
+		for i in range(self.csvCal_tableWidget.rowCount()):
+			for field in self.csvCal_fields:
+				self.csvCal_tableWidget.item(i, field.pos).set_text()
