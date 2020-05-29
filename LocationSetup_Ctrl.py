@@ -2,7 +2,6 @@ from PyQt4 import QtCore, QtGui
 from LocationSetup_Vst import Ui_LocationSetup
 import LocationSetup_Vst as vst
 import LocationSetup_Mdl as mdl
-import InputWindow_Mdl as mdl2
 import CtrlUtilities as cu
 import PlotUtilities as pu
 import MdlUtilities as mu
@@ -67,11 +66,17 @@ class Main_LocationSetup(Ui_LocationSetup):
 			MDstage,IDstage = mdl.get_LASMDandCALID_intoStage(self, stage)
 			IPODstage = stage['PipeProps'].OD[0]
 
+			"""
 			for factor in factors[1:]:
 				IPOD = IPODstage*factor
 				self.lsCaliperMap_graphicsView.axes.fill_betweenx( MDstage, +IPOD, +IDstage, where=IPOD<IDstage, alpha=0.15, color='C3')
 				self.lsCaliperMap_graphicsView.axes.fill_betweenx( MDstage, -IPOD, -IDstage, where=IPOD<IDstage, alpha=0.15, color='C3')
+			"""
 
+			if stage['Centralization']['Mode']==False:
+				self.lsCaliperMap_graphicsView.axes.fill_betweenx( MDstage, -IDstage, +IDstage, alpha=0.5, color='white')
+
+			self.lsCaliperMap_graphicsView.axes.plot( [ -IDstage, +IDstage], [stage['MDbot'],stage['MDbot']], 'white', lw=0.5 )
 			self.lsCaliperMap_graphicsView.axes.plot( [ -IPODstage, -IPODstage], [MDstage[0],MDstage[-1]], 'C1', lw=2 )
 			self.lsCaliperMap_graphicsView.axes.plot( [ +IPODstage, +IPODstage], [MDstage[0],MDstage[-1]], 'C1', lw=2 )
 
@@ -104,6 +109,9 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.lsSOVisualization_graphicsView.axes.plot( [self.min_SO, self.min_SO], [self.max_MD, self.min_MD], 'C3--', lw=2 )
 		self.lsSOVisualization_graphicsView.axes.plot( [0, 0], [self.max_MD, self.min_MD], 'k-', lw=1, alpha=0.3 )
 		self.lsSOVisualization_graphicsView.axes.plot( [self.max_SO, self.max_SO], [self.max_MD, self.min_MD], 'k-', lw=1, alpha=0.3 ) 
+		for stage in self.parent.v3WellboreInnerStageData.values():
+			self.lsSOVisualization_graphicsView.axes.plot( [0, self.max_SO], [stage['MDbot'], stage['MDbot']], 'k-', lw=0.5, alpha=0.3 )
+
 		#self.lsSOVisualization_graphicsView.draw()
 
 		#-------------------------------------------------
@@ -229,22 +237,17 @@ class Main_LocationSetup(Ui_LocationSetup):
 			EW = self.lsCentralization_fields.EW[r]
 			NS = self.lsCentralization_fields.NS[r]
 			VD = self.lsCentralization_fields.TVD[r]
+			ID = self.lsCentralization_fields.ID[r]
 
-			self.draw_MDlocations(MD, EW, NS, VD, created=False)
+			self.draw_MDlocations(MD, EW, NS, VD, ID, created=False)
 
 
 	def update_calculations(self, indexes=None):
 		
 		locations = self.lsCentralization_fields.MD
 		SOatC_field = self.lsCentralization_fields.SOatC
-		#ClatC_field = self.lsCentralization_fields.ClatC
 		SOatM_field = self.lsCentralization_fields.SOatM
-		#ClatM_field = self.lsCentralization_fields.ClatM
-		#LatC_field = self.lsCentralization_fields.LatC
 		Inc_field = self.lsCentralization_fields.Inc
-
-		#mdl2.calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field, LatC_field)
-		#mdl2.calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, ClatM_field, Inc_field)
 
 		if indexes==None:
 			mdl.calculate_standOff_at_Centralizers(self)
@@ -285,68 +288,11 @@ class Main_LocationSetup(Ui_LocationSetup):
 																						unit=SOatM_field.unit ) )
 		cu.idleFunction()
 
-	"""
-	@cu.waiting_effects
-	def choose_MDlocation(self, MD, overwrite=False):
-
-		if MD>=self.min_MD and MD<=self.max_MD:
-
-			if overwrite:
-				r = self.lsCentralizerLocations_tableWidget.selectedRow
-				if r<len(self.lsCentralization_fields.MD):
-					del self.lsCentralization_fields.MD[r]
-
-			mu.create_physicalValue_and_appendTo_field( MD, self.lsCentralization_fields.MD )
-			MD = self.lsCentralization_fields.MD[-1]
-			self.lsCentralization_fields.MD.sort()
-			self.lsCentralization_fields.EW.clear()
-			self.lsCentralization_fields.NS.clear()
-			self.lsCentralization_fields.TVD.clear()
-			self.lsCentralization_fields.DL.clear()
-			self.lsCentralization_fields.Inc.clear()
-			self.lsCentralization_fields.SOatC.clear()
-			self.lsCentralization_fields.SOatM.clear()
-			self.lsCentralization_fields.ClatC.clear()
-			self.lsCentralization_fields.ClatM.clear()
-			self.lsCentralization_fields.LatC.clear()
-			self.centralizerCount = len(self.lsCentralization_fields.MD)
-
-			for i, MDi in enumerate(self.lsCentralization_fields.MD):
-					
-				EWi,NSi,VDi,_ = mdl2.get_ASCCoordinates_from_MD(self.parent, MDi)
-				DLi = mdl2.get_ASCDogleg_from_MD(self.parent, MDi)
-				
-				#mu.create_physicalValue_and_appendTo_field( EWi, self.lsCentralization_fields.EW )
-				#mu.create_physicalValue_and_appendTo_field( NSi, self.lsCentralization_fields.NS )
-				#mu.create_physicalValue_and_appendTo_field( VDi, self.lsCentralization_fields.TVD )
-				#mu.create_physicalValue_and_appendTo_field( DLi, self.lsCentralization_fields.DL )
-
-				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralization_fields.MD.pos )
-				item.set_text( MDi )
-				if MD==MDi:
-					EW = EWi
-					NS = NSi
-					VD = VDi
-					DL = DLi
-					cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget, i, alltherow=True)
-
-			try:
-				self.update_calculations()
-			except mu.LogicalError:
-				msg = "There is a logical error between centralizer locations and length.\nThe last entered location will be removed."
-				QtGui.QMessageBox.critical(self.ssCentralizerLocations_tableWidget, 'Error', msg)
-				self.lsCentralization_fields.MD.remove(MD)
-				self.lsCentralization_fields.EW.remove(EW)
-				self.lsCentralization_fields.NS.remove(NS)
-				self.lsCentralization_fields.TVD.remove(VD)
-				self.lsCentralization_fields.DL.remove(LD)
-				self.centralizerCount = len(self.lsCentralization_fields.MD)
-				self.update_calculations()
-				return
-			self.draw_MDlocations(MD, EW, NS, VD)
-	"""
 
 	def choose_MDlocation(self, MD, overwrite=False):
+
+		PL = mu.unitConvert_value( 480, 'in', self.lsCentralization_fields.MD.unit )
+		MD = round(MD/PL)*PL
 
 		if MD<self.min_MD or MD>self.max_MD:
 			return
@@ -360,10 +306,22 @@ class Main_LocationSetup(Ui_LocationSetup):
 			gooD = mdl.insert_location_to_CentralizationFields(self, r, MD)
 
 		try:
-			assert( gooD )
-			indexes = mdl.get_indexes_for_shoosing(self, r)
-			self.update_calculations(indexes=indexes)
-			cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget, r, alltherow=True)
+			if gooD:
+				indexes = mdl.get_indexes_for_shoosing(self, r)
+				self.update_calculations(indexes=indexes)
+				cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget, r, alltherow=True)
+				MD = self.lsCentralization_fields.MD[r]
+				EW = self.lsCentralization_fields.EW[r]
+				NS = self.lsCentralization_fields.NS[r]
+				VD = self.lsCentralization_fields.TVD[r]
+				ID = self.lsCentralization_fields.ID[r]
+				self.draw_MDlocations(MD, EW, NS, VD, ID)
+
+			else:
+				msg = "There are not centralizers defined in this region. \nThis action is going to be ignored."
+				QtGui.QMessageBox.critical(self.lsCentralizerLocations_tableWidget, 'Error', msg)
+				return
+
 		except mu.LogicalError:
 			msg = "There is a logical error between centralizer locations and length.\nThe last entered location will be removed."
 			QtGui.QMessageBox.critical(self.lsCentralizerLocations_tableWidget, 'Error', msg)
@@ -383,24 +341,10 @@ class Main_LocationSetup(Ui_LocationSetup):
 			self.lsCentralization_fields.Azi.pop(r)
 			self.lsCentralization_fields.Stage.pop(r)
 			self.centralizerCount = len(self.lsCentralization_fields.MD)
-			self.update_calculations()
 			return
-		except AssertionError:
-			msg = "There are not centralizers defined in this region. \nThis action is going to be ignored."
-			QtGui.QMessageBox.critical(self.lsCentralizerLocations_tableWidget, 'Error', msg)
-			return
-
-		MD = self.lsCentralization_fields.MD[r]
-		EW = self.lsCentralization_fields.EW[r]
-		NS = self.lsCentralization_fields.NS[r]
-		VD = self.lsCentralization_fields.TVD[r]
-		self.draw_MDlocations(MD, EW, NS, VD)	
-
+		
 
 	def remove_location(self):
-
-		#for field in self.lsCentralization_fields:
-		#	print('br:',field.abbreviation,len(field))
 
 		r = self.lsCentralizerLocations_tableWidget.selectedRow
 		self.lsCentralizerLocations_tableWidget.removeRow(r)
@@ -427,12 +371,6 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 			self.centralizerCount-=1
 
-			#self.lsCentralization_fields.SOatC.clear()
-			#self.lsCentralization_fields.SOatM.clear()
-			#self.lsCentralization_fields.ClatC.clear()
-			#self.lsCentralization_fields.ClatM.clear()
-			#self.lsCentralization_fields.LatC.clear()
-
 			s = r-1 if (r>0) else 0
 
 			if self.centralizerCount>0:
@@ -440,17 +378,15 @@ class Main_LocationSetup(Ui_LocationSetup):
 				EW = self.lsCentralization_fields.EW[s]
 				NS = self.lsCentralization_fields.NS[s]
 				VD = self.lsCentralization_fields.TVD[s]
+				ID = self.lsCentralization_fields.ID[s]
 
 				cu.select_tableWidgetRow(self.lsCentralizerLocations_tableWidget,s)
 				indexes = mdl.get_indexes_for_removing(self, r)
 				self.update_calculations(indexes=indexes)
-				self.draw_MDlocations(MD, EW, NS, VD)
+				self.draw_MDlocations(MD, EW, NS, VD, ID)
 
 			else:
 				self.draw_MDlocations()
-
-		#for field in self.lsCentralization_fields:
-		#	print('ar:',field.abbreviation,len(field))
 
 
 	def highlight_MDlocation(self, MD):
@@ -459,26 +395,27 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.select_row( index, 0, alltherow=True )
 
 
-	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None, created=True, initial=False ):
+	def draw_MDlocations(self, MD=None, EW=None, NS=None, VD=None, ID=None, created=True, initial=False ):
 
 		fieldlen = len(self.lsCentralization_fields.MD)
-		print( ':MD', fieldlen )
+		print('MD',fieldlen)
 		for field in self.lsCentralization_fields[1:]:
-			print( field.abbreviation, len(field) )
-			#assert( fieldlen==len(field) )
+			print(field.abbreviation,len(field))
+			assert( fieldlen==len(field) )
+		print('-------------------------------------')
 
 		xlim = self.lsCaliperMap_graphicsView.axes.get_xlim()	
 
 		if MD!=None:
 
-			del self.lsCaliperMap_graphicsView.axes.lines[2*self.numofStages:]
+			del self.lsCaliperMap_graphicsView.axes.lines[3*self.numofStages:]
 			del self.lsWellbore3D_graphicsView.axes.lines[1:]
-			del self.lsSOVisualization_graphicsView.axes.lines[3:]
+			del self.lsSOVisualization_graphicsView.axes.lines[self.numofStages+3:]
 
-			for MDi in self.lsCentralization_fields.MD:
-				self.lsCaliperMap_graphicsView.axes.plot( xlim, [MDi, MDi], color='C3', lw=1 )
+			for MDi,IDi in zip(self.lsCentralization_fields.MD,self.lsCentralization_fields.ID):
+				self.lsCaliperMap_graphicsView.axes.plot( [-IDi, +IDi], [MDi, MDi], color='C3', lw=1 ) #xlim
 
-			self.lsCaliperMap_graphicsView.axes.plot( xlim, [MD, MD], color='C3', lw=4, alpha=0.4 )
+			self.lsCaliperMap_graphicsView.axes.plot( [-ID, +ID], [MD, MD], color='C3', lw=4, alpha=0.4 )
 			
 			self.lsWellbore3D_graphicsView.axes.plot( 	self.lsCentralization_fields.EW,
 														self.lsCentralization_fields.NS,
@@ -502,7 +439,6 @@ class Main_LocationSetup(Ui_LocationSetup):
 				
 			index = mu.np.where( mu.np.isclose(self.lsCentralization_fields.MD, MD) )[0][0]
 			SOatC = self.lsCentralization_fields.SOatC[index]
-			#SOatC = self.lsCentralization_fields.SOatC[self.lsCentralization_fields.MD.index(MD) ]
 			self.lsSOVisualization_graphicsView.axes.plot(	SOatC, MD, marker='o', mec='black', color='C3', ms='8' )
 			if created:
 				self.lsSOVisualization_graphicsView.axes.plot(	[0, self.max_SO], [MD, MD], color='C3', lw=4, alpha=0.4 )
@@ -518,8 +454,8 @@ class Main_LocationSetup(Ui_LocationSetup):
 		
 		elif initial:
 
-			for MDi in self.lsCentralization_fields.MD:
-				self.lsCaliperMap_graphicsView.axes.plot( xlim, [MDi, MDi], color='C3', lw=1 )
+			for MDi, IDi in zip( self.lsCentralization_fields.MD, self.lsCentralization_fields.ID):
+				self.lsCaliperMap_graphicsView.axes.plot( [-IDi, +IDi], [MDi, MDi], color='C3', lw=1 )
 
 			self.lsWellbore3D_graphicsView.axes.plot( 	self.lsCentralization_fields.EW,
 														self.lsCentralization_fields.NS,

@@ -372,7 +372,9 @@ class FieldList( list ):
 
 	def referenceUnitConvert_fields(self):
 		for field in self:
+			print(field.abbreviation,' ...')
 			field.referenceUnitConvert()
+			print(field.abbreviation,' !')
 
 
 	def inverseReferenceUnitConvert_fields(self):
@@ -519,10 +521,10 @@ class Field( list ):
 				newValue = physicalValue( None, self.referenceUnit )
 				self[i] = newValue
 			else:
-				if value.unit==self.unit:
-					newValue = physicalValue( self.factorToReferenceUnit*value + self.offsetToReferenceUnit, self.referenceUnit )
-				elif value.unit==self.referenceUnit:
+				if value.unit==self.referenceUnit:
 					newValue = value
+				elif value.unit==self.unit:
+					newValue = physicalValue( self.factorToReferenceUnit*value + self.offsetToReferenceUnit, self.referenceUnit )
 				else:	
 					raise(ValueError)
 				self[i] = newValue
@@ -536,7 +538,9 @@ class Field( list ):
 				newValue = physicalValue( None, self.unit )
 				self[i] = newValue
 			else:
-				if value.unit==self.referenceUnit:
+				if value.unit==self.unit:
+					newValue = value
+				elif value.unit==self.referenceUnit:
 					newValue = physicalValue( (value-self.offsetToReferenceUnit)/self.factorToReferenceUnit, self.unit )
 				else:
 					raise(ValueError)

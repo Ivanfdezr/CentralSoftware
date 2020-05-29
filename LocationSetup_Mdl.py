@@ -100,7 +100,7 @@ def cat_locations(self):
 		fields = stage['Centralization']['Fields']
 		if fields==None:
 			continue
-		rows = [mu.physicalValue(stage['row'],'1') for md in fields.MD]
+		rows = [mu.physicalValue(stage['row'],None) for md in fields.MD]
 
 		self.lsCentralization_fields.MD.extend( fields.MD )
 		self.lsCentralization_fields.Inc.extend( fields.Inc )
@@ -129,6 +129,12 @@ def cat_locations(self):
 
 	for field in self.lsCentralization_fields:
 		print(field.abbreviation,len(field))
+
+	print('¿¿¿¿¿¿¿¿¿¿')
+	print(self.lsCentralization_fields.Stage.unit)
+	print(self.lsCentralization_fields.Stage.referenceUnit)
+	print(self.lsCentralization_fields.Stage[0])
+	print('??????????')
 
 	return len(K)
 
@@ -167,6 +173,9 @@ def calculate_standOff_at_jthCentralizer(self, j):
 	avgID_field = self.lsCentralization_fields.avgID
 	stage_field = self.lsCentralization_fields.Stage
 
+	self.lsCentralization_fields.referenceUnitConvert_fields()
+
+	"""
 	Loc_field.referenceUnitConvert()
 	Inc_field.referenceUnitConvert()
 	Azi_field.referenceUnitConvert()
@@ -175,6 +184,7 @@ def calculate_standOff_at_jthCentralizer(self, j):
 	LatC_field.referenceUnitConvert()
 	ID_field.referenceUnitConvert()
 	avgID_field.referenceUnitConvert()
+	"""
 
 	def calculate_SO_per_centralizersEnsemble():
 		
@@ -295,6 +305,7 @@ def calculate_standOff_at_jthCentralizer(self, j):
 		In0 = Inc_field[i] + 1e-12
 		Az0 = Azi_field[i]
 		if MD0>MD1:
+			self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
 			raise(mu.LogicalError)
 	if k==len(Loc_field):
 		MD2 = None
@@ -305,6 +316,7 @@ def calculate_standOff_at_jthCentralizer(self, j):
 		In2 = Inc_field[k] + 1e-12
 		Az2 = Azi_field[k]
 		if MD1+CEL>MD2:
+			self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
 			raise(mu.LogicalError)
 
 	def calculate_SO_per_centralizer(label,ctype,supports,ΔMD1):
@@ -391,6 +403,9 @@ def calculate_standOff_at_jthCentralizer(self, j):
 	ClatC_field.put( j, Cc )
 	LatC_field.put( j, L )
 
+	self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
+
+	"""
 	Loc_field.inverseReferenceUnitConvert()
 	Inc_field.inverseReferenceUnitConvert()
 	SOatC_field.inverseReferenceUnitConvert()
@@ -398,6 +413,7 @@ def calculate_standOff_at_jthCentralizer(self, j):
 	LatC_field.inverseReferenceUnitConvert()
 	ID_field.inverseReferenceUnitConvert()
 	avgID_field.inverseReferenceUnitConvert()
+	"""
 
 
 def calculate_standOff_at_ithMidspan(self, i):
@@ -412,6 +428,9 @@ def calculate_standOff_at_ithMidspan(self, i):
 	avgID_field = self.lsCentralization_fields.avgID
 	stage_field = self.lsCentralization_fields.Stage
 
+	self.lsCentralization_fields.referenceUnitConvert_fields()
+
+	"""
 	Loc_field.referenceUnitConvert()
 	ClatC_field.referenceUnitConvert()
 	SOatM_field.referenceUnitConvert()
@@ -420,6 +439,7 @@ def calculate_standOff_at_ithMidspan(self, i):
 	Azi_field.referenceUnitConvert()
 	ID_field.referenceUnitConvert()
 	avgID_field.referenceUnitConvert()
+	"""
 
 	MDs = self.lsCentralization_fields.MD.factorToReferenceUnit*self.MD
 	IDs = self.lsCentralization_fields.ID.factorToReferenceUnit*self.ID
@@ -511,6 +531,9 @@ def calculate_standOff_at_ithMidspan(self, i):
 	SOatM_field.put( i, SO )
 	ClatM_field.put( i, Mc )
 
+	self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
+
+	"""
 	Loc_field.inverseReferenceUnitConvert()
 	ClatC_field.inverseReferenceUnitConvert()
 	SOatM_field.inverseReferenceUnitConvert()
@@ -519,9 +542,16 @@ def calculate_standOff_at_ithMidspan(self, i):
 	Azi_field.inverseReferenceUnitConvert()
 	ID_field.inverseReferenceUnitConvert()
 	avgID_field.inverseReferenceUnitConvert()
+	"""
 
 
 def calculate_standOff_at_Centralizers(self):
+
+	fieldlen = len(self.lsCentralization_fields.MD)
+	print('MD',fieldlen)
+	for field in self.lsCentralization_fields[1:]:
+		print(field.abbreviation,len(field))
+	print('-------------------------------------')
 
 	Loc_field = self.lsCentralization_fields.MD
 	Inc_field = self.lsCentralization_fields.Inc
@@ -533,6 +563,9 @@ def calculate_standOff_at_Centralizers(self):
 	avgID_field = self.lsCentralization_fields.avgID
 	stage_field = self.lsCentralization_fields.Stage
 
+	self.lsCentralization_fields.referenceUnitConvert_fields()
+
+	"""
 	Loc_field.referenceUnitConvert()
 	Inc_field.referenceUnitConvert()
 	Azi_field.referenceUnitConvert()
@@ -541,6 +574,7 @@ def calculate_standOff_at_Centralizers(self):
 	LatC_field.referenceUnitConvert()
 	ID_field.referenceUnitConvert()
 	avgID_field.referenceUnitConvert()
+	"""
 
 	def calculate_SO_per_centralizersEnsemble():
 			SO = []
@@ -588,7 +622,6 @@ def calculate_standOff_at_Centralizers(self):
 
 	stageRow = None
 	for j, (MD1,Hd,mHd) in enumerate(zip(Loc_field, ID_field, avgID_field)):
-		#stageRow = SOcalculation_job( j, MD1 ,Hd, mHd, stageRow )
 
 		stage = self.parent.v3WellboreInnerStageData[ stage_field[j] ]
 
@@ -664,6 +697,7 @@ def calculate_standOff_at_Centralizers(self):
 			In0 = Inc_field[i] + 1e-12
 			Az0 = Azi_field[i]
 			if MD0>MD1:
+				self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
 				raise(mu.LogicalError)
 		if k==len(Loc_field):
 			MD2 = None
@@ -674,6 +708,7 @@ def calculate_standOff_at_Centralizers(self):
 			In2 = Inc_field[k] + 1e-12
 			Az2 = Azi_field[k]
 			if MD1+CEL>MD2:
+				self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
 				raise(mu.LogicalError)
 
 		def calculate_SO_per_centralizer(label,ctype,supports,ΔMD1):
@@ -764,6 +799,9 @@ def calculate_standOff_at_Centralizers(self):
 		mu.create_physicalValue_and_appendTo_field( Cc, ClatC_field, ClatC_field.referenceUnit )
 		mu.create_physicalValue_and_appendTo_field( L, LatC_field, LatC_field.referenceUnit )
 
+	self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
+
+	"""
 	Loc_field.inverseReferenceUnitConvert()
 	Inc_field.inverseReferenceUnitConvert()
 	SOatC_field.inverseReferenceUnitConvert()
@@ -771,6 +809,7 @@ def calculate_standOff_at_Centralizers(self):
 	LatC_field.inverseReferenceUnitConvert()
 	ID_field.inverseReferenceUnitConvert()
 	avgID_field.inverseReferenceUnitConvert()
+	"""
 
 	print('............................................')
 	print('C: ',len(Loc_field),len(SOatC_field),len(Inc_field))
@@ -791,6 +830,9 @@ def calculate_standOff_at_Midspans(self):
 	avgID_field = self.lsCentralization_fields.avgID
 	stage_field = self.lsCentralization_fields.Stage
 
+	self.lsCentralization_fields.referenceUnitConvert_fields()
+
+	"""
 	Loc_field.referenceUnitConvert()
 	ClatC_field.referenceUnitConvert()
 	SOatM_field.referenceUnitConvert()
@@ -799,6 +841,7 @@ def calculate_standOff_at_Midspans(self):
 	Azi_field.referenceUnitConvert()
 	ID_field.referenceUnitConvert()
 	avgID_field.referenceUnitConvert()
+	"""
 
 	MDs = self.lsCentralization_fields.MD.factorToReferenceUnit*self.MD
 	IDs = self.lsCentralization_fields.ID.factorToReferenceUnit*self.ID
@@ -896,6 +939,9 @@ def calculate_standOff_at_Midspans(self):
 	mu.create_physicalValue_and_appendTo_field( 0, SOatM_field, SOatM_field.referenceUnit )
 	mu.create_physicalValue_and_appendTo_field( 0, ClatM_field, ClatM_field.referenceUnit )
 
+	self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
+
+	"""
 	Loc_field.inverseReferenceUnitConvert()
 	ClatC_field.inverseReferenceUnitConvert()
 	SOatM_field.inverseReferenceUnitConvert()
@@ -904,6 +950,7 @@ def calculate_standOff_at_Midspans(self):
 	Azi_field.inverseReferenceUnitConvert()
 	ID_field.inverseReferenceUnitConvert()
 	avgID_field.inverseReferenceUnitConvert()
+	"""
 
 	print('............................................')
 	print('M: ',len(Loc_field),len(SOatM_field),len(Inc_field))
@@ -915,16 +962,16 @@ def calculate_standOff_at_Midspans(self):
 def insert_location_to_CentralizationFields(self, pos, MD):
 
 	MD = mu.physicalValue( MD, self.lsCentralization_fields.MD.unit )
+	innerStage = mdl.get_innerStage_at_MD(self.parent, MD)
+	if not innerStage['Centralization']['Mode']:
+		return False
+	outerStage = mdl.get_outerStage_at_MD(self.parent, MD)
 	Inc, Azi = mdl.get_ASCIncAzi_from_MD(self.parent, MD)
 	EW,NS,VD,i = mdl.get_ASCCoordinates_from_MD(self.parent, MD)
 	DL = mdl.get_ASCDogleg_from_MD(self.parent, MD)
 	ID = mdl.get_wellboreID_at_MD(self.parent, MD) 
-	outerStage = mdl.get_outerStage_at_MD(self.parent, MD)
-	innerStage = mdl.get_innerStage_at_MD(self.parent, MD)
-	if not innerStage['Centralization']['Mode']:
-		return False
 	avgID = outerStage['WellboreProps'].ID[0]
-	row = mu.physicalValue(innerStage['row'],'1')
+	row = mu.physicalValue(innerStage['row'],None)
 
 	self.lsCentralization_fields.MD.insert( pos, MD )
 	self.lsCentralization_fields.Inc.insert( pos, Inc )
@@ -948,16 +995,16 @@ def insert_location_to_CentralizationFields(self, pos, MD):
 def put_location_to_CentralizationFields(self, pos, MD):
 
 	MD = mu.physicalValue( MD, self.lsCentralization_fields.MD.unit )
+	innerStage = mdl.get_innerStage_at_MD(self.parent, MD)
+	if not innerStage['Centralization']['Mode']:
+		return False
+	outerStage = mdl.get_outerStage_at_MD(self.parent, MD)
 	Inc, Azi = mdl.get_ASCIncAzi_from_MD(self.parent, MD)
 	EW,NS,VD,i = mdl.get_ASCCoordinates_from_MD(self.parent, MD)
 	DL = mdl.get_ASCDogleg_from_MD(self.parent, MD)
 	ID = mdl.get_wellboreID_at_MD(self.parent, MD) 
-	outerStage = mdl.get_outerStage_at_MD(self.parent, MD)
-	innerStage = mdl.get_innerStage_at_MD(self.parent, MD)
-	if not innerStage['Centralization']['Mode']:
-		return False
 	avgID = outerStage['WellboreProps'].ID[0]
-	row = mu.physicalValue(innerStage['row'],'1')
+	row = mu.physicalValue(innerStage['row'],None)
 
 	self.lsCentralization_fields.MD.put( pos, MD )
 	self.lsCentralization_fields.Inc.put( pos, Inc )
