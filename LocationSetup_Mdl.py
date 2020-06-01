@@ -17,10 +17,13 @@ def get_lsCentralization_fields():
 	SOatM = mu.Field(2078, altBg=True, altFg=True)
 	ClatC = mu.Field(2073, altBg=True, altFg=True)
 	ClatM = mu.Field(2073, altBg=True, altFg=True)
+	SFatC = mu.Field(2074, altBg=True, altFg=True)
+	SFatM = mu.Field(2074, altBg=True, altFg=True)
 	LatC  = mu.Field(2080, altBg=True, altFg=True)
 	EW    = mu.Field(2007, altBg=True, altFg=True)
 	NS    = mu.Field(2006, altBg=True, altFg=True)
 	TVD   = mu.Field(2004, altBg=True, altFg=True)
+	HD    = mu.Field(2005, altBg=True, altFg=True)
 	DL    = mu.Field(2008, altBg=True, altFg=True)
 	ID    = mu.Field(2031, altBg=True, altFg=True)
 	avgID = mu.Field(2031, altBg=True, altFg=True)
@@ -30,6 +33,8 @@ def get_lsCentralization_fields():
 	SOatM.set_abbreviation('SOatM')
 	ClatC.set_abbreviation('ClatC')
 	ClatM.set_abbreviation('ClatM')
+	SFatC.set_abbreviation('SFatC')
+	SFatM.set_abbreviation('SFatM')
 	LatC.set_abbreviation('LatC')
 	avgID.set_abbreviation('avgID')
 	Stage.set_abbreviation('Stage')
@@ -46,17 +51,20 @@ def get_lsCentralization_fields():
 	lsCentralization_fields.append( Inc )
 	lsCentralization_fields.append( SOatC )
 	lsCentralization_fields.append( SOatM )
+	lsCentralization_fields.append( Stage )
 	lsCentralization_fields.append( ClatC )
 	lsCentralization_fields.append( ClatM )
+	#lsCentralization_fields.append( SFatC )
+	#lsCentralization_fields.append( SFatM )
 	lsCentralization_fields.append( LatC )
+	lsCentralization_fields.append( Azi )
 	lsCentralization_fields.append( EW )
 	lsCentralization_fields.append( NS )
 	lsCentralization_fields.append( TVD )
+	lsCentralization_fields.append( HD )
 	lsCentralization_fields.append( DL )
 	lsCentralization_fields.append( ID )
-	lsCentralization_fields.append( avgID )
-	lsCentralization_fields.append( Azi )
-	lsCentralization_fields.append( Stage )
+	lsCentralization_fields.append( avgID )	
 
 	return lsCentralization_fields
 
@@ -108,6 +116,7 @@ def cat_locations(self):
 		self.lsCentralization_fields.EW.extend( fields.EW )
 		self.lsCentralization_fields.NS.extend( fields.NS )
 		self.lsCentralization_fields.TVD.extend( fields.TVD )
+		self.lsCentralization_fields.HD.extend( fields.HD )
 		self.lsCentralization_fields.DL.extend( fields.DL )
 		self.lsCentralization_fields.ID.extend( fields.ID )
 		self.lsCentralization_fields.avgID.extend( fields.avgID )
@@ -122,19 +131,16 @@ def cat_locations(self):
 		self.lsCentralization_fields.EW.pop()
 		self.lsCentralization_fields.NS.pop()
 		self.lsCentralization_fields.TVD.pop()
+		self.lsCentralization_fields.HD.pop()
 		self.lsCentralization_fields.DL.pop()
 		self.lsCentralization_fields.ID.pop()
 		self.lsCentralization_fields.avgID.pop()
 		self.lsCentralization_fields.Stage.pop()
 
+	"""
 	for field in self.lsCentralization_fields:
 		print(field.abbreviation,len(field))
-
-	print('¿¿¿¿¿¿¿¿¿¿')
-	print(self.lsCentralization_fields.Stage.unit)
-	print(self.lsCentralization_fields.Stage.referenceUnit)
-	print(self.lsCentralization_fields.Stage[0])
-	print('??????????')
+	"""
 
 	return len(K)
 
@@ -352,9 +358,14 @@ def calculate_standOff_at_jthCentralizer(self, j):
 					f = 0.0
 				else:
 					cosγ0 = np.sin(In0)*np.sin(In2)*np.sin(Az2-Az0)/np.sin(β)
-					cosγn = np.sin( (In0-In2)/2 )*np.sin( (In0+In2)/2 )/np.sin(β/2)
+					cosγn = np.sin( abs(In0-In2)/2 )*np.sin( (In0+In2)/2 )/np.sin(β/2)
 
-					Fldp = PWb*L*cosγn + 2*Ft*np.sin(β/2)
+					if In0>In2:
+						Fldp = PWb*L*cosγn + 2*Ft*np.sin(β/2)
+					elif In0<In2:
+						Fldp = PWb*L*cosγn - 2*Ft*np.sin(β/2)
+					else:
+						Fldp = 0.0
 					Flp  = PWb*L*cosγ0
 					f   = np.sqrt( Fldp**2 + Flp**2 )/supports
 
@@ -506,9 +517,14 @@ def calculate_standOff_at_ithMidspan(self, i):
 		δ = 0.0
 	else:
 		cosγ0 = np.sin(In1)*np.sin(In2)*np.sin(Az2-Az1)/np.sin(β)
-		cosγn = np.sin( (In1-In2)/2 )*np.sin( (In1+In2)/2 )/np.sin(β/2)
+		cosγn = np.sin( abs(In1-In2)/2 )*np.sin( (In1+In2)/2 )/np.sin(β/2)
 
-		Fldp = PWb*L*cosγn + 2*Ft*np.sin(β/2)
+		if In1>In2:
+			Fldp = PWb*L*cosγn + 2*Ft*np.sin(β/2)
+		elif In1<In2:
+			Fldp = PWb*L*cosγn - 2*Ft*np.sin(β/2)
+		else:
+			Fldp = 0.0
 		Flp  = PWb*L*cosγ0
 		Fl   = np.sqrt( Fldp**2 + Flp**2 )
 
@@ -547,11 +563,13 @@ def calculate_standOff_at_ithMidspan(self, i):
 
 def calculate_standOff_at_Centralizers(self):
 
+	"""
 	fieldlen = len(self.lsCentralization_fields.MD)
 	print('MD',fieldlen)
 	for field in self.lsCentralization_fields[1:]:
 		print(field.abbreviation,len(field))
 	print('-------------------------------------')
+	"""
 
 	Loc_field = self.lsCentralization_fields.MD
 	Inc_field = self.lsCentralization_fields.Inc
@@ -744,9 +762,14 @@ def calculate_standOff_at_Centralizers(self):
 						f = 0.0
 					else:
 						cosγ0 = np.sin(In0)*np.sin(In2)*np.sin(Az2-Az0)/np.sin(β)
-						cosγn = np.sin( (In0-In2)/2 )*np.sin( (In0+In2)/2 )/np.sin(β/2)
+						cosγn = np.sin( abs(In0-In2)/2 )*np.sin( (In0+In2)/2 )/np.sin(β/2)
 
-						Fldp = PWb*L*cosγn + 2*Ft*np.sin(β/2)
+						if In0>In2:
+							Fldp = PWb*L*cosγn + 2*Ft*np.sin(β/2)
+						elif In0<In2:
+							Fldp = PWb*L*cosγn - 2*Ft*np.sin(β/2)
+						else:
+							Fldp = 0.0
 						Flp  = PWb*L*cosγ0
 						f   = np.sqrt( Fldp**2 + Flp**2 )/supports
 
@@ -801,22 +824,6 @@ def calculate_standOff_at_Centralizers(self):
 
 	self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
 
-	"""
-	Loc_field.inverseReferenceUnitConvert()
-	Inc_field.inverseReferenceUnitConvert()
-	SOatC_field.inverseReferenceUnitConvert()
-	ClatC_field.inverseReferenceUnitConvert()
-	LatC_field.inverseReferenceUnitConvert()
-	ID_field.inverseReferenceUnitConvert()
-	avgID_field.inverseReferenceUnitConvert()
-	"""
-
-	print('............................................')
-	print('C: ',len(Loc_field),len(SOatC_field),len(Inc_field))
-	assert(len(Loc_field)==len(SOatC_field)==len(Inc_field))
-	#for x,s,i in zip(Loc_field,SOatC_field,Inc_field):
-	#	print(x,'\t',s,'\t',i)
-	
 
 def calculate_standOff_at_Midspans(self):
 
@@ -914,9 +921,14 @@ def calculate_standOff_at_Midspans(self):
 			δ = 0.0
 		else:
 			cosγ0 = np.sin(In1)*np.sin(In2)*np.sin(Az2-Az1)/np.sin(β)
-			cosγn = np.sin( (In1-In2)/2 )*np.sin( (In1+In2)/2 )/np.sin(β/2)
+			cosγn = np.sin( abs(In1-In2)/2 )*np.sin( (In1+In2)/2 )/np.sin(β/2)
 
-			Fldp = PWb*L*cosγn + 2*Ft*np.sin(β/2)
+			if In1>In2:
+				Fldp = PWb*L*cosγn + 2*Ft*np.sin(β/2)
+			elif In1<In2:
+				Fldp = PWb*L*cosγn - 2*Ft*np.sin(β/2)
+			else:
+				Fldp = 0.0
 			Flp  = PWb*L*cosγ0
 			Fl   = np.sqrt( Fldp**2 + Flp**2 )
 
@@ -941,23 +953,6 @@ def calculate_standOff_at_Midspans(self):
 
 	self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
 
-	"""
-	Loc_field.inverseReferenceUnitConvert()
-	ClatC_field.inverseReferenceUnitConvert()
-	SOatM_field.inverseReferenceUnitConvert()
-	ClatM_field.inverseReferenceUnitConvert()
-	Inc_field.inverseReferenceUnitConvert()
-	Azi_field.inverseReferenceUnitConvert()
-	ID_field.inverseReferenceUnitConvert()
-	avgID_field.inverseReferenceUnitConvert()
-	"""
-
-	print('............................................')
-	print('M: ',len(Loc_field),len(SOatM_field),len(Inc_field))
-	assert(len(Loc_field)==len(SOatM_field)==len(Inc_field))
-	#for x,s,i in zip(Loc_field,SOatM_field,Inc_field):
-	#	print(x,'\t',s,'\t',i)
-
 
 def insert_location_to_CentralizationFields(self, pos, MD):
 
@@ -967,7 +962,7 @@ def insert_location_to_CentralizationFields(self, pos, MD):
 		return False
 	outerStage = mdl.get_outerStage_at_MD(self.parent, MD)
 	Inc, Azi = mdl.get_ASCIncAzi_from_MD(self.parent, MD)
-	EW,NS,VD,i = mdl.get_ASCCoordinates_from_MD(self.parent, MD)
+	EW,NS,VD,HD,i = mdl.get_ASCCoordinates_from_MD(self.parent, MD)
 	DL = mdl.get_ASCDogleg_from_MD(self.parent, MD)
 	ID = mdl.get_wellboreID_at_MD(self.parent, MD) 
 	avgID = outerStage['WellboreProps'].ID[0]
@@ -984,6 +979,7 @@ def insert_location_to_CentralizationFields(self, pos, MD):
 	self.lsCentralization_fields.EW.insert( pos, EW )
 	self.lsCentralization_fields.NS.insert( pos, NS )
 	self.lsCentralization_fields.TVD.insert( pos, VD )
+	self.lsCentralization_fields.HD.insert( pos, HD )
 	self.lsCentralization_fields.DL.insert( pos, DL )
 	self.lsCentralization_fields.ID.insert( pos, ID )
 	self.lsCentralization_fields.avgID.insert( pos, avgID )
@@ -1000,7 +996,7 @@ def put_location_to_CentralizationFields(self, pos, MD):
 		return False
 	outerStage = mdl.get_outerStage_at_MD(self.parent, MD)
 	Inc, Azi = mdl.get_ASCIncAzi_from_MD(self.parent, MD)
-	EW,NS,VD,i = mdl.get_ASCCoordinates_from_MD(self.parent, MD)
+	EW,NS,VD,HD,i = mdl.get_ASCCoordinates_from_MD(self.parent, MD)
 	DL = mdl.get_ASCDogleg_from_MD(self.parent, MD)
 	ID = mdl.get_wellboreID_at_MD(self.parent, MD) 
 	avgID = outerStage['WellboreProps'].ID[0]
@@ -1012,6 +1008,7 @@ def put_location_to_CentralizationFields(self, pos, MD):
 	self.lsCentralization_fields.EW.put( pos, EW )
 	self.lsCentralization_fields.NS.put( pos, NS )
 	self.lsCentralization_fields.TVD.put( pos, VD )
+	self.lsCentralization_fields.HD.put( pos, HD )
 	self.lsCentralization_fields.DL.put( pos, DL )
 	self.lsCentralization_fields.ID.put( pos, ID )
 	self.lsCentralization_fields.avgID.put( pos, avgID )

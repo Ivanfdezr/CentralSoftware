@@ -154,7 +154,7 @@ class ZoomPan:
 			self.xpress, self.ypress = self.press
 
 		def onRelease(event):
-			self.press = None
+			self.xpress = self.ypress = self.press = None
 			ax.figure.canvas.draw()
 
 		def onMotion(event):

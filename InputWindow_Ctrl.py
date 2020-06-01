@@ -29,9 +29,10 @@ class Main_InputWindow(Ui_InputWindow):
 
 		self.wellboreOuterStageDataIsUpdatable = True
 		self.wellboreInnerStageDataIsUpdatable = True
-		self.wellboreInnerStageDataIsEnabled = True
+		self.wellboreInnerStageDataIsEnabled   = True
 		self._PipeCentralizationStageAdjusting_isEnabled = True
-		self.centralizationChanged_flag = False
+		self.v3CentralizationChanged_flag   = False
+		self.v3CentralizationProcessed_flag = False
 
 		self.__init__s1Info_tableWidget()
 		self.__init__s2DataSurvey_tableWidget()
@@ -75,8 +76,8 @@ class Main_InputWindow(Ui_InputWindow):
 		#open_TDB_dialog_for_innerStages = lambda: wf.open_TDB_dialog_for_innerStages(self)
 		#self.s3PipeDB_pushButton.clicked.connect(open_TDB_dialog_for_innerStages)
 		
-		calculate_axialForce_field = lambda: mdl.calculate_axialForce_field(self)
-		self.s3UpdateInnerStages_pushButton.clicked.connect(calculate_axialForce_field)
+		calculate_theForces = lambda: mdl.calculate_theForces(self)
+		self.s3UpdateInnerStages_pushButton.clicked.connect(calculate_theForces)
 		self.s3UpdateInnerStages_pushButton.setEnabled(False)
 
 		adjust_Wt = lambda: wf.adjust_Wt(self)
@@ -163,7 +164,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def load_file(self):
 
 		#filename = QtGui.QFileDialog.getOpenFileName( self.s1Info_tableWidget, 'Open File ...', self.v1WorkingDirectory, 'Central-Soft File (*.csf)' )
-		filename = 'C:/Users/arcad/Documents/__WORKS__/AZTECATROL/CENTRAL-SOFTWARE/CentralSoftware/tmp/test1.csf'
+		filename = 'C:/Users/arcad/Documents/__WORKS__/AZTECATROL/CENTRAL-SOFTWARE/CentralSoftware/tmp/test4.csf'
 		
 		with open(filename,'rb') as File:
 			OBJ = mdl.load_obj( File )
@@ -185,7 +186,6 @@ class Main_InputWindow(Ui_InputWindow):
 
 		for attrname, attr in OBJ.items():
 			setattr( self, attrname, attr )
-
 			print(attrname)
 
 		self.load_fields_to_vTableWidget( self.v1Info_fields, self.s1Info_tableWidget )
@@ -356,7 +356,9 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def open_selectWorkingDirectoryDialog(self):
 		
-		self.v1WorkingDirectory = QtGui.QFileDialog.getExistingDirectory( self.s1Info_tableWidget, 'Select the working directory', 'c:\\' )
+		self.v1WorkingDirectory = QtGui.QFileDialog.getExistingDirectory( self.s1Info_tableWidget, 'Select the working directory', 'C:\\' )
+		items = re.split(r'\\',self.v1WorkingDirectory)
+		self.v1WorkingDirectory = '/'.join(items)
 		print(self.v1WorkingDirectory)
 		item = self.s1Info_tableWidget.item( 5,0 )
 		item.setText( self.v1WorkingDirectory )

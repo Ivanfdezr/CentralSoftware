@@ -372,9 +372,9 @@ class FieldList( list ):
 
 	def referenceUnitConvert_fields(self):
 		for field in self:
-			print(field.abbreviation,' ...')
+			#print(field.abbreviation,' ...')
 			field.referenceUnitConvert()
-			print(field.abbreviation,' !')
+			#print(field.abbreviation,' !')
 
 
 	def inverseReferenceUnitConvert_fields(self):

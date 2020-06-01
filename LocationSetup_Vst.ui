@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1417</width>
-    <height>585</height>
+    <width>1441</width>
+    <height>636</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,8 +21,8 @@
     <rect>
      <x>40</x>
      <y>40</y>
-     <width>350</width>
-     <height>450</height>
+     <width>300</width>
+     <height>500</height>
     </rect>
    </property>
   </widget>
@@ -31,15 +31,15 @@
     <rect>
      <x>880</x>
      <y>40</y>
-     <width>511</width>
-     <height>450</height>
+     <width>541</width>
+     <height>500</height>
     </rect>
    </property>
    <property name="rowCount">
     <number>1000</number>
    </property>
    <property name="columnCount">
-    <number>4</number>
+    <number>5</number>
    </property>
    <attribute name="horizontalHeaderDefaultSectionSize">
     <number>110</number>
@@ -1067,32 +1067,39 @@
      <string>SO at\nmidspan</string>
     </property>
    </column>
+   <column>
+    <property name="text">
+     <string>Stage</string>
+    </property>
+   </column>
   </widget>
   <widget class="QPushButton" name="lsAccept_pushButton">
    <property name="geometry">
     <rect>
-     <x>1300</x>
-     <y>530</y>
-     <width>93</width>
-     <height>30</height>
+     <x>1310</x>
+     <y>560</y>
+     <width>101</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
     </font>
    </property>
    <property name="text">
-    <string>Accept</string>
+    <string>DONE</string>
    </property>
   </widget>
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>410</x>
+     <x>360</x>
      <y>40</y>
-     <width>450</width>
-     <height>470</height>
+     <width>500</width>
+     <height>520</height>
     </rect>
    </property>
    <property name="font">
@@ -1126,6 +1133,21 @@
    <property name="tabsClosable">
     <bool>false</bool>
    </property>
+   <widget class="QWidget" name="tab_3">
+    <attribute name="title">
+     <string>Side Forces</string>
+    </attribute>
+    <widget class="MatplotlibWidget" name="lsSideForces_graphicsView">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>500</width>
+       <height>500</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
    <widget class="QWidget" name="tab">
     <attribute name="title">
      <string>3D View</string>
@@ -1135,8 +1157,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>450</width>
-       <height>450</height>
+       <width>500</width>
+       <height>500</height>
       </rect>
      </property>
     </widget>
@@ -1150,8 +1172,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>450</width>
-       <height>450</height>
+       <width>500</width>
+       <height>500</height>
       </rect>
      </property>
     </widget>
@@ -1161,7 +1183,7 @@
    <property name="geometry">
     <rect>
      <x>880</x>
-     <y>510</y>
+     <y>560</y>
      <width>331</width>
      <height>21</height>
     </rect>
@@ -1181,7 +1203,7 @@
    <property name="geometry">
     <rect>
      <x>880</x>
-     <y>540</y>
+     <y>590</y>
      <width>331</width>
      <height>21</height>
     </rect>

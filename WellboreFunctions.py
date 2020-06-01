@@ -191,8 +191,10 @@ def update_wellboreInnerStageData(self):
 
 		self.currentWellboreInnerStageDataItem['PipeProps'] = copy.deepcopy(self.v3PipeProperties_fields)
 
-		K = list(self.v3WellboreInnerStageData.keys())
-		K.sort()
+		#K = list(self.v3WellboreInnerStageData.keys())
+		#K.sort()
+
+		K = mdl.get_sortedIndexes_of_wellboreInnerStageData(self)
 		for k in K:
 			stage = self.v3WellboreInnerStageData[k]
 			if stage['PipeProps']==None:
@@ -234,8 +236,12 @@ def update_wellboreInnerStageData(self):
 
 		mdl.setup_ensembles_fromConfiguration( self )
 		self.s3StageEnsemble_label.setText( self.currentWellboreInnerStageDataItem['Centralization']['Ensemble']['label'] )
-		self.centralizationChanged_flag = True
-		#print_wellboreInnerStageData(self)
+		if self.v3CentralizationProcessed_flag:
+			self.v3CentralizationChanged_flag   = False
+			self.v3CentralizationProcessed_flag = False
+		else:
+			self.v3CentralizationChanged_flag   = True
+			self.v3CentralizationProcessed_flag = False
 
 
 def update_wellboreOuterStageData(self):
@@ -255,10 +261,10 @@ def update_wellboreOuterStageData(self):
 
 		workWellbore_exist = False
 
-		#K = mdl.get_sortedIndexes_of_wellboreOuterStageData(self)
+		K = mdl.get_sortedIndexes_of_wellboreOuterStageData(self)
 
-		K = list(self.v3WellboreOuterStageData.keys())
-		K.sort()
+		#K = list(self.v3WellboreOuterStageData.keys())
+		#K.sort()
 		for k in K:
 			stage = self.v3WellboreOuterStageData[k]
 
@@ -617,25 +623,40 @@ def open_specifyCentralization_dialog(self):
 	#try:
 	mdl.get_centralizationLocations( self )
 	print_wellboreInnerStageData(self)
-	self.centralizationChanged_flag = False
 	open_LS_dialog(self)
 	#except (AssertionError, IndexError):
 	#	msg = 'Some Pattern and Offset combinations are not suitable\nfor the number of joins in the stages.'
 	#	QtGui.QMessageBox.critical(self.s3WellboreInnerStages_tableWidget, 'Error', msg)
 	
 
-@updateByBlock_currentWellboreInnerStageDataItem
+#@updateByBlock_currentWellboreInnerStageDataItem
 def open_LS_dialog(self):
 
 	importlib.reload(ls)
 
 	dialog = QtGui.QDialog(self.s3ManageLocations_pushButton)
 	LS = ls.Main_LocationSetup(dialog, self)
-	
 
+	if not hasattr(LS, 'fields'):
+		self.v3CentralizationChanged_flag = False
+		return
 
-	"""
-	self.currentWellboreInnerStageDataItem['Centralization']['Fields'] = LS.fields
+	K = mdl.get_sortedIndexes_of_wellboreInnerStageData(self)
+	for k in K:
+		datafields = self.v3WellboreInnerStageData[k]['Centralization']['Fields']
+		if datafields==None:
+			continue
+		datafields.clear_content()
+
+	for i,row in enumerate(LS.fields.Stage):
+		datafields = self.v3WellboreInnerStageData[row]['Centralization']['Fields']
+		for lsfield in LS.fields:
+			if lsfield.abbreviation!='Stage':
+				datafield = getattr( datafields, lsfield.abbreviation )
+				datafield.append( lsfield[i] )
+
+		
+	currfields = self.currentWellboreInnerStageDataItem['Centralization']['Fields']
 
 	for tab in ['A','B','C']:
 		s3CentralizerLocation_tableWidget = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )	
@@ -646,7 +667,7 @@ def open_LS_dialog(self):
 			for i in range(s3CentralizerLocation_tableWidget.rowCount()):
 				item = s3CentralizerLocation_tableWidget.item(i,field.pos)
 				try:
-					value = LS.fields.MD[i]
+					value = currfields.MD[i]
 					item.set_text( value, value.unit )
 				except IndexError:
 					item.set_text()
@@ -654,12 +675,12 @@ def open_LS_dialog(self):
 	self.msg_label.setText( 'Mean SO at centralizers:   {meanSOatC} {unit} ,   Mean SO at minspan:   {meanSOatM} {unit}'.format(
 							meanSOatC=LS.meanSOatC, meanSOatM=LS.meanSOatM, unit=LS.fields.SOatC.unit ) )
 	cu.idleFunction()
-	"""
-
 
 	self.meanSOatC = LS.meanSOatC
 	self.meanSOatM = LS.meanSOatM
 
+
+	
 
 @updateByBlock_currentWellboreInnerStageDataItem
 def open_SS_dialog(self):
@@ -850,8 +871,9 @@ def adjust_ID(self):
 def print_wellboreInnerStageData(self):
 
 	print('-----------------------------------------')
-	K = list(self.v3WellboreInnerStageData.keys())
-	K.sort()
+	K = mdl.get_sortedIndexes_of_wellboreInnerStageData(self)
+	#K = self.v3WellboreInnerStageData.keys()
+	#K.sort()
 	for k in K:
 		print('\n',self.v3WellboreInnerStageData[k],'\n')
 	print('-----------------------------------------\n')
@@ -860,8 +882,9 @@ def print_wellboreInnerStageData(self):
 def print_wellboreOuterStageData(self):
 	
 	print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv')
-	K = list(self.v3WellboreOuterStageData.keys())
-	K.sort()
+	K = mdl.get_sortedIndexes_of_wellboreOuterStageData(self)
+	#K = self.v3WellboreOuterStageData.keys()
+	#K.sort()
 	for k in K:
 		print('\n',self.v3WellboreOuterStageData[k],'\n')
 	print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n')

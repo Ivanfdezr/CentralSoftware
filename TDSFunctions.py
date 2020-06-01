@@ -6,8 +6,6 @@ import MdlUtilities as mu
 
 def calculateAndDraw_torque_drag_sideforce(self):
 
-	print( '!!!',self.v4Settings_fields )
-
 	calculate_inclination_torque_drag_sideforce( self )
 
 	TDS_fields = self.v4TorqueDragSideforce_fields
@@ -73,12 +71,13 @@ def calculate_inclination_torque_drag_sideforce( self ):
 	#	value = self.s4Settings_tableWidget.item(field.pos,0).realValue
 	#	field.append( value )
 
-	K = list(self.v3WellboreInnerStageData.keys())
-	if K==[]:
+	if len(self.v3WellboreInnerStageData):
 		msg = "Any inner wellbore stage completed. Can not proceed."
 		QtGui.QMessageBox.critical(self.s4TorqueDragSideforce_tableWidget, 'Error', msg)
 		return
-	K.sort()
+	#K.sort()
+	
+	K = get_sortedIndexes_of_wellboreInnerStageData(self)
 	K.reverse()
 
 	set_initial_TDSConditions_to_fields( self, self.v3WellboreInnerStageData[K[0]]['PipeProps'].OD[0] )
