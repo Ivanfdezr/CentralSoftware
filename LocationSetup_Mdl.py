@@ -17,6 +17,8 @@ def get_lsCentralization_fields():
 	SOatM = mu.Field(2078, altBg=True, altFg=True)
 	ClatC = mu.Field(2073, altBg=True, altFg=True)
 	ClatM = mu.Field(2073, altBg=True, altFg=True)
+	AFatC = mu.Field(2074, altBg=True, altFg=True)
+	AFatM = mu.Field(2074, altBg=True, altFg=True)
 	SFatC = mu.Field(2074, altBg=True, altFg=True)
 	SFatM = mu.Field(2074, altBg=True, altFg=True)
 	LatC  = mu.Field(2080, altBg=True, altFg=True)
@@ -33,6 +35,8 @@ def get_lsCentralization_fields():
 	SOatM.set_abbreviation('SOatM')
 	ClatC.set_abbreviation('ClatC')
 	ClatM.set_abbreviation('ClatM')
+	AFatC.set_abbreviation('AFatC')
+	AFatM.set_abbreviation('AFatM')
 	SFatC.set_abbreviation('SFatC')
 	SFatM.set_abbreviation('SFatM')
 	LatC.set_abbreviation('LatC')
@@ -54,8 +58,10 @@ def get_lsCentralization_fields():
 	lsCentralization_fields.append( Stage )
 	lsCentralization_fields.append( ClatC )
 	lsCentralization_fields.append( ClatM )
-	#lsCentralization_fields.append( SFatC )
-	#lsCentralization_fields.append( SFatM )
+	lsCentralization_fields.append( AFatC )
+	lsCentralization_fields.append( AFatM )
+	lsCentralization_fields.append( SFatC )
+	lsCentralization_fields.append( SFatM )
 	lsCentralization_fields.append( LatC )
 	lsCentralization_fields.append( Azi )
 	lsCentralization_fields.append( EW )
@@ -174,6 +180,8 @@ def calculate_standOff_at_jthCentralizer(self, j):
 	Azi_field = self.lsCentralization_fields.Azi
 	SOatC_field = self.lsCentralization_fields.SOatC
 	ClatC_field = self.lsCentralization_fields.ClatC
+	AFatC_field = self.lsCentralization_fields.AFatC
+	SFatC_field = self.lsCentralization_fields.SFatC
 	LatC_field = self.lsCentralization_fields.LatC
 	ID_field = self.lsCentralization_fields.ID
 	avgID_field = self.lsCentralization_fields.avgID
@@ -181,22 +189,13 @@ def calculate_standOff_at_jthCentralizer(self, j):
 
 	self.lsCentralization_fields.referenceUnitConvert_fields()
 
-	"""
-	Loc_field.referenceUnitConvert()
-	Inc_field.referenceUnitConvert()
-	Azi_field.referenceUnitConvert()
-	SOatC_field.referenceUnitConvert()
-	ClatC_field.referenceUnitConvert()
-	LatC_field.referenceUnitConvert()
-	ID_field.referenceUnitConvert()
-	avgID_field.referenceUnitConvert()
-	"""
-
 	def calculate_SO_per_centralizersEnsemble():
 		
 		SO = []
 		Cc = []
-		L = []
+		Ft = []
+		Fl = []
+		L  = []
 		Δs = get_separationsInEnsemble( c['Ensemble']['nest'], PL )
 		Δa = 0
 
@@ -204,12 +203,14 @@ def calculate_standOff_at_jthCentralizer(self, j):
 			
 			Δa += Δ
 			if c[x]['Type']!=None:
-				so, cc, l = calculate_SO_per_centralizer(x,c[x]['Type'],supports,Δ)
+				so, cc, ft, fl, l = calculate_SO_per_centralizer(x,c[x]['Type'],supports,Δ)
 				SO.append( so )
 				Cc.append( cc )
+				Ft.append( ft )
+				Fl.append( fl )
 				L.append( l )
 
-		return np.mean(SO), np.mean(Cc), np.mean(L)
+		return np.mean(SO), np.mean(Cc), np.mean(Ft), np.mean(Fl), np.mean(L)
 
 	def get_L(MD0, MD1, MD2, inc, Hr):
 
@@ -344,10 +345,11 @@ def calculate_standOff_at_jthCentralizer(self, j):
 
 			if MD0==None:
 				Ft = mdl.get_axialTension_below_MD(self.parent, MD2, referenceUnit=True)
-				f = Ft*np.sin(In1)/supports
+				Fl = Ft*np.sin(In1)/supports
 
 			elif MD2==None:
-				f = PWb*L*np.sin(In1)/supports
+				Ft = 0.0
+				Fl = PWb*L*np.sin(In1)/supports
 
 			else:
 				Ft = mdl.get_axialTension_below_MD(self.parent, MD2, referenceUnit=True)
@@ -355,7 +357,7 @@ def calculate_standOff_at_jthCentralizer(self, j):
 				β = np.arccos( np.cos(In0)*np.cos(In2) + np.sin(In0)*np.sin(In2)*np.cos(Az2-Az0) )
 				
 				if β==0.0:
-					f = 0.0
+					Fl = 0.0
 				else:
 					cosγ0 = np.sin(In0)*np.sin(In2)*np.sin(Az2-Az0)/np.sin(β)
 					cosγn = np.sin( abs(In0-In2)/2 )*np.sin( (In0+In2)/2 )/np.sin(β/2)
@@ -367,12 +369,12 @@ def calculate_standOff_at_jthCentralizer(self, j):
 					else:
 						Fldp = 0.0
 					Flp  = PWb*L*cosγ0
-					f   = np.sqrt( Fldp**2 + Flp**2 )/supports
+					Fl   = np.sqrt( Fldp**2 + Flp**2 )/supports
 
 			#f = PWb*L*np.sin(In1)/supports
 			resK = 2*ResF[label]/( D[label]-d[label]-0.67*(Hr*2-PD) )
 
-			y = f/resK
+			y = Fl/resK
 			Rmin = PR+(R-PR)*0.1
 			R = (R-y) if (R<Hr) else (Hr-y)
 			R = Rmin if (R<Rmin) else R
@@ -401,30 +403,51 @@ def calculate_standOff_at_jthCentralizer(self, j):
 			Cc = np.mean( Cc_ )
 			SO = np.mean( SO_ )
 			L = np.mean( L_ )
+
+			if MD0==None:
+				Ft = mdl.get_axialTension_below_MD(self.parent, MD2, referenceUnit=True)
+				Fl = Ft*np.sin(In1)/supports
+
+			elif MD2==None:
+				Fl = PWb*L*np.sin(In1)/supports
+
+			else:
+				Ft = mdl.get_axialTension_below_MD(self.parent, MD2, referenceUnit=True)
+				u = np.sqrt( Ft*L**2/4/PE/PI )
+				β = np.arccos( np.cos(In0)*np.cos(In2) + np.sin(In0)*np.sin(In2)*np.cos(Az2-Az0) )
+				
+				if β==0.0:
+					Fl = 0.0
+				else:
+					cosγ0 = np.sin(In0)*np.sin(In2)*np.sin(Az2-Az0)/np.sin(β)
+					cosγn = np.sin( abs(In0-In2)/2 )*np.sin( (In0+In2)/2 )/np.sin(β/2)
+
+					if In0>In2:
+						Fldp = PWb*L*cosγn + 2*Ft*np.sin(β/2)
+					elif In0<In2:
+						Fldp = PWb*L*cosγn - 2*Ft*np.sin(β/2)
+					else:
+						Fldp = 0.0
+					Flp  = PWb*L*cosγ0
+					Fl   = np.sqrt( Fldp**2 + Flp**2 )/supports
 		
-		return SO, Cc, L
+		return SO, Cc, Ft, Fl, L
 	
-	SO, Cc, L = calculate_SO_per_centralizersEnsemble()
+	SO, Cc, Ft, Fl, L = calculate_SO_per_centralizersEnsemble()
 
 	SO = mu.physicalValue( SO, SOatC_field.referenceUnit )
 	Cc = mu.physicalValue( Cc, ClatC_field.referenceUnit )
+	Ft  = mu.physicalValue( Ft, AFatC_field.referenceUnit )
+	Fl  = mu.physicalValue( Fl, SFatC_field.referenceUnit )
 	L  = mu.physicalValue( L, LatC_field.referenceUnit )
 
 	SOatC_field.put( j, SO )
 	ClatC_field.put( j, Cc )
+	AFatC_field.put( j, Ft )
+	SFatC_field.put( j, Fl )
 	LatC_field.put( j, L )
 
 	self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
-
-	"""
-	Loc_field.inverseReferenceUnitConvert()
-	Inc_field.inverseReferenceUnitConvert()
-	SOatC_field.inverseReferenceUnitConvert()
-	ClatC_field.inverseReferenceUnitConvert()
-	LatC_field.inverseReferenceUnitConvert()
-	ID_field.inverseReferenceUnitConvert()
-	avgID_field.inverseReferenceUnitConvert()
-	"""
 
 
 def calculate_standOff_at_ithMidspan(self, i):
@@ -435,22 +458,13 @@ def calculate_standOff_at_ithMidspan(self, i):
 	SOatM_field = self.lsCentralization_fields.SOatM
 	ClatM_field = self.lsCentralization_fields.ClatM
 	ClatC_field = self.lsCentralization_fields.ClatC
+	AFatM_field = self.lsCentralization_fields.AFatM
+	SFatM_field = self.lsCentralization_fields.SFatM
 	ID_field = self.lsCentralization_fields.ID
 	avgID_field = self.lsCentralization_fields.avgID
 	stage_field = self.lsCentralization_fields.Stage
 
 	self.lsCentralization_fields.referenceUnitConvert_fields()
-
-	"""
-	Loc_field.referenceUnitConvert()
-	ClatC_field.referenceUnitConvert()
-	SOatM_field.referenceUnitConvert()
-	ClatM_field.referenceUnitConvert()
-	Inc_field.referenceUnitConvert()
-	Azi_field.referenceUnitConvert()
-	ID_field.referenceUnitConvert()
-	avgID_field.referenceUnitConvert()
-	"""
 
 	MDs = self.lsCentralization_fields.MD.factorToReferenceUnit*self.MD
 	IDs = self.lsCentralization_fields.ID.factorToReferenceUnit*self.ID
@@ -543,24 +557,17 @@ def calculate_standOff_at_ithMidspan(self, i):
 
 	SO = mu.physicalValue( SO, SOatM_field.referenceUnit )
 	Mc = mu.physicalValue( Mc, ClatM_field.referenceUnit )
+	Ft = mu.physicalValue( Ft, AFatM_field.referenceUnit )
+	Fl = mu.physicalValue( Fl, SFatM_field.referenceUnit )
 
 	SOatM_field.put( i, SO )
 	ClatM_field.put( i, Mc )
+	AFatM_field.put( i, Ft )
+	SFatM_field.put( i, Fl )
 
 	self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
 
-	"""
-	Loc_field.inverseReferenceUnitConvert()
-	ClatC_field.inverseReferenceUnitConvert()
-	SOatM_field.inverseReferenceUnitConvert()
-	ClatM_field.inverseReferenceUnitConvert()
-	Inc_field.inverseReferenceUnitConvert()
-	Azi_field.inverseReferenceUnitConvert()
-	ID_field.inverseReferenceUnitConvert()
-	avgID_field.inverseReferenceUnitConvert()
-	"""
-
-
+	
 def calculate_standOff_at_Centralizers(self):
 
 	"""
@@ -576,6 +583,8 @@ def calculate_standOff_at_Centralizers(self):
 	Azi_field = self.lsCentralization_fields.Azi
 	SOatC_field = self.lsCentralization_fields.SOatC
 	ClatC_field = self.lsCentralization_fields.ClatC
+	AFatC_field = self.lsCentralization_fields.AFatC
+	SFatC_field = self.lsCentralization_fields.SFatC
 	LatC_field = self.lsCentralization_fields.LatC
 	ID_field = self.lsCentralization_fields.ID
 	avgID_field = self.lsCentralization_fields.avgID
@@ -583,20 +592,12 @@ def calculate_standOff_at_Centralizers(self):
 
 	self.lsCentralization_fields.referenceUnitConvert_fields()
 
-	"""
-	Loc_field.referenceUnitConvert()
-	Inc_field.referenceUnitConvert()
-	Azi_field.referenceUnitConvert()
-	SOatC_field.referenceUnitConvert()
-	ClatC_field.referenceUnitConvert()
-	LatC_field.referenceUnitConvert()
-	ID_field.referenceUnitConvert()
-	avgID_field.referenceUnitConvert()
-	"""
 
 	def calculate_SO_per_centralizersEnsemble():
 			SO = []
 			Cc = []
+			Ft = []
+			Fl = []
 			L = []
 			Δs = get_separationsInEnsemble( c['Ensemble']['nest'], PL )
 			Δa = 0
@@ -605,12 +606,14 @@ def calculate_standOff_at_Centralizers(self):
 				
 				Δa += Δ
 				if c[x]['Type']!=None:
-					so, cc, l = calculate_SO_per_centralizer(x,c[x]['Type'],supports,Δ)
+					so, cc, ft, fl, l = calculate_SO_per_centralizer(x,c[x]['Type'],supports,Δ)
 					SO.append( so )
 					Cc.append( cc )
+					Ft.append( ft )
+					Fl.append( fl )
 					L.append( l )
 
-			return np.mean(SO), np.mean(Cc), np.mean(L)
+			return np.mean(SO), np.mean(Cc), np.mean(Ft), np.mean(Fl), np.mean(L)
 
 	def get_L(MD0, MD1, MD2, inc, Hr):
 
@@ -748,10 +751,11 @@ def calculate_standOff_at_Centralizers(self):
 
 				if MD0==None:
 					Ft = mdl.get_axialTension_below_MD(self.parent, MD2, referenceUnit=True)
-					f = Ft*np.sin(In1)/supports
+					Fl = Ft*np.sin(In1)/supports
 
 				elif MD2==None:
-					f = PWb*L*np.sin(In1)/supports
+					Ft = 0.0
+					Fl = PWb*L*np.sin(In1)/supports
 
 				else:
 					Ft = mdl.get_axialTension_below_MD(self.parent, MD2, referenceUnit=True)
@@ -759,7 +763,7 @@ def calculate_standOff_at_Centralizers(self):
 					β = np.arccos( np.cos(In0)*np.cos(In2) + np.sin(In0)*np.sin(In2)*np.cos(Az2-Az0) )
 					
 					if β==0.0:
-						f = 0.0
+						Fl = 0.0
 					else:
 						cosγ0 = np.sin(In0)*np.sin(In2)*np.sin(Az2-Az0)/np.sin(β)
 						cosγn = np.sin( abs(In0-In2)/2 )*np.sin( (In0+In2)/2 )/np.sin(β/2)
@@ -771,12 +775,12 @@ def calculate_standOff_at_Centralizers(self):
 						else:
 							Fldp = 0.0
 						Flp  = PWb*L*cosγ0
-						f   = np.sqrt( Fldp**2 + Flp**2 )/supports
+						Fl   = np.sqrt( Fldp**2 + Flp**2 )/supports
 
 				#f = PWb*L*np.sin(In1)/supports
 				resK = 2*ResF[label]/( D[label]-d[label]-0.67*(Hr*2-PD) )
 
-				y = f/resK
+				y = Fl/resK
 				Rmin = PR+(R-PR)*0.1
 				R = (R-y) if (R<Hr) else (Hr-y)
 				R = Rmin if (R<Rmin) else R
@@ -805,21 +809,43 @@ def calculate_standOff_at_Centralizers(self):
 				Cc = np.mean( Cc_ )
 				SO = np.mean( SO_ )
 				L = np.mean( L_ )
+
+				if MD0==None:
+					Ft = mdl.get_axialTension_below_MD(self.parent, MD2, referenceUnit=True)
+					Fl = Ft*np.sin(In1)/supports
+
+				elif MD2==None:
+					Ft = 0.0
+					Fl = PWb*L*np.sin(In1)/supports
+
+				else:
+					Ft = mdl.get_axialTension_below_MD(self.parent, MD2, referenceUnit=True)
+					u = np.sqrt( Ft*L**2/4/PE/PI )
+					β = np.arccos( np.cos(In0)*np.cos(In2) + np.sin(In0)*np.sin(In2)*np.cos(Az2-Az0) )
+					
+					if β==0.0:
+						Fl = 0.0
+					else:
+						cosγ0 = np.sin(In0)*np.sin(In2)*np.sin(Az2-Az0)/np.sin(β)
+						cosγn = np.sin( abs(In0-In2)/2 )*np.sin( (In0+In2)/2 )/np.sin(β/2)
+
+						if In0>In2:
+							Fldp = PWb*L*cosγn + 2*Ft*np.sin(β/2)
+						elif In0<In2:
+							Fldp = PWb*L*cosγn - 2*Ft*np.sin(β/2)
+						else:
+							Fldp = 0.0
+						Flp  = PWb*L*cosγ0
+						Fl   = np.sqrt( Fldp**2 + Flp**2 )/supports
 			
-			return SO, Cc, L
+			return SO, Cc, Ft, Fl, L
 		
-		SO, Cc, L = calculate_SO_per_centralizersEnsemble()
-
-		#SO = mu.physicalValue( SO, SOatC_field.referenceUnit )
-		#Cc = mu.physicalValue( Cc, ClatC_field.referenceUnit )
-		#L  = mu.physicalValue( L, LatC_field.referenceUnit )
-
-		#SOatC_field.put( j, SO )
-		#ClatC_field.put( j, Cc )
-		#LatC_field.put( j, L )
+		SO, Cc, Ft, Fl, L = calculate_SO_per_centralizersEnsemble()
 
 		mu.create_physicalValue_and_appendTo_field( SO, SOatC_field, SOatC_field.referenceUnit )
 		mu.create_physicalValue_and_appendTo_field( Cc, ClatC_field, ClatC_field.referenceUnit )
+		mu.create_physicalValue_and_appendTo_field( Ft, AFatC_field, AFatC_field.referenceUnit )
+		mu.create_physicalValue_and_appendTo_field( Fl, SFatC_field, SFatC_field.referenceUnit )
 		mu.create_physicalValue_and_appendTo_field( L, LatC_field, LatC_field.referenceUnit )
 
 	self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
@@ -832,23 +858,14 @@ def calculate_standOff_at_Midspans(self):
 	Azi_field = self.lsCentralization_fields.Azi
 	SOatM_field = self.lsCentralization_fields.SOatM
 	ClatM_field = self.lsCentralization_fields.ClatM
+	AFatM_field = self.lsCentralization_fields.AFatM
+	SFatM_field = self.lsCentralization_fields.SFatM
 	ClatC_field = self.lsCentralization_fields.ClatC
 	ID_field = self.lsCentralization_fields.ID
 	avgID_field = self.lsCentralization_fields.avgID
 	stage_field = self.lsCentralization_fields.Stage
 
 	self.lsCentralization_fields.referenceUnitConvert_fields()
-
-	"""
-	Loc_field.referenceUnitConvert()
-	ClatC_field.referenceUnitConvert()
-	SOatM_field.referenceUnitConvert()
-	ClatM_field.referenceUnitConvert()
-	Inc_field.referenceUnitConvert()
-	Azi_field.referenceUnitConvert()
-	ID_field.referenceUnitConvert()
-	avgID_field.referenceUnitConvert()
-	"""
 
 	MDs = self.lsCentralization_fields.MD.factorToReferenceUnit*self.MD
 	IDs = self.lsCentralization_fields.ID.factorToReferenceUnit*self.ID
@@ -947,9 +964,13 @@ def calculate_standOff_at_Midspans(self):
 
 		mu.create_physicalValue_and_appendTo_field( SO, SOatM_field, SOatM_field.referenceUnit )
 		mu.create_physicalValue_and_appendTo_field( Mc, ClatM_field, ClatM_field.referenceUnit )
+		mu.create_physicalValue_and_appendTo_field( Ft, AFatM_field, AFatM_field.referenceUnit )
+		mu.create_physicalValue_and_appendTo_field( Fl, SFatM_field, SFatM_field.referenceUnit )
 
 	mu.create_physicalValue_and_appendTo_field( 0, SOatM_field, SOatM_field.referenceUnit )
 	mu.create_physicalValue_and_appendTo_field( 0, ClatM_field, ClatM_field.referenceUnit )
+	mu.create_physicalValue_and_appendTo_field( 0, AFatM_field, AFatM_field.referenceUnit )
+	mu.create_physicalValue_and_appendTo_field( 0, SFatM_field, SFatM_field.referenceUnit )
 
 	self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
 
@@ -975,6 +996,10 @@ def insert_location_to_CentralizationFields(self, pos, MD):
 	self.lsCentralization_fields.SOatM.insert( pos, None )
 	self.lsCentralization_fields.ClatC.insert( pos, None )
 	self.lsCentralization_fields.ClatM.insert( pos, None )
+	self.lsCentralization_fields.AFatC.insert( pos, None )
+	self.lsCentralization_fields.AFatM.insert( pos, None )
+	self.lsCentralization_fields.SFatC.insert( pos, None )
+	self.lsCentralization_fields.SFatM.insert( pos, None )
 	self.lsCentralization_fields.LatC.insert( pos, None )
 	self.lsCentralization_fields.EW.insert( pos, EW )
 	self.lsCentralization_fields.NS.insert( pos, NS )

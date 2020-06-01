@@ -135,7 +135,7 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s4Calculate_pushButton.clicked.connect(calculateAndDraw_torque_drag_sideforce)
 
 		# TEST
-		self.load_file()
+		#self.load_file('C:/Users/arcad/Documents/__WORKS__/AZTECATROL/CENTRAL-SOFTWARE/CentralSoftware/tmp/test4.csf')
 
 
 	def save_file(self):
@@ -163,8 +163,7 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def load_file(self):
 
-		#filename = QtGui.QFileDialog.getOpenFileName( self.s1Info_tableWidget, 'Open File ...', self.v1WorkingDirectory, 'Central-Soft File (*.csf)' )
-		filename = 'C:/Users/arcad/Documents/__WORKS__/AZTECATROL/CENTRAL-SOFTWARE/CentralSoftware/tmp/test4.csf'
+		filename = QtGui.QFileDialog.getOpenFileName( self.s1Info_tableWidget, 'Open File ...', self.v1WorkingDirectory, 'Central-Soft File (*.csf)' )
 		
 		with open(filename,'rb') as File:
 			OBJ = mdl.load_obj( File )
