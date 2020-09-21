@@ -430,7 +430,7 @@
         <normaloff>iconos/edit-redo.png</normaloff>iconos/edit-redo.png</iconset>
       </property>
      </widget>
-     <widget class="QPushButton" name="s3ODRigidUpdate_pushButton">
+     <widget class="QPushButton" name="s3ODResinUpdate_pushButton">
       <property name="geometry">
        <rect>
         <x>440</x>
@@ -457,7 +457,7 @@
        <string>Bow spring</string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="s3RigidCentralizer_radioButton">
+     <widget class="QRadioButton" name="s3ResinCentralizer_radioButton">
       <property name="geometry">
        <rect>
         <x>180</x>
@@ -467,7 +467,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Rigid</string>
+       <string>Resin</string>
       </property>
      </widget>
      <widget class="QPushButton" name="s3CentralizerDB_pushButton">

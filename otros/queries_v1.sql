@@ -5,7 +5,7 @@ select centralizerID, valueRepresentation, concat( floor(valueRepresentation), '
 from centralizer_properties
 where fieldID=2009 and centralizerID>5000 and valueRepresentation like '%.75'
 
-update centralizer_properties set valueRepresentation='Rigid'
+update centralizer_properties set valueRepresentation='Resin'
 where fieldID=2049 and centralizerID<5000
 
 update centralizer_properties set valueRepresentation='Bow Spring'

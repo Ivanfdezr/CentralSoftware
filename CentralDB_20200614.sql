@@ -504,7 +504,7 @@ INSERT INTO `centralizer_properties` (`centralizerID`, `fieldID`, `nativeUnitID`
 	(4034, 2026, 3111, '251'),
 	(4034, 2027, 3000, '0.089'),
 	(4034, 2049, NULL, 'Resin'),
-	(4034, 2050, NULL, 'ICI Thru-0700-0834  (4)'),
+	(4034, 2050, NULL, 'ICI Thru-0700-0834 (4)'),
 	(4034, 2051, NULL, NULL),
 	(4035, 2009, 3004, '7 5/8'),
 	(4035, 2011, 3004, '8.375'),
@@ -2833,7 +2833,53 @@ INSERT INTO `centralizer_properties` (`centralizerID`, `fieldID`, `nativeUnitID`
 	(5128, 2029, 3000, '12'),
 	(5128, 2049, NULL, 'Bow Spring'),
 	(5128, 2050, NULL, 'ICI Flex-2000-2600S'),
-	(5128, 2051, NULL, NULL);
+	(5128, 2051, NULL, NULL),
+	(5129, 2009, 3004, '7'),
+	(5129, 2011, 3004, '8.125'),
+	(5129, 2014, 3007, '8.5'),
+	(5129, 2020, 3004, '8 1/4'),
+	(5129, 2021, 3007, '1.7'),
+	(5129, 2022, 3004, '7.33'),
+	(5129, 2023, 3004, '0.5'),
+	(5129, 2024, 3004, '16.0'),
+	(5129, 2025, 3000, '5'),
+	(5129, 2026, 3111, '251.0'),
+	(5129, 2027, 3000, '0.089'),
+	(5129, 2049, NULL, 'Resin'),
+	(5129, 2050, NULL, 'ICI Thru-0700-0814 (5)'),
+	(5129, 2051, NULL, NULL),
+	(5130, 2009, 3004, '1'),
+	(5130, 2010, 3004, '1'),
+	(5130, 2011, 3004, '1'),
+	(5130, 2012, 3004, '1'),
+	(5130, 2013, 3044, '1.0'),
+	(5130, 2014, 3004, '1.0'),
+	(5130, 2015, 3076, '1.0'),
+	(5130, 2016, 3076, '1.0'),
+	(5130, 2017, 3076, '1.0'),
+	(5130, 2018, 3076, '1.0'),
+	(5130, 2019, 2999, '1.0'),
+	(5130, 2020, 3004, NULL),
+	(5130, 2029, 3000, '1'),
+	(5130, 2049, NULL, 'Bow Spring'),
+	(5130, 2050, NULL, 'ICI Flex-0278-PRUEBA'),
+	(5130, 2051, NULL, NULL),
+	(5131, 2009, 3004, '1'),
+	(5131, 2010, 3004, '1.1'),
+	(5131, 2011, 3004, '1'),
+	(5131, 2012, 3004, '1'),
+	(5131, 2013, 3044, '2.0'),
+	(5131, 2014, 3004, '2.0'),
+	(5131, 2015, 3076, '2.0'),
+	(5131, 2016, 3076, '1.0'),
+	(5131, 2017, 3076, '1.0'),
+	(5131, 2018, 3076, '1.0'),
+	(5131, 2019, 2999, '1.0'),
+	(5131, 2020, 3004, NULL),
+	(5131, 2029, 3000, '2'),
+	(5131, 2049, NULL, 'Bow Spring'),
+	(5131, 2050, NULL, 'ICI Flex-0278-PRUEBA2'),
+	(5131, 2051, NULL, NULL);
 /*!40000 ALTER TABLE `centralizer_properties` ENABLE KEYS */;
 
 -- Dumping structure for table centraldb.default_cu_units
@@ -3117,7 +3163,7 @@ CREATE TABLE IF NOT EXISTS `parameters` (
   CONSTRAINT `FK_parameters_quantities` FOREIGN KEY (`quantityID`) REFERENCES `quantities` (`quantityID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1037 DEFAULT CHARSET=utf8mb4 COMMENT='Catalog';
 
--- Dumping data for table centraldb.parameters: ~35 rows (approximately)
+-- Dumping data for table centraldb.parameters: ~36 rows (approximately)
 /*!40000 ALTER TABLE `parameters` DISABLE KEYS */;
 INSERT INTO `parameters` (`parameterID`, `parameterName`, `quantityID`, `isEditable`) VALUES
 	(1001, 'Length', 1, 1),
@@ -3168,7 +3214,7 @@ CREATE TABLE IF NOT EXISTS `pipe_properties` (
   PRIMARY KEY (`pipeID`,`fieldID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table centraldb.pipe_properties: ~27,093 rows (approximately)
+-- Dumping data for table centraldb.pipe_properties: ~28,262 rows (approximately)
 /*!40000 ALTER TABLE `pipe_properties` DISABLE KEYS */;
 INSERT INTO `pipe_properties` (`pipeID`, `fieldID`, `nativeUnitID`, `valueRepresentation`) VALUES
 	(6001, 2027, 3000, '0.09'),
@@ -31300,7 +31346,36 @@ INSERT INTO `pipe_properties` (`pipeID`, `fieldID`, `nativeUnitID`, `valueRepres
 	(6970, 2054, NULL, NULL),
 	(6970, 2068, 3065, '71250'),
 	(6970, 2069, 3065, '31900'),
-	(6970, 2070, 3097, '963812');
+	(6970, 2070, 3097, '963812'),
+	(6971, 2027, 3000, '0.09'),
+	(6971, 2030, 3004, '1'),
+	(6971, 2031, 3004, '3.826'),
+	(6971, 2032, 3050, '15.1'),
+	(6971, 2033, 3065, '110000.0'),
+	(6971, 2034, 3076, '485000.0'),
+	(6971, 2035, 3065, '115000.0'),
+	(6971, 2036, 3065, '14340.0'),
+	(6971, 2037, 3065, '14420.0'),
+	(6971, 2038, 3065, '10000.0'),
+	(6971, 2039, 3057, '7.85'),
+	(6971, 2040, 3122, '30.0'),
+	(6971, 2041, 3000, '0.3'),
+	(6971, 2042, 3004, NULL),
+	(6971, 2043, 3004, NULL),
+	(6971, 2044, 3004, NULL),
+	(6971, 2045, 3006, '40.0'),
+	(6971, 2046, 3004, '3.701'),
+	(6971, 2047, 3004, '0.337'),
+	(6971, 2048, 3010, '4.407'),
+	(6971, 2049, NULL, 'Casing'),
+	(6971, 2050, NULL, NULL),
+	(6971, 2051, NULL, 'Tenaris Tamsa'),
+	(6971, 2052, NULL, 'TRC110'),
+	(6971, 2053, NULL, NULL),
+	(6971, 2054, NULL, NULL),
+	(6971, 2068, 3065, '86250.0'),
+	(6971, 2069, 3065, '63800.0'),
+	(6971, 2070, 3097, '45418.0');
 /*!40000 ALTER TABLE `pipe_properties` ENABLE KEYS */;
 
 -- Dumping structure for table centraldb.project_settings
@@ -31388,7 +31463,7 @@ CREATE TABLE IF NOT EXISTS `units` (
   CONSTRAINT `FK_units_quantities` FOREIGN KEY (`quantityID`) REFERENCES `quantities` (`quantityID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3125 DEFAULT CHARSET=utf8mb4 COMMENT='Catalog';
 
--- Dumping data for table centraldb.units: ~122 rows (approximately)
+-- Dumping data for table centraldb.units: ~126 rows (approximately)
 /*!40000 ALTER TABLE `units` DISABLE KEYS */;
 INSERT INTO `units` (`unitID`, `representation`, `factorToReferenceUnit`, `offsetToReferenceUnit`, `referenceUnit`, `quantityID`) VALUES
 	(2999, '%', 0.01, 0, '1', 0),

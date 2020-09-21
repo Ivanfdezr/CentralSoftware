@@ -186,14 +186,13 @@ def draw_survey_plots( self ):
 	self.s2PlanView_graphicsView.axes.grid()
 	self.s2PlanView_graphicsView.draw()
 	
-	#X,Y,Z,triangles = mu.render_wellbore( self.v2ASCComplements_fields, 0.1, 20 )
-	#ls = pu.LightSource(270, 45)
-	#rgb = ls.shade(-Z, cmap=pu.cm.gist_earth, vert_exag=0.1, blend_mode='soft')
-	#self.s2TriDView_graphicsView.axes.plot_surface(X,Y,Z, linewidth=0, facecolors=rgb, antialiased=False, shade=True)
+	"""
+	X,Y,Z,C = mu.render_wellbore( self.v2ASCComplements_fields, 100, 20 )
+	lis = pu.LightSource(270, 45)
+	rgb = lis.shade(mu.np.cos(C/500), cmap=pu.cm.RdYlBu, vert_exag=1, blend_mode='soft')
+	self.s2TriDView_graphicsView.axes.plot_surface(X,Y,Z, linewidth=0, facecolors=rgb, antialiased=False)
+	"""
 	
-	##self.s2TriDView_graphicsView.axes.plot_trisurf(X,Y,Z, triangles=triangles, cmap=pu.cm.copper)
-	##self.s2TriDView_graphicsView.axes.plot(X,Y,Z,'.',markersize=2)
-
 	curve, = self.s2TriDView_graphicsView.axes.plot( self.v2ASCComplements_fields.EW, self.v2ASCComplements_fields.NS, self.v2ASCComplements_fields.TVD, color=color )
 	#dot,   = self.s2TriDView_graphicsView.axes.plot( [0],[0],[0],'bo' )
 	self.s2TriDView_graphicsView.axes.set_xlabel( self.v2ASCComplements_fields.EW.headerName )

@@ -207,8 +207,6 @@ def update_wellboreInnerStageData(self):
 			return
 
 		self.currentWellboreInnerStageDataItem['Centralization']['Mode'] = True
-		self.currentWellboreInnerStageDataItem['Centralization']['Pattern'] = self.s3CentralizationPattern_spinBox.value()
-		self.currentWellboreInnerStageDataItem['Centralization']['Offset'] = self.s3CentralizationOffset_spinBox.value()
 		descriptionItem.set_text( self.v3PipeProperties_fields.Desc[0] +'\nwith Centralization'  )
 		self.currentWellboreInnerStageDataItem['Desc'] = descriptionItem.text()
 
@@ -217,8 +215,8 @@ def update_wellboreInnerStageData(self):
 			if eval( 'self.s3BowSpringCentralizer_radioButton_{tab}.isChecked()'.format(tab=tab) ):
 				self.currentWellboreInnerStageDataItem['Centralization'][tab]['Type'] = 'Bow Spring'
 			
-			elif eval( 'self.s3RigidCentralizer_radioButton_{tab}.isChecked()'.format(tab=tab) ):
-				self.currentWellboreInnerStageDataItem['Centralization'][tab]['Type'] = 'Rigid'
+			elif eval( 'self.s3ResinCentralizer_radioButton_{tab}.isChecked()'.format(tab=tab) ):
+				self.currentWellboreInnerStageDataItem['Centralization'][tab]['Type'] = 'Resin'
 			
 			else:
 				continue
@@ -236,6 +234,11 @@ def update_wellboreInnerStageData(self):
 
 		mdl.setup_ensembles_fromConfiguration( self )
 		self.s3StageEnsemble_label.setText( self.currentWellboreInnerStageDataItem['Centralization']['Ensemble']['label'] )
+		numofJoins = len( self.currentWellboreInnerStageDataItem['Centralization']['Ensemble']['nest'])
+		self.s3CentralizationPattern_spinBox.setMinimum( numofJoins )
+		self.currentWellboreInnerStageDataItem['Centralization']['Pattern'] = self.s3CentralizationPattern_spinBox.value()
+		self.currentWellboreInnerStageDataItem['Centralization']['Offset'] = self.s3CentralizationOffset_spinBox.value()
+
 		if self.v3CentralizationProcessed_flag:
 			self.v3CentralizationChanged_flag   = False
 			self.v3CentralizationProcessed_flag = False
@@ -291,6 +294,44 @@ def update_wellboreOuterStageData(self):
 		#print('>> MD ID =',len(self.v3WorkWellboreMD),len(self.v3WorkWellboreID))
 
 
+def save_information(self, row):
+
+	row_=row+1
+
+	cu.savetable( 	self.s3PipeProperties_tableWidget,
+					self.v3PipeProperties_fields,
+					self.v1WorkingDirectory+f"/PipeProperties_{row_}.csv",
+					orientation='v' )
+
+	cu.savetable( 	self.s3CentralizerProperties_tableWidget_A,
+					self.v3CentralizerProperties_fields_A,
+					self.v1WorkingDirectory+f"/CentralizerProperties_A_{row_}.csv",
+					orientation='v' )
+
+	cu.savetable( 	self.s3CentralizerProperties_tableWidget_B,
+					self.v3CentralizerProperties_fields_B,
+					self.v1WorkingDirectory+f"/CentralizerProperties_B_{row_}.csv",
+					orientation='v' )
+
+	cu.savetable( 	self.s3CentralizerProperties_tableWidget_C,
+					self.v3CentralizerProperties_fields_C,
+					self.v1WorkingDirectory+f"/CentralizerProperties_C_{row_}.csv",
+					orientation='v' )
+
+	cu.savetable( 	self.s3CentralizerLocation_tableWidget_A,
+					self.v3WellboreInnerStageData[row]['Centralization']['Fields'].MD,
+					self.v1WorkingDirectory+f"/CentralizerLocation_{row_}.csv" )
+
+	try:
+		stageLabel = self.currentWellboreInnerStageDataItem['Centralization']['Ensemble']['label']	
+	except (KeyError, TypeError):
+		stageLabel = '=\n|\n|\n|\n='
+	self.s3StageEnsemble_label.setText( stageLabel )
+
+	self.s3StageNumber_label1.setText( f"STAGE {row_}" )
+	self.s3StageNumber_label2.setText( f"STAGE {row_}" )
+
+
 @disableByBlock_currentWellboreInnerStageDataItem
 def select_innerStageRow_and_prepare_innerStageObjects(self, row):
 
@@ -307,13 +348,15 @@ def select_innerStageRow_and_prepare_innerStageObjects(self, row):
 		self.v3WellboreInnerStageData[row] = mdl.WellboreInnerStageDataItem(row)
 		self.currentWellboreInnerStageDataItem = self.v3WellboreInnerStageData[row]
 
-	self.s3StageNumber_label1.setText( 'STAGE '+str(row+1) )
-	self.s3StageNumber_label2.setText( 'STAGE '+str(row+1) )
-
+	"""
 	try:
-		self.s3StageEnsemble_label.setText( self.currentWellboreInnerStageDataItem['Centralization']['Ensemble']['label'] )
+		stageLabel = self.currentWellboreInnerStageDataItem['Centralization']['Ensemble']['label']	
 	except (KeyError, TypeError):
-		pass
+		stageLabel = '=\n|\n|\n|\n='
+	self.s3StageEnsemble_label.setText( stageLabel )
+	"""
+
+	save_information(self, row)
 
 	cu.idleFunction()
 	print_wellboreInnerStageData(self)
@@ -389,8 +432,8 @@ def load_wellboreInnerStageToolkit(self, dataItem):
 				if dataItem['Centralization'][tab]['Type'] == 'Bow Spring':
 					eval( 'self.s3BowSpringCentralizer_radioButton_{tab}.setChecked(True)'.format(tab=tab) )
 					setEnabled_bowSpringToolkit(self, tab)
-				elif dataItem['Centralization'][tab]['Type'] == 'Rigid':
-					eval( 'self.s3RigidCentralizer_radioButton_{tab}.setChecked(True)'.format(tab=tab) )
+				elif dataItem['Centralization'][tab]['Type'] == 'Resin':
+					eval( 'self.s3ResinCentralizer_radioButton_{tab}.setChecked(True)'.format(tab=tab) )
 					setEnabled_rigidToolkit(self, tab)
 
 				if dataItem['Centralization'][tab]['CentralizerProps']:
@@ -542,9 +585,9 @@ def setEnabled_specifyLocationToolkit(self):
 
 		s3CentralizerLocation_tableWidget   = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
 		s3BowSpringCentralizer_radioButton  = eval( 'self.s3BowSpringCentralizer_radioButton_{tab}'.format(tab=tab) )
-		s3RigidCentralizer_radioButton      = eval( 'self.s3RigidCentralizer_radioButton_{tab}'.format(tab=tab) )
+		s3ResinCentralizer_radioButton      = eval( 'self.s3ResinCentralizer_radioButton_{tab}'.format(tab=tab) )
 
-		if s3BowSpringCentralizer_radioButton.isChecked() or s3RigidCentralizer_radioButton.isChecked():
+		if s3BowSpringCentralizer_radioButton.isChecked() or s3ResinCentralizer_radioButton.isChecked():
 			s3CentralizerLocation_tableWidget.setEnabled(True)
 
 
@@ -582,7 +625,7 @@ def open_CDB_dialog(self, tab):
 	importlib.reload(cdb)
 
 	s3BowSpringCentralizer_radioButton    = eval( 'self.s3BowSpringCentralizer_radioButton_{tab}'.format(tab=tab) )
-	s3RigidCentralizer_radioButton        = eval( 'self.s3RigidCentralizer_radioButton_{tab}'.format(tab=tab) )
+	s3ResinCentralizer_radioButton        = eval( 'self.s3ResinCentralizer_radioButton_{tab}'.format(tab=tab) )
 	s3CentralizerProperties_tableWidget   = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
 	s3CentralizerProperties_fields        = eval( 'self.v3CentralizerProperties_fields_{tab}'.format(tab=tab) )
 	#s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )	
@@ -592,8 +635,8 @@ def open_CDB_dialog(self, tab):
 	
 	if s3BowSpringCentralizer_radioButton.isChecked():
 		CDB = cdb.Main_CentralizerDatabase(dialog, 'Bow Spring' )
-	elif s3RigidCentralizer_radioButton.isChecked():
-		CDB = cdb.Main_CentralizerDatabase(dialog, 'Rigid' )
+	elif s3ResinCentralizer_radioButton.isChecked():
+		CDB = cdb.Main_CentralizerDatabase(dialog, 'Resin' )
 	
 	if 'fields' not in dir(CDB): return
 	self.currentWellboreInnerStageDataItem['Centralization'][tab]['CentralizerBase'] = CDB.fields
@@ -629,13 +672,17 @@ def open_specifyCentralization_dialog(self):
 	#	QtGui.QMessageBox.critical(self.s3WellboreInnerStages_tableWidget, 'Error', msg)
 	
 
-#@updateByBlock_currentWellboreInnerStageDataItem
+@updateByBlock_currentWellboreInnerStageDataItem
 def open_LS_dialog(self):
 
 	importlib.reload(ls)
 
+	mdl.get_centralizationLocations( self )
+	print_wellboreInnerStageData(self)
+
 	dialog = QtGui.QDialog(self.s3ManageLocations_pushButton)
 	LS = ls.Main_LocationSetup(dialog, self)
+	del dialog 
 
 	if not hasattr(LS, 'fields'):
 		self.v3CentralizationChanged_flag = False
@@ -672,15 +719,54 @@ def open_LS_dialog(self):
 				except IndexError:
 					item.set_text()
 
-	self.msg_label.setText( 'Mean SO at centralizers:   {meanSOatC} {unit} ,   Mean SO at minspan:   {meanSOatM} {unit}'.format(
-							meanSOatC=LS.meanSOatC, meanSOatM=LS.meanSOatM, unit=LS.fields.SOatC.unit ) )
-	cu.idleFunction()
-
 	self.meanSOatC = LS.meanSOatC
 	self.meanSOatM = LS.meanSOatM
 
+	self.v4TorqueDragForces_fields.MD[:]     = LS.fields.MD
+	self.v4TorqueDragForces_fields.AxialF[:] = LS.fields.AFatC
+	self.v4TorqueDragForces_fields.SideF[:]  = LS.fields.SFatC
 
+	print('+++++++++++++++++++++++++++++++++++++++++++')
+	for field in LS.fields:
+		print(field.abbreviation,len(field))
+	print('+++++++++++++++++++++++++++++++++++++++++++')
+
+
+	self.v3SOs_MD = []
+	self.v3SOs_SO = []
 	
+	for k in range(2*len(LS.fields.MD)-1):
+		if k%2==0:
+			self.v3SOs_MD.append( LS.fields.MD[k//2] )
+			self.v3SOs_SO.append( LS.fields.SOatC[k//2] )
+		elif k%2==1:
+			self.v3SOs_MD.append( (LS.fields.MD[(k+1)//2]+LS.fields.MD[(k-1)//2])/2 )
+			self.v3SOs_SO.append( LS.fields.SOatM[k//2] )
+
+
+	for i, (AF, SF) in enumerate(zip(LS.fields.AFatM[:-1], LS.fields.SFatM[:-1])):
+		MD0 = LS.fields.MD[i]
+		MD1 = LS.fields.MD[i+1]
+		MDm = mdl.mu.physicalValue( (MD1+MD0)/2, LS.fields.MD.unit )
+		self.v4TorqueDragForces_fields.MD.insert(i*2+1, MDm)
+		self.v4TorqueDragForces_fields.AxialF.insert(i*2+1, AF)
+		self.v4TorqueDragForces_fields.SideF.insert(i*2+1, SF)
+
+	if self.v4TorqueDragForces_fields.MD[0]!=self.v3Forces_fields.MD[0]:
+		self.v4TorqueDragForces_fields.MD.insert( 0, self.v3Forces_fields.MD[0])
+		self.v4TorqueDragForces_fields.AxialF.insert( 0, self.v3Forces_fields.AxialF[0] )
+		self.v4TorqueDragForces_fields.SideF.insert( 0, self.v3Forces_fields.SideF[0] )
+
+	if self.v4TorqueDragForces_fields.MD[-1]!=self.v3Forces_fields.MD[-1]:
+		self.v4TorqueDragForces_fields.MD.append( self.v3Forces_fields.MD[-1])
+		self.v4TorqueDragForces_fields.AxialF.append( self.v3Forces_fields.AxialF[-1] )
+		self.v4TorqueDragForces_fields.SideF.append( self.v3Forces_fields.SideF[-1] )
+
+	self.msg_label.setText( 'Mean SO at centralizers:   {meanSOatC} {unit} ,   Mean SO at minspan:   {meanSOatM} {unit}'.format(
+							meanSOatC=LS.meanSOatC, meanSOatM=LS.meanSOatM, unit=LS.fields.SOatC.unit ) )
+	del LS
+	cu.idleFunction()
+
 
 @updateByBlock_currentWellboreInnerStageDataItem
 def open_SS_dialog(self):

@@ -100,7 +100,7 @@
     <enum>QTabWidget::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -353,9 +353,9 @@
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
-     <string>Rigid</string>
+     <string>Resin</string>
     </attribute>
-    <widget class="QTableWidget" name="CDBRigid_tableWidget">
+    <widget class="QTableWidget" name="CDBResin_tableWidget">
      <property name="geometry">
       <rect>
        <x>2</x>

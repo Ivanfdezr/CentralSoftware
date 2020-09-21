@@ -18,14 +18,14 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 
 		self.__init__CDB_tabWidget(centralizerType)
 		self.__init__CDBBowSpring_tableWidget()
-		self.__init__CDBRigid_tableWidget()
+		self.__init__CDBResin_tableWidget()
 		self.__init__CDBCasingOD_listWidget()
 
 		def export_centralizer():
 			if self.CDB_tabWidget.currentTabText == "Bow Spring":
 				self.export_centralizer(self.CDBBowSpring_tableWidget, self.CDBBowSpring_fields)
-			elif self.CDB_tabWidget.currentTabText == "Rigid":
-				self.export_centralizer(self.CDBRigid_tableWidget, self.CDBRigid_fields)
+			elif self.CDB_tabWidget.currentTabText == "Resin":
+				self.export_centralizer(self.CDBResin_tableWidget, self.CDBResin_fields)
 		self.CDBAccept_pushButton.clicked.connect(export_centralizer)
 		
 		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
@@ -52,8 +52,8 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 		
 		if self.centralizerType == 'Bow Spring':
 			ODs = mdl.get_BowSpringCasingODList()
-		elif self.centralizerType == 'Rigid':
-			ODs = mdl.get_RigidCasingODList()
+		elif self.centralizerType == 'Resin':
+			ODs = mdl.get_ResinCasingODList()
 
 		for OD in ODs:
 			self.CDBCasingOD_listWidget.addItem(OD)
@@ -91,31 +91,31 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 		self.CDBBowSpring_tableWidget.customContextMenuRequested.connect(__open_menu)	
 
 
-	def __init__CDBRigid_tableWidget(self):
+	def __init__CDBResin_tableWidget(self):
 		
-		OD = mdl.get_RigidCasingODList()[0]
-		self.CDBRigid_fields = mdl.get_CDBRigid_fields()
-		mdl.set_CDBRigid_data_to_fields(OD, self.CDBRigid_fields)
+		OD = mdl.get_ResinCasingODList()[0]
+		self.CDBResin_fields = mdl.get_CDBResin_fields()
+		mdl.set_CDBResin_data_to_fields(OD, self.CDBResin_fields)
 		
-		for field in self.CDBRigid_fields[:-2]:
+		for field in self.CDBResin_fields[:-2]:
 			item = QtGui.QTableWidgetItem()
-			self.CDBRigid_tableWidget.setHorizontalHeaderItem(field.pos, item)
+			self.CDBResin_tableWidget.setHorizontalHeaderItem(field.pos, item)
 			item.setText( field.headerName )
 
-		__update_CDBRigid_tableWidget = lambda: self.__update_CDB_tableWidget(self.CDBRigid_tableWidget, self.CDBRigid_fields)
-		__update_CDBRigid_tableWidget()
-		self._update_CDBRigid_tableWidget = cu.handle_sorting_table(self, self.CDBRigid_tableWidget, __update_CDBRigid_tableWidget )
-		self.CDBRigid_tableWidget.resizeColumnsToContents()
+		__update_CDBResin_tableWidget = lambda: self.__update_CDB_tableWidget(self.CDBResin_tableWidget, self.CDBResin_fields)
+		__update_CDBResin_tableWidget()
+		self._update_CDBResin_tableWidget = cu.handle_sorting_table(self, self.CDBResin_tableWidget, __update_CDBResin_tableWidget )
+		self.CDBResin_tableWidget.resizeColumnsToContents()
 		
-		#select_row = lambda r,c : cu.select_tableWidgetRow(self.CDBRigid_tableWidget,r,True)
-		#self.CDBRigid_tableWidget.cellPressed.connect(select_row)
-		__fetch_selectedPosition = lambda r, c: self.fetch_selectedPosition(self.CDBRigid_tableWidget, r, c)
-		self.CDBRigid_tableWidget.cellPressed.connect(__fetch_selectedPosition)
-		self.CDBRigid_tableWidget.itemChanged.connect(cu.update_fieldItem)
+		#select_row = lambda r,c : cu.select_tableWidgetRow(self.CDBResin_tableWidget,r,True)
+		#self.CDBResin_tableWidget.cellPressed.connect(select_row)
+		__fetch_selectedPosition = lambda r, c: self.fetch_selectedPosition(self.CDBResin_tableWidget, r, c)
+		self.CDBResin_tableWidget.cellPressed.connect(__fetch_selectedPosition)
+		self.CDBResin_tableWidget.itemChanged.connect(cu.update_fieldItem)
 		
-		__open_menu = lambda pos: self.open_menu(self.CDBRigid_tableWidget, self.CDBRigid_fields, pos)
-		self.CDBRigid_tableWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-		self.CDBRigid_tableWidget.customContextMenuRequested.connect(__open_menu)
+		__open_menu = lambda pos: self.open_menu(self.CDBResin_tableWidget, self.CDBResin_fields, pos)
+		self.CDBResin_tableWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+		self.CDBResin_tableWidget.customContextMenuRequested.connect(__open_menu)
 
 
 	def fetch_selectedPosition(self, CDB_tableWidget, r, c):
@@ -252,9 +252,9 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 			mdl.set_CDBBowSpring_data_to_fields(OD, self.CDBBowSpring_fields)
 			self._update_CDBBowSpring_tableWidget()
 		
-		elif self.centralizerType=='Rigid':
-			mdl.set_CDBRigid_data_to_fields(OD, self.CDBRigid_fields)
-			self._update_CDBRigid_tableWidget()
+		elif self.centralizerType=='Resin':
+			mdl.set_CDBResin_data_to_fields(OD, self.CDBResin_fields)
+			self._update_CDBResin_tableWidget()
 
 
 	def update_CDBCasingOD_listWidget(self, index):
@@ -264,9 +264,9 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 		if self.centralizerType == 'Bow Spring':
 			ODs = mdl.get_BowSpringCasingODList()
 			theOD = self.CDBBowSpring_fields.OD
-		elif self.centralizerType == 'Rigid':
-			ODs = mdl.get_RigidCasingODList()
-			theOD = self.CDBRigid_fields.OD
+		elif self.centralizerType == 'Resin':
+			ODs = mdl.get_ResinCasingODList()
+			theOD = self.CDBResin_fields.OD
 
 		self.CDBCasingOD_listWidget.clear()
 		for OD in ODs:

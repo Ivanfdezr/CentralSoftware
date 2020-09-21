@@ -27,7 +27,7 @@ def savetable(table, fields, filenames, orientation='h'):
 			FILE.write(csvtext)
 """
 
-def savetable(table, fields, filenames, orientation='h'):
+def savetable(table, fields, filename, orientation='h'):
 
 	csvtext = ''
 	
@@ -40,8 +40,8 @@ def savetable(table, fields, filenames, orientation='h'):
 		for i in range(len(fields[0])):
 			for field in fields:
 				item = table.item( i, field.pos )
-				parts = re.split('\n',item.text())
-				text = ''.join(parts)
+				parts = re.split('[,\n]+',item.text())
+				text = ' '.join(parts)
 				csvtext += text +','
 			csvtext = csvtext[:-1] +'\n'
 		csvtext = csvtext[:-1]
@@ -52,15 +52,14 @@ def savetable(table, fields, filenames, orientation='h'):
 			csvtext += field.headerName +','
 			for i in range(len(fields[0])):
 				item = table.item( field.pos, i )
-				parts = re.split('\n',item.text())
-				text = ''.join(parts)
+				parts = re.split('[,\n]+',item.text())
+				text = ' '.join(parts)
 				csvtext += text +','
 			csvtext = csvtext[:-1] +'\n'
 		csvtext = csvtext[:-1]
 
-	for filename in filenames:
-		with open(filename,'w',encoding='utf-8') as FILE:
-			FILE.write(csvtext)
+	with open(filename,'w',encoding='utf-8') as FILE:
+		FILE.write(csvtext)
 
 
 def waiting_effects(function):

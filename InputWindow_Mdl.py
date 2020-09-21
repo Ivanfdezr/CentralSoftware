@@ -322,6 +322,19 @@ def get_Centralization_fields():
 	return Centralization_fields
 
 
+def get_v3SOs_fields():
+
+	MD = mu.Field(2001)
+	SO = mu.Field(2078)
+	SO.set_abbreviation('SO')
+
+	v3SOs_fields = mu.FieldList()
+	v3SOs_fields.append( MD )
+	v3SOs_fields.append( SO )
+
+	return v3SOs_fields
+
+
 def get_v4Settings_fields():
 
 	TAW = mu.Field(2083)
@@ -344,73 +357,59 @@ def get_v4Settings_fields():
 	return s4Settings_fields
 
 
-def get_v4TorqueDragSideforce_fields():
+def get_v4TorqueDragForces_fields():
 
 	MD       = mu.Field(2001, altBg=True, altFg=True)
-	Inc      = mu.Field(2002, altBg=True, altFg=True)
-	Torque_u = mu.Field(2082, altBg=True, altFg=True)
-	Torque_s = mu.Field(2082, altBg=True, altFg=True)
-	Torque_d = mu.Field(2082, altBg=True, altFg=True)
+	Torque   = mu.Field(2082, altBg=True, altFg=True)
 	Drag_u   = mu.Field(2075, altBg=True, altFg=True)
 	Drag_s   = mu.Field(2075, altBg=True, altFg=True)
 	Drag_d   = mu.Field(2075, altBg=True, altFg=True)
+	AxialF   = mu.Field(2075, altBg=True, altFg=True)
 	SideF    = mu.Field(2074, altBg=True, altFg=True)
 	
-	uncMD       = mu.Field(2001, altBg=True, altFg=True)
-	uncInc      = mu.Field(2002, altBg=True, altFg=True)
-	uncTorque_u = mu.Field(2082, altBg=True, altFg=True)
-	uncTorque_s = mu.Field(2082, altBg=True, altFg=True)
-	uncTorque_d = mu.Field(2082, altBg=True, altFg=True)
+	uncTorque   = mu.Field(2082, altBg=True, altFg=True)
 	uncDrag_u   = mu.Field(2075, altBg=True, altFg=True)
 	uncDrag_s   = mu.Field(2075, altBg=True, altFg=True)
 	uncDrag_d   = mu.Field(2075, altBg=True, altFg=True)
-	uncSideF    = mu.Field(2074, altBg=True, altFg=True)
-	
-	Torque_u.set_representation('Torque raising')
-	Torque_s.set_representation('Torque static')
-	Torque_d.set_representation('Torque lowering')
+
+	Torque.set_representation('Torque')
 	Drag_u.set_representation('Drag raising')
 	Drag_s.set_representation('Drag static')
 	Drag_d.set_representation('Drag lowering')
+
+	uncTorque.set_representation('unc. Torque')
+	uncDrag_u.set_representation('unc. Drag raising')
+	uncDrag_s.set_representation('unc. Drag static')
+	uncDrag_d.set_representation('unc. Drag lowering')
 	
-	Torque_u.set_abbreviation('Torque_u')
-	Torque_s.set_abbreviation('Torque_s')
-	Torque_d.set_abbreviation('Torque_d')
+	Torque.set_abbreviation('Torque')
 	Drag_u.set_abbreviation('Drag_u')
 	Drag_s.set_abbreviation('Drag_s')
 	Drag_d.set_abbreviation('Drag_d')
 	
-	uncMD.set_abbreviation('uncMD')
-	uncInc.set_abbreviation('uncInc')
-	uncTorque_u.set_abbreviation('uncTorque_u')
-	uncTorque_s.set_abbreviation('uncTorque_s')
-	uncTorque_d.set_abbreviation('uncTorque_d')
+	uncTorque.set_abbreviation('uncTorque')
 	uncDrag_u.set_abbreviation('uncDrag_u')
 	uncDrag_s.set_abbreviation('uncDrag_s')
 	uncDrag_d.set_abbreviation('uncDrag_d')
-	uncSideF.set_abbreviation('uncSideF')
 
 	s4TorqueDragSideforce_fields = mu.FieldList()
 	s4TorqueDragSideforce_fields.append( MD )
-	s4TorqueDragSideforce_fields.append( Inc )
-	s4TorqueDragSideforce_fields.append( Torque_u )
-	s4TorqueDragSideforce_fields.append( Torque_s )
-	s4TorqueDragSideforce_fields.append( Torque_d )
+	s4TorqueDragSideforce_fields.append( Torque )
 	s4TorqueDragSideforce_fields.append( Drag_u )
 	s4TorqueDragSideforce_fields.append( Drag_s )
 	s4TorqueDragSideforce_fields.append( Drag_d )
+	s4TorqueDragSideforce_fields.append( AxialF )
 	s4TorqueDragSideforce_fields.append( SideF )
-	s4TorqueDragSideforce_fields.append( uncMD )
-	s4TorqueDragSideforce_fields.append( uncInc )
-	s4TorqueDragSideforce_fields.append( uncTorque_u )
-	s4TorqueDragSideforce_fields.append( uncTorque_s )
-	s4TorqueDragSideforce_fields.append( uncTorque_d )
+
+	s4TorqueDragSideforce_fields.append( uncTorque )
 	s4TorqueDragSideforce_fields.append( uncDrag_u )
 	s4TorqueDragSideforce_fields.append( uncDrag_s )
 	s4TorqueDragSideforce_fields.append( uncDrag_d )
-	s4TorqueDragSideforce_fields.append( uncSideF )
-	
+
 	return s4TorqueDragSideforce_fields
+
+
+
 
 
 def calculate_MCMComplements( fields, KOP, tortuosity=None ):
@@ -733,14 +732,6 @@ def calculate_ASCComplements( fields, KOP, tortuosity=None ):
 		HD[:]  = fields.HD
 		DL[:]  = fields.DL
 
-	#fmap = lambda x: len(x)
-	#print( list(map(fmap,fields)) )
-	#print(fields)
-	#print( list(map(fmap,ASCComplements)) )
-	#print(ASCComplements)
-	#for j,md in enumerate(ASCComplements.MD):
-	#	print(j,md)
-
 	return ASCComplements, dT, T, sT
 
 
@@ -846,7 +837,6 @@ def calculate_SideF_and_DLplaneF(self):
 
 	for field in self.v3Forces_fields:
 		print(field.abbreviation,len(field))
-
 
 	MD_field = self.v3Forces_fields.MD
 	Inc_field = self.v3Forces_fields.Inc
@@ -1166,9 +1156,14 @@ def get_centralizationLocations( self ):
 		locationIndexes = indexes[mask]+offset
 		locationMDtops  = stageMDtops[mask]
 
-		for i in range(1,len(ensemble)):
-			assert( not any( mask[locationIndexes+i] ) )
+		#for i in range(1,len(ensemble)):
+		#	assert( not any( mask[locationIndexes+i] ) )
 
+		if (locationIndexes[-1]+len(ensemble)-1) >= len(mask):
+			locationIndexes = locationIndexes[:-1]
+			locationMDtops = locationMDtops[:-1]
+
+		print(k,':',innerStage['MDtop'],innerStage['MDbot'])
 		for md in locationMDtops:
 
 			MD = mu.physicalValue( md, self.v2ASCComplements_fields.MD.unit )
@@ -1289,7 +1284,7 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 			CL[x] = mu.referenceUnitConvert_value( CL[x], CL[x].unit )
 			supports+=1
 
-		elif c['Type']=='Rigid':
+		elif c['Type']=='Resin':
 			D[x] = c['CentralizerProps'].COD[0]
 			D[x] = mu.referenceUnitConvert_value( D[x], D[x].unit )
 			CL[x] = c['CentralizerBase'].CL[0]
@@ -1316,7 +1311,7 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 				SO.append( so )
 				Cc.append( cc )
 				L.append( l )
-			#elif c['Type']=='Rigid':
+			#elif c['Type']=='Resin':
 			#	so, cc, l = calculate_SO_per_centralizer(x)
 			#	SO += so/supports #*c['CentralizerBase'].Blades[0]/supports
 			#	Cc += cc/supports #*c['CentralizerBase'].Blades[0]/supports
@@ -1411,7 +1406,7 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 				Cc = R-PR-(Hr-mHr)
 				SO = Cc/mHc
 
-			elif ctype=='Rigid':
+			elif ctype=='Resin':
 
 				SO_ = []
 				Cc_ = []
@@ -1554,13 +1549,18 @@ def calculate_standOff_atMidspan(self, locations, ClatC_field, SOatM_field, Clat
 
 
 
+
 def calculate_psiAngle( self, diameter ):
 
 	self.v4Settings_fields.TrV.referenceUnitConvert()
 	self.v4Settings_fields.RoR.referenceUnitConvert()
 	radius = mu.referenceUnitConvert_value( diameter/2, diameter.unit )
 
-	Psi = np.arctan( self.v4Settings_fields.TrV[0]/self.v4Settings_fields.RoR[0]/radius )
+	if self.v4Settings_fields.RoR[0]==0.0:
+		Psi = np.arctan( np.inf )
+	else:
+		Psi = np.arctan( self.v4Settings_fields.TrV[0]/self.v4Settings_fields.RoR[0]/radius )
+
 	Psi = mu.physicalValue( Psi, self.v4Settings_fields.Psi.referenceUnit )
 	self.v4Settings_fields.Psi.append( Psi )
 
@@ -1577,7 +1577,7 @@ def set_stepMD( self ):
 
 def calculate_TDS_for_uncentralizedStage(self, stage, FT1=None, MDLims=None, centralizedStage=False ):
 
-	TDS_fields = self.v4TorqueDragSideforce_fields
+	TDS_fields = self.v4TorqueDragForces_fields
 
 	PD = stage['PipeProps'].OD[0]
 	Pd = stage['PipeProps'].ID[0]
@@ -1777,7 +1777,7 @@ def calculate_TDS_for_centralizedStage(self, stage ):
 	SO.referenceUnitConvert()
 	numofC = len(MD)
 
-	TDS_fields = self.v4TorqueDragSideforce_fields
+	TDS_fields = self.v4TorqueDragForces_fields
 
 	MDLims = ( MD[-1], stageBottomMD )
 	calculate_TDS_for_uncentralizedStage(self, stage, FT1=FT1, MDLims=MDLims, centralizedStage=True )
@@ -1841,32 +1841,128 @@ def calculate_TDS_for_centralizedStage(self, stage ):
 			calculate_TDS_for_uncentralizedStage(self, stage, FT1=FT1, MDLims=MDLims, centralizedStage=True )
 
 
+
+def calculate_TDS(self):
+
+	self.v4TorqueDragForces_fields.referenceUnitConvert_fields()
+
+	self.v4Settings_fields.WOB.referenceUnitConvert()
+	self.v4Settings_fields.TOB.referenceUnitConvert()
+	self.v4Settings_fields.TAW.referenceUnitConvert()
+
+	F0 = -self.v4Settings_fields.WOB[0] -self.v4Settings_fields.TAW[0]
+	T0 = self.v4Settings_fields.TOB[0]
+	
+	self.v4Settings_fields.WOB.inverseReferenceUnitConvert()
+	self.v4Settings_fields.TOB.inverseReferenceUnitConvert()
+	self.v4Settings_fields.TAW.inverseReferenceUnitConvert()
+	
+	MDs = copy.deepcopy( self.v4TorqueDragForces_fields.MD )
+	MDs.reverse()
+
+	cF = 0
+	cT = 0
+	uF = 0
+	uT = 0
+
+	for i,MD in enumerate(MDs):
+
+		outerStage = get_outerStage_at_MD(self, MD)
+		innerStage = get_innerStage_at_MD(self, MD)
+
+		PD = innerStage['PipeProps'].OD[0]
+		ff = outerStage['WellboreProps'].FF[0]
+
+		PD = mu.referenceUnitConvert_value( PD, PD.unit )
+		ff = mu.referenceUnitConvert_value( ff, ff.unit )
+		ffReduction = mu.referenceUnitConvert_value( innerStage['PipeProps'].FFReduction[0], 
+													 innerStage['PipeProps'].FFReduction[0].unit )
+		ff = ff*(1-ffReduction)
+
+		sinPsi = np.sin(self.v4Settings_fields.Psi[0])
+		cosPsi = np.cos(self.v4Settings_fields.Psi[0])
+		r = PD/2
+
+		if self.v4TorqueDragForces_fields.SideF[-i-1]>0:
+			cSF = self.v4TorqueDragForces_fields.SideF[-i-1]
+		else:
+			cSF = 0.0
+		uSF = abs( self.v4TorqueDragForces_fields.SideF[-i-1] )
+
+		cF += cSF*ff*sinPsi
+		cT += cSF*ff*cosPsi*r
+		uF += uSF*ff*sinPsi
+		uT += uSF*ff*cosPsi*r
+
+		DragValue = mu.physicalValue( self.v4TorqueDragForces_fields.AxialF[-i-1]+F0, 
+									  self.v4TorqueDragForces_fields.Drag_s.referenceUnit )
+		self.v4TorqueDragForces_fields.Drag_s.insert(0, DragValue )
+
+		DragValue = mu.physicalValue( self.v4TorqueDragForces_fields.AxialF[-i-1]+F0+cF, 
+									  self.v4TorqueDragForces_fields.Drag_s.referenceUnit )
+		self.v4TorqueDragForces_fields.Drag_u.insert(0, DragValue )
+
+		DragValue = mu.physicalValue( self.v4TorqueDragForces_fields.AxialF[-i-1]+F0-cF, 
+									  self.v4TorqueDragForces_fields.Drag_s.referenceUnit )
+		self.v4TorqueDragForces_fields.Drag_d.insert(0, DragValue )
+
+		TorqueValue = mu.physicalValue( T0+cT, self.v4TorqueDragForces_fields.Torque.referenceUnit )
+		self.v4TorqueDragForces_fields.Torque.insert(0, TorqueValue )
+
+
+		DragValue = mu.physicalValue( self.v4TorqueDragForces_fields.AxialF[-i-1]+F0, 
+									  self.v4TorqueDragForces_fields.uncDrag_s.referenceUnit )
+		self.v4TorqueDragForces_fields.uncDrag_s.insert(0, DragValue )
+
+		DragValue = mu.physicalValue( self.v4TorqueDragForces_fields.AxialF[-i-1]+F0+uF, 
+									  self.v4TorqueDragForces_fields.uncDrag_s.referenceUnit )
+		self.v4TorqueDragForces_fields.uncDrag_u.insert(0, DragValue )
+
+		DragValue = mu.physicalValue( self.v4TorqueDragForces_fields.AxialF[-i-1]+F0-uF, 
+									  self.v4TorqueDragForces_fields.uncDrag_s.referenceUnit )
+		self.v4TorqueDragForces_fields.uncDrag_d.insert(0, DragValue )
+
+		TorqueValue = mu.physicalValue( T0+uT, self.v4TorqueDragForces_fields.uncTorque.referenceUnit )
+		self.v4TorqueDragForces_fields.uncTorque.insert(0, TorqueValue )
+
+	self.v4TorqueDragForces_fields.inverseReferenceUnitConvert_fields()
+
+
+
+
+
 def get_sortedIndexes_of_wellboreOuterStageData(self):
 
-	stages = list(self.v3WellboreOuterStageData.values())
+	stages = self.v3WellboreOuterStageData.values()
+	keys = np.array(list(self.v3WellboreOuterStageData.keys()))
 	
 	def mapfunction( stage ): 
 		if stage['WellboreProps']==None:
 			return np.inf
 		else:
 			return stage['WellboreProps'].MDtop[0]
+
 	MDtops = list(map( mapfunction, stages ))
 	sortedIndexes = np.argsort( MDtops )
+	sortedIndexes = keys[sortedIndexes]
 
 	return sortedIndexes
 
 
 def get_sortedIndexes_of_wellboreInnerStageData(self):
 
-	stages = list(self.v3WellboreInnerStageData.values())
-	mapfunction = lambda stage: stage['MDtop']
+	stages = self.v3WellboreInnerStageData.values()
+	keys = np.array(list(self.v3WellboreInnerStageData.keys()))
+
 	def mapfunction( stage ): 
 		if stage['MDtop']==None:
 			return np.inf
 		else:
 			return stage['MDtop']
+
 	MDtops = list(map( mapfunction, stages ))
 	sortedIndexes = np.argsort( MDtops )
+	sortedIndexes = keys[sortedIndexes]
 
 	return sortedIndexes
 
@@ -1876,7 +1972,7 @@ def setup_ensembles_fromConfiguration( self ):
 	def translate(label):
 		if label=='Bow Spring':
 			return 'b'
-		elif label=='Rigid':
+		elif label=='Resin':
 			return 'r'
 		else:
 			return None

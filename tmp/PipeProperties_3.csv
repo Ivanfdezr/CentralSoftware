@@ -1,0 +1,11 @@
+Description,Casing of 7 in  N80
+Weight [lbf/ft],29.0
+OD [in],7.0
+ID [in],6.184
+Tensile Limit [tonf],338.0
+Torsional Limit [ft∙lbf],101796.0
+Density [lb/in³],0.28
+E [×10⁶ psi],30.0
+FF Reduction [%],3.0
+Inner Mud Density [g/cm³],2.0
+Outer Mud Density [g/cm³],2.0

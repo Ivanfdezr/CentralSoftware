@@ -3,6 +3,8 @@ from InputWindow_Vst import Ui_InputWindow
 from UnitSettings_Ctrl import Main_UnitSettings
 from OneSpanAnalysis_Ctrl import Main_OneSpanAnalysis
 from OutputWindow_Ctrl import Main_OutputWindow
+from DiagramWindow_Ctrl import Main_DiagramWindow
+from GraphWindow_Ctrl import Main_GraphWindow
 import InputWindow_Mdl as mdl
 import CtrlUtilities as cu
 #import MdlUtilities as mu
@@ -34,6 +36,8 @@ class Main_InputWindow(Ui_InputWindow):
 		self.v3CentralizationChanged_flag   = False
 		self.v3CentralizationProcessed_flag = False
 
+		self.v3SOs_fields = mdl.get_v3SOs_fields()
+
 		self.__init__s1Info_tableWidget()
 		self.__init__s2DataSurvey_tableWidget()
 		self.__init__s2SurveyTortuosity_tableWidget()
@@ -47,13 +51,13 @@ class Main_InputWindow(Ui_InputWindow):
 		self.__init__s4Settings_tableWidget()
 		self.__init__s4TorqueDragSideforce_tableWidget()
 
-		self.actionOpen.triggered.connect(self.load_file)
-		self.actionSave.triggered.connect(self.save_file)
-		self.actionAbout.triggered.connect(self.about)
-		#self.objectsSizes = {}
+		self.Open_action.triggered.connect(self.load_file)
+		self.Save_action.triggered.connect(self.save_file)
+		self.SchematicDiagram_action.triggered.connect(self.open_schematicDiagramDialog)
+		self.OneSpanAnalysis_action.triggered.connect(self.open_oneSpanAnalysisDialog)
+		self.MakeReport_action.triggered.connect(self.save_src_and_make_report)
+		self.About_action.triggered.connect(self.about)
 
-		self.actionOne_Span_Analysis.triggered.connect(self.open_oneSpanAnalysisDialog)
-		self.actionStar_Calculation.triggered.connect(self.open_outputWindow)
 		self.s1SelectDirectory_pushButton.clicked.connect(self.open_selectWorkingDirectoryDialog)
 		self.s1UnitSetting_pushButton.clicked.connect(self.open_unitSettingsDialog)
 		
@@ -85,8 +89,10 @@ class Main_InputWindow(Ui_InputWindow):
 		self.s3ODID_pushButton.clicked.connect(adjust_Wt)
 		self.s3ODWt_pushButton.clicked.connect(adjust_ID)
 
-		open_specifyCentralization_dialog = lambda: wf.open_specifyCentralization_dialog(self)
-		self.s3ManageLocations_pushButton.clicked.connect(open_specifyCentralization_dialog)
+		open_LS_dialog = lambda: wf.open_LS_dialog(self)
+		self.s3ManageLocations_pushButton.clicked.connect(open_LS_dialog)
+
+		self.s3Plot3DSO_pushButton.clicked.connect(self.open_graphWindow_dialog)
 
 		valueChangedAction = lambda v: wf.valueChangedAction(self, v)
 		self.s3CentralizationPattern_spinBox.valueChanged.connect(valueChangedAction)
@@ -115,27 +121,27 @@ class Main_InputWindow(Ui_InputWindow):
 		setEnabled_bowSpringToolkit_A = lambda: wf.setEnabled_bowSpringToolkit(self, 'A')
 		setEnabled_rigidToolkit_A = lambda: wf.setEnabled_rigidToolkit(self, 'A')
 		self.s3BowSpringCentralizer_radioButton_A.clicked.connect(setEnabled_bowSpringToolkit_A)
-		self.s3RigidCentralizer_radioButton_A.clicked.connect(setEnabled_rigidToolkit_A)
+		self.s3ResinCentralizer_radioButton_A.clicked.connect(setEnabled_rigidToolkit_A)
 
 		setEnabled_bowSpringToolkit_B = lambda: wf.setEnabled_bowSpringToolkit(self, 'B')
 		setEnabled_rigidToolkit_B = lambda: wf.setEnabled_rigidToolkit(self, 'B')
 		setDisabled_centralizerToolkit_B = lambda: wf.setDisabled_centralizerToolkit(self, 'B')
 		self.s3BowSpringCentralizer_radioButton_B.clicked.connect(setEnabled_bowSpringToolkit_B)
-		self.s3RigidCentralizer_radioButton_B.clicked.connect(setEnabled_rigidToolkit_B)
+		self.s3ResinCentralizer_radioButton_B.clicked.connect(setEnabled_rigidToolkit_B)
 		self.s3NoneCentralizer_radioButton_B.clicked.connect(setDisabled_centralizerToolkit_B)
 
 		setEnabled_bowSpringToolkit_C = lambda: wf.setEnabled_bowSpringToolkit(self, 'C')
 		setEnabled_rigidToolkit_C = lambda: wf.setEnabled_rigidToolkit(self, 'C')
 		setDisabled_centralizerToolkit_C = lambda: wf.setDisabled_centralizerToolkit(self, 'C')
 		self.s3BowSpringCentralizer_radioButton_C.clicked.connect(setEnabled_bowSpringToolkit_C)
-		self.s3RigidCentralizer_radioButton_C.clicked.connect(setEnabled_rigidToolkit_C)
+		self.s3ResinCentralizer_radioButton_C.clicked.connect(setEnabled_rigidToolkit_C)
 		self.s3NoneCentralizer_radioButton_C.clicked.connect(setDisabled_centralizerToolkit_C)
 
 		calculateAndDraw_torque_drag_sideforce = lambda: tdsf.calculateAndDraw_torque_drag_sideforce(self)
 		self.s4Calculate_pushButton.clicked.connect(calculateAndDraw_torque_drag_sideforce)
 
 		# TEST
-		#self.load_file('C:/Users/arcad/Documents/__WORKS__/AZTECATROL/CENTRAL-SOFTWARE/CentralSoftware/tmp/test4.csf')
+		#self.load_file()
 
 
 	def save_file(self):
@@ -164,7 +170,8 @@ class Main_InputWindow(Ui_InputWindow):
 	def load_file(self):
 
 		filename = QtGui.QFileDialog.getOpenFileName( self.s1Info_tableWidget, 'Open File ...', self.v1WorkingDirectory, 'Central-Soft File (*.csf)' )
-		
+		#filename = 'C:/Users/arcad/Documents/__WORKS__/AZTECATROL/CENTRAL-SOFTWARE/CentralSoftware/tmp/test1.csf'
+
 		with open(filename,'rb') as File:
 			OBJ = mdl.load_obj( File )
 
@@ -209,7 +216,7 @@ class Main_InputWindow(Ui_InputWindow):
 		"""
 
 		self.load_fields_to_vTableWidget( self.v4Settings_fields[:5], self.s4Settings_tableWidget )
-		self.load_fields_to_hTableWidget( self.v4TorqueDragSideforce_fields[:9], self.s4TorqueDragSideforce_tableWidget )
+		self.load_fields_to_hTableWidget( self.v4TorqueDragForces_fields[:7], self.s4TorqueDragSideforce_tableWidget )
 		print(filename,' loaded!')
 		print('=========================================================')
 
@@ -367,40 +374,47 @@ class Main_InputWindow(Ui_InputWindow):
 		dialog = QtGui.QDialog(self.s1UnitSetting_pushButton)
 		Main_UnitSettings(dialog)
 		self.s1Customized_radioButton.click()
+		del dialog
 		
 
 	def open_oneSpanAnalysisDialog(self):
 		dialog = QtGui.QDialog(self.iw_toolBar)
 		Main_OneSpanAnalysis(dialog)
+		del dialog
 
 
-	def open_outputWindow(self):
+	def open_schematicDiagramDialog(self):
+		dialog = QtGui.QDialog(self.iw_toolBar)
+		DW = Main_DiagramWindow(dialog, self)
+		DW.dwWellboreSchematic_graphicsView.figure.savefig( self.parent.v1WorkingDirectory+"WellboreSchematic.png", dpi=300 )
+		del DW
+		del dialog
+
+
+	def open_graphWindow_dialog(self):
+		dialog = QtGui.QDialog(self.s3Plot3DSO_pushButton)
+		GW = Main_GraphWindow(dialog, self)
+		GW.gwColoredWellbore_graphicsView.figure.savefig( self.parent.v1WorkingDirectory+"WellboreCentralization3D.png", dpi=300 )
+		del GW
+		del dialog
+
+
+	def save_src_and_make_report(self):
 		
 
 		cu.savetable( 	self.s1Info_tableWidget,
 						self.v1Info_fields,
-						["tmp/GeneralInformation.csv",
-						self.v1WorkingDirectory+"/GeneralInformation.csv"],
+						self.v1WorkingDirectory+"/GeneralInformation.csv",
 						orientation='v' )
 
 		cu.savetable( 	self.s2DataSurvey_tableWidget,
 						self.v2DataSurvey_fields,
-						["tmp/DataSurvey.csv",
-						self.v1WorkingDirectory+"/DataSurvey.csv"] )
+						self.v1WorkingDirectory+"/DataSurvey.csv" )
 
 		cu.savetable( 	self.s2SurveyTortuosity_tableWidget,
 						self.v2SurveyTortuosity_fields,
-						["tmp/SurveyTortuosity.csv",
-						self.v1WorkingDirectory+"/SurveyTortuosity.csv"] )
+						self.v1WorkingDirectory+"/SurveyTortuosity.csv" )
 		
-		self.s2SectionView_graphicsView.figure.savefig( "tmp/SectionView.png", dpi=300 )
-
-		self.s2PlanView_graphicsView.figure.savefig( "tmp/PlanView.png", dpi=300 )
-
-		self.s2TriDView_graphicsView.figure.savefig( "tmp/TriDView.png", dpi=300 )
-
-		self.s2Dogleg_graphicsView.figure.savefig( "tmp/Dogleg.png", dpi=300 )
-
 		self.s2SectionView_graphicsView.figure.savefig( self.v1WorkingDirectory+"/SectionView.png", dpi=300 )
 
 		self.s2PlanView_graphicsView.figure.savefig( self.v1WorkingDirectory+"/PlanView.png", dpi=300 )
@@ -411,42 +425,21 @@ class Main_InputWindow(Ui_InputWindow):
 
 		cu.savetable( 	self.s3WellboreOuterStages_tableWidget,
 						self.v3WellboreOuterStages_fields,
-						["tmp/WellboreOuterStages.csv",
-						self.v1WorkingDirectory+"/WellboreOuterStages.csv"] )
+						self.v1WorkingDirectory+"/WellboreOuterStages.csv" )
 
 		cu.savetable( 	self.s3WellboreInnerStages_tableWidget,
 						self.v3WellboreInnerStages_fields,
-						["tmp/WellboreInnerStages.csv",
-						self.v1WorkingDirectory+"/WellboreInnerStages.csv"] )
+						self.v1WorkingDirectory+"/WellboreInnerStages.csv" )
 
-		cu.savetable( 	self.s3PipeProperties_tableWidget,
-						self.v3PipeProperties_fields,
-						["tmp/PipeProperties.csv",
-						self.v1WorkingDirectory+"/PipeProperties.csv"],
+		cu.savetable( 	self.s4Settings_tableWidget,
+						self.s4Settings_tableWidget,
+						self.v1WorkingDirectory+"/TorqueAndDragSettings.csv",
 						orientation='v' )
 
-		cu.savetable( 	self.s3CentralizerProperties_tableWidget_A,
-						self.v3CentralizerProperties_fields_A,
-						["tmp/CentralizerProperties_A.csv",
-						self.v1WorkingDirectory+"/CentralizerProperties_A.csv"],
-						orientation='v' )
-
-		cu.savetable( 	self.s3CentralizerProperties_tableWidget_B,
-						self.v3CentralizerProperties_fields_B,
-						["tmp/CentralizerProperties_B.csv",
-						self.v1WorkingDirectory+"/CentralizerProperties_B.csv"],
-						orientation='v' )
-
-		cu.savetable( 	self.s3CentralizerProperties_tableWidget_C,
-						self.v3CentralizerProperties_fields_C,
-						["tmp/CentralizerProperties_C.csv",
-						self.v1WorkingDirectory+"/CentralizerProperties_C.csv"],
-						orientation='v' )
-
-		cu.savetable( 	self.s3CentralizerLocation_tableWidget_A,
-						self.v3CentralizerLocation_fields_A,
-						["tmp/CentralizerLocation.csv",
-						self.v1WorkingDirectory+"/CentralizerLocation.csv"] )
+		self.s4Drag_graphicsView.figure.savefig( self.v1WorkingDirectory+"/Drag.png", dpi=300 )
+		self.s4Torque_graphicsView.figure.savefig( self.v1WorkingDirectory+"/Torque.png", dpi=300 )
+		self.s4Sideforce_graphicsView.figure.savefig( self.v1WorkingDirectory+"/SideForce.png", dpi=300 )
+		self.s4HookLoad_graphicsView.figure.savefig( self.v1WorkingDirectory+"/HookLoad.png", dpi=300 )
 
 	
 	def __init__s1Info_tableWidget(self):
@@ -714,7 +707,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def setup_s3WellboreInnerStages_tableWidget(self):
 
 		self.v3WellboreInnerStages_fields = mdl.get_v3WellboreInnerStages_fields()
-		for size,field in zip([46,20,20], self.v3WellboreInnerStages_fields):
+		for size,field in zip([40,20,20], self.v3WellboreInnerStages_fields):
 			item = self.s3WellboreInnerStages_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( cu.extend_text( field.headerName, size, mode='center' ) )
 			
@@ -801,13 +794,13 @@ class Main_InputWindow(Ui_InputWindow):
 
 		self.setup_s4Settings_tableWidget()
 
-		def auxiliar_function(item):
-			item.field.clear()
-			item.field.append( item.realValue )
+		#def auxiliar_function(item):
+		#	item.field.put( 0, item.realValue )
+		#	print( item.realValue, id(item.field), self.v4Settings_fields, id(self.v4Settings_fields[item.field.pos]) )
 
 		def update_through_itemChange(item):
-			call_function = lambda: auxiliar_function(item)
-			cu.update_fieldItem(item, call_function)
+			cu.update_fieldItem(item)
+			self.v4Settings_fields[item.field.pos].put( 0, item.realValue )
 
 		self.s4Settings_tableWidget.itemChanged.connect(update_through_itemChange)
 
@@ -841,8 +834,9 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def setup_s4TorqueDragSideforce_tableWidget(self):
 
-		self.v4TorqueDragSideforce_fields = mdl.get_v4TorqueDragSideforce_fields()
-		for size,field in zip([20,20,20,20,20,20,20,20,20], self.v4TorqueDragSideforce_fields):
+		self.v4TorqueDragForces_fields = mdl.get_v4TorqueDragForces_fields()
+		
+		for size,field in zip([20,20,20,20,20,20,20], self.v4TorqueDragForces_fields[:7]):
 			item = self.s4TorqueDragSideforce_tableWidget.horizontalHeaderItem( field.pos )
 			item.setText( cu.extend_text( field.headerName, size, mode='center' ) )
 			

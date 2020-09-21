@@ -6,7 +6,7 @@ import CtrlUtilities as cu
 import PlotUtilities as pu
 import MdlUtilities as mu
 import copy
-import re, os
+import re, os, sys
 import datetime as dt
 
 
@@ -277,28 +277,25 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 	def makeResults_and_done(self):
 
+		"""
 		DT = str(dt.datetime.now())
 		items = re.split('[\:]+',DT)
 		DT = ''.join(items)
 		items = re.split('[ \.]+',DT)
 		DT = '_'.join(items[:-1])
+		"""
 
 		cu.savetable( 	self.lsCentralizerLocations_tableWidget,
 						self.lsCentralization_fields[:5],
-						[self.parent.v1WorkingDirectory+"/Centralization_LocationsAndSO_{DT}.csv"
-						.format(DT=DT)] )
+						self.parent.v1WorkingDirectory+"/Centralization_LocationsAndSO.csv" )
 
-		self.lsCaliperMap_graphicsView.figure.savefig( self.parent.v1WorkingDirectory+"/Centralization_CaliperMap_{DT}.png"
-			.format(DT=DT), dpi=300 )
+		self.lsCaliperMap_graphicsView.figure.savefig( self.parent.v1WorkingDirectory+"/Centralization_CaliperMap.png", dpi=300 )
 
-		self.lsSOVisualization_graphicsView.figure.savefig( self.parent.v1WorkingDirectory+"/Centralization_SOVisualization_{DT}.png"
-			.format(DT=DT), dpi=300 )
+		self.lsSOVisualization_graphicsView.figure.savefig( self.parent.v1WorkingDirectory+"/Centralization_SOVisualization.png", dpi=300 )
 
-		self.lsWellbore3D_graphicsView.figure.savefig( self.parent.v1WorkingDirectory+"/Centralization_Wellbore3D_{DT}.png"
-			.format(DT=DT), dpi=300 )
+		self.lsWellbore3D_graphicsView.figure.savefig( self.parent.v1WorkingDirectory+"/Centralization_Wellbore3D.png", dpi=300 )
 
-		self.lsSideForces_graphicsView.figure.savefig( self.parent.v1WorkingDirectory+"/Centralization_SideForces_{DT}.png"
-			.format(DT=DT), dpi=300 )
+		self.lsSideForces_graphicsView.figure.savefig( self.parent.v1WorkingDirectory+"/Centralization_SideForces.png", dpi=300 )
 
 		self.fields = self.lsCentralization_fields
 
@@ -362,6 +359,9 @@ class Main_LocationSetup(Ui_LocationSetup):
 				item = self.lsCentralizerLocations_tableWidget.item( i, self.lsCentralization_fields.Stage.pos )
 				item.set_text()
 
+		print(SOatC_field)
+		print(SOatM_field)
+
 		self.meanSOatC = mu.np.round( mu.np.mean(SOatC_field), 1 )
 		self.meanSOatM = mu.np.round( mu.np.mean(SOatM_field), 1 )
 		self.lsMeanSOatC_label.setText( 'Mean SO at centralizers:\t{mSOatC} {unit}'.format( mSOatC=self.meanSOatC, 
@@ -384,8 +384,12 @@ class Main_LocationSetup(Ui_LocationSetup):
 			gooD = mdl.put_location_to_CentralizationFields(self, r, MD)
 			
 		else:
-			r = mu.np.where(mu.np.array(self.lsCentralization_fields.MD)>MD)[0][0]
+			try:
+				r = mu.np.where(mu.np.array(self.lsCentralization_fields.MD)>MD)[0][0]
+			except IndexError:
+				r = mu.np.where(mu.np.array(self.lsCentralization_fields.MD)<MD)[0][-1]+1
 			gooD = mdl.insert_location_to_CentralizationFields(self, r, MD)
+			self.centralizerCount+=1
 
 		try:
 			if gooD:
@@ -414,6 +418,10 @@ class Main_LocationSetup(Ui_LocationSetup):
 			self.lsCentralization_fields.SOatM.pop(r)
 			self.lsCentralization_fields.ClatC.pop(r)
 			self.lsCentralization_fields.ClatM.pop(r)
+			self.lsCentralization_fields.AFatC.pop(r)
+			self.lsCentralization_fields.AFatM.pop(r)
+			self.lsCentralization_fields.SFatC.pop(r)
+			self.lsCentralization_fields.SFatM.pop(r)
 			self.lsCentralization_fields.LatC.pop(r)
 			self.lsCentralization_fields.EW.pop(r)
 			self.lsCentralization_fields.NS.pop(r)
@@ -443,6 +451,10 @@ class Main_LocationSetup(Ui_LocationSetup):
 			self.lsCentralization_fields.SOatM.pop(r)
 			self.lsCentralization_fields.ClatC.pop(r)
 			self.lsCentralization_fields.ClatM.pop(r)
+			self.lsCentralization_fields.AFatC.pop(r)
+			self.lsCentralization_fields.AFatM.pop(r)
+			self.lsCentralization_fields.SFatC.pop(r)
+			self.lsCentralization_fields.SFatM.pop(r)
 			self.lsCentralization_fields.LatC.pop(r)
 			self.lsCentralization_fields.EW.pop(r)
 			self.lsCentralization_fields.NS.pop(r)

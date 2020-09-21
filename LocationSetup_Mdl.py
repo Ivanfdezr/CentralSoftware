@@ -128,9 +128,11 @@ def cat_locations(self):
 		self.lsCentralization_fields.avgID.extend( fields.avgID )
 		self.lsCentralization_fields.Stage.extend( rows )
 
-	PL  = stage['PipeBase'].PL[0]
+	PL = mu.unitConvert_value( 480, 'in', self.lsCentralization_fields.MD.unit )
 	CEL = stage['Centralization']['Ensemble']['PLfactor']*PL*0.9
+
 	if self.lsCentralization_fields.MD[-1] + CEL > stage['MDbot']:
+		
 		self.lsCentralization_fields.MD.pop()
 		self.lsCentralization_fields.Inc.pop()
 		self.lsCentralization_fields.Azi.pop()
@@ -142,11 +144,6 @@ def cat_locations(self):
 		self.lsCentralization_fields.ID.pop()
 		self.lsCentralization_fields.avgID.pop()
 		self.lsCentralization_fields.Stage.pop()
-
-	"""
-	for field in self.lsCentralization_fields:
-		print(field.abbreviation,len(field))
-	"""
 
 	return len(K)
 
@@ -203,7 +200,7 @@ def calculate_standOff_at_jthCentralizer(self, j):
 			
 			Δa += Δ
 			if c[x]['Type']!=None:
-				so, cc, ft, fl, l = calculate_SO_per_centralizer(x,c[x]['Type'],supports,Δ)
+				so, cc, ft, fl, l = calculate_SO_per_centralizer(x,c[x]['Type'],supports,Δa)
 				SO.append( so )
 				Cc.append( cc )
 				Ft.append( ft )
@@ -237,7 +234,7 @@ def calculate_standOff_at_jthCentralizer(self, j):
 			L = L21 + L10
 
 		return L
-
+	
 	stage = self.parent.v3WellboreInnerStageData[ stage_field[j] ]
 	MD1 = Loc_field[j]
 	Hd  = ID_field[j]
@@ -260,6 +257,9 @@ def calculate_standOff_at_jthCentralizer(self, j):
 	ρi = mu.referenceUnitConvert_value( ρi, ρi.unit )
 	ρe = mu.referenceUnitConvert_value( ρe, ρe.unit )
 	ρs = mu.referenceUnitConvert_value( ρs, ρs.unit )
+
+	if j>0:
+		BEL = self.parent.v3WellboreInnerStageData[ stage_field[j-1] ]['Centralization']['Ensemble']['PLfactor']*PL*0.9
 
 	ResF = {}
 	D    = {}
@@ -287,7 +287,7 @@ def calculate_standOff_at_jthCentralizer(self, j):
 			CL[x] = mu.referenceUnitConvert_value( CL[x], CL[x].unit )
 			supports+=1
 
-		elif c[x]['Type']=='Rigid':
+		elif c[x]['Type']=='Resin':
 			D[x] = c[x]['CentralizerProps'].COD[0]
 			D[x] = mu.referenceUnitConvert_value( D[x], D[x].unit )
 			CL[x] = c[x]['CentralizerBase'].CL[0]
@@ -308,7 +308,7 @@ def calculate_standOff_at_jthCentralizer(self, j):
 		In0 = None
 		Az0 = None
 	else:
-		MD0 = Loc_field[i] + CEL
+		MD0 = Loc_field[i] + BEL
 		In0 = Inc_field[i] + 1e-12
 		Az0 = Azi_field[i]
 		if MD0>MD1:
@@ -383,7 +383,7 @@ def calculate_standOff_at_jthCentralizer(self, j):
 			Cc = R-PR-(Hr-mHr)
 			SO = Cc/mHc
 
-		elif ctype=='Rigid':
+		elif ctype=='Resin':
 
 			SO_ = []
 			Cc_ = []
@@ -409,6 +409,7 @@ def calculate_standOff_at_jthCentralizer(self, j):
 				Fl = Ft*np.sin(In1)/supports
 
 			elif MD2==None:
+				Ft = 0.0
 				Fl = PWb*L*np.sin(In1)/supports
 
 			else:
@@ -466,11 +467,26 @@ def calculate_standOff_at_ithMidspan(self, i):
 
 	self.lsCentralization_fields.referenceUnitConvert_fields()
 
+	if i==len(self.lsCentralization_fields.MD)-1:
+		
+		SO = mu.physicalValue( 0, SOatM_field.referenceUnit )
+		Mc = mu.physicalValue( 0, ClatM_field.referenceUnit )
+		Ft = mu.physicalValue( 0, AFatM_field.referenceUnit )
+		Fl = mu.physicalValue( 0, SFatM_field.referenceUnit )
+
+		SOatM_field.put( i, SO )
+		ClatM_field.put( i, Mc )
+		AFatM_field.put( i, Ft )
+		SFatM_field.put( i, Fl )
+
+		self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
+		return
+
 	MDs = self.lsCentralization_fields.MD.factorToReferenceUnit*self.MD
 	IDs = self.lsCentralization_fields.ID.factorToReferenceUnit*self.ID
 
 	j = i+1
-	stage = self.parent.v3WellboreInnerStageData[ stage_field[j] ]
+	stage = self.parent.v3WellboreInnerStageData[ stage_field[i] ] # CORREGIR, ELEGIR EL STAGE ADECUADO PARA MID.
 
 	PD = stage['PipeProps'].OD[0]
 	Pd = stage['PipeProps'].ID[0]
@@ -552,7 +568,11 @@ def calculate_standOff_at_ithMidspan(self, i):
 	mHc = mHr-PR
 	Mc = (c1+c2)/2-δ
 	xHc = mHr-Hr
-	Mc = Mc if (Mc>xHc) else xHc
+	#Mc = Mc if (Mc>xHc) else xHc
+	if Mc>xHc:
+		Fl = -Fl
+	else:
+		Mc = xHc
 	SO = Mc/mHc
 
 	SO = mu.physicalValue( SO, SOatM_field.referenceUnit )
@@ -567,7 +587,7 @@ def calculate_standOff_at_ithMidspan(self, i):
 
 	self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
 
-	
+
 def calculate_standOff_at_Centralizers(self):
 
 	"""
@@ -606,7 +626,7 @@ def calculate_standOff_at_Centralizers(self):
 				
 				Δa += Δ
 				if c[x]['Type']!=None:
-					so, cc, ft, fl, l = calculate_SO_per_centralizer(x,c[x]['Type'],supports,Δ)
+					so, cc, ft, fl, l = calculate_SO_per_centralizer(x,c[x]['Type'],supports,Δa)
 					SO.append( so )
 					Cc.append( cc )
 					Ft.append( ft )
@@ -642,6 +662,7 @@ def calculate_standOff_at_Centralizers(self):
 			return L
 
 	stageRow = None
+	BEL = None
 	for j, (MD1,Hd,mHd) in enumerate(zip(Loc_field, ID_field, avgID_field)):
 
 		stage = self.parent.v3WellboreInnerStageData[ stage_field[j] ]
@@ -693,7 +714,7 @@ def calculate_standOff_at_Centralizers(self):
 				CL[x] = mu.referenceUnitConvert_value( CL[x], CL[x].unit )
 				supports+=1
 
-			elif c[x]['Type']=='Rigid':
+			elif c[x]['Type']=='Resin':
 				D[x] = c[x]['CentralizerProps'].COD[0]
 				D[x] = mu.referenceUnitConvert_value( D[x], D[x].unit )
 				CL[x] = c[x]['CentralizerBase'].CL[0]
@@ -714,7 +735,7 @@ def calculate_standOff_at_Centralizers(self):
 			In0 = None
 			Az0 = None
 		else:
-			MD0 = Loc_field[i] + CEL
+			MD0 = Loc_field[i] + BEL
 			In0 = Inc_field[i] + 1e-12
 			Az0 = Azi_field[i]
 			if MD0>MD1:
@@ -731,6 +752,8 @@ def calculate_standOff_at_Centralizers(self):
 			if MD1+CEL>MD2:
 				self.lsCentralization_fields.inverseReferenceUnitConvert_fields()
 				raise(mu.LogicalError)
+
+		BEL = CEL
 
 		def calculate_SO_per_centralizer(label,ctype,supports,ΔMD1):
 
@@ -789,7 +812,7 @@ def calculate_standOff_at_Centralizers(self):
 				Cc = R-PR-(Hr-mHr)
 				SO = Cc/mHc
 
-			elif ctype=='Rigid':
+			elif ctype=='Resin':
 
 				SO_ = []
 				Cc_ = []
@@ -959,7 +982,11 @@ def calculate_standOff_at_Midspans(self):
 		mHc = mHr-PR
 		Mc = (c1+c2)/2-δ
 		xHc = mHr-Hr
-		Mc = Mc if (Mc>xHc) else xHc
+		#Mc = Mc if (Mc>xHc) else xHc
+		if Mc>xHc:
+			Fl = -Fl
+		else:
+			Mc = xHc
 		SO = Mc/mHc
 
 		mu.create_physicalValue_and_appendTo_field( SO, SOatM_field, SOatM_field.referenceUnit )

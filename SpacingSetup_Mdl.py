@@ -219,7 +219,7 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 			CL[x] = mu.referenceUnitConvert_value( CL[x], CL[x].unit )
 			supports+=1
 
-		elif c['Type']=='Rigid':
+		elif c['Type']=='Resin':
 			D[x] = c['CentralizerProps'].COD[0]
 			D[x] = mu.referenceUnitConvert_value( D[x], D[x].unit )
 			CL[x] = c['CentralizerBase'].CL[0]
@@ -246,7 +246,7 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 				SO.append( so )
 				Cc.append( cc )
 				L.append( l )
-			#elif c['Type']=='Rigid':
+			#elif c['Type']=='Resin':
 			#	so, cc, l = calculate_SO_per_centralizer(x)
 			#	SO += so/supports #*c['CentralizerBase'].Blades[0]/supports
 			#	Cc += cc/supports #*c['CentralizerBase'].Blades[0]/supports
@@ -332,7 +332,7 @@ def calculate_standOff_atCentralizers(self, locations, SOatC_field, ClatC_field,
 				Cc = R-PR-(Hr-mHr)
 				SO = Cc/mHc
 
-			elif ctype=='Rigid':
+			elif ctype=='Resin':
 
 				SO_ = []
 				Cc_ = []

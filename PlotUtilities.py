@@ -239,9 +239,8 @@ class ZoomPan:
 					if event.button==1:
 						self.cur_ylim = ax.get_ylim()
 						self.ypress = event.ydata
-						if not isinstance(ypressfunction1,type(None)):
-							ypressfunction1(event.ydata)
-					
+						
+
 					elif event.button==3:
 						if isinstance(yselection,list):
 							yselection.append(event.ydata)
@@ -251,6 +250,9 @@ class ZoomPan:
 
 		def onRelease(event):
 			
+			if not isinstance(ypressfunction1,type(None)):
+				ypressfunction1(event.ydata)
+
 			self.ypress = None
 
 			for ax in ax_:
@@ -279,6 +281,9 @@ class ZoomPan:
 				if not isinstance(ymotionfunction,type(None)):
 					ymotionfunction(event.ydata)
 
+		#def onScroll(event):
+
+
 
 		for ax in ax_:
 			fig = ax.get_figure()
@@ -300,6 +305,8 @@ class ZoomPan:
 	# 				yselection.append(event.ydata)
 	# 			if not isinstance(yselectionfunction,type(None)):
 	# 				yselectionfunction(event.ydata)
+
+
 	
 	
 	

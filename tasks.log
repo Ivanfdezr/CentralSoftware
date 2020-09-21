@@ -1,16 +1,23 @@
--	Reset-plot button for charts.
 -x	Save/Open functionality (very important)
--!	Installation stuffs / DB installation (very important)
 -x	@ABC: dont accept B or C without A
 -x	Centralizer CID instead PID @OSA
 -x	Manage frictions
 -x	Modification of ABC ensemble length considerations
 -x	All centralization stages together.
--	T&D check
--	Include Sideforces @LS and SS
+-x	T&D check
+-x	Include Sideforces @LS and SS
 -x	Remove BS from import caliper
 -x	Insert stage numeration in pipe properties or label
 -x	Check if sorting by row is congruent at stages.
+-x	Modify LS pan scroll+shift (Replaced by actionOnRelease)
+-x	Fix insert last element SO@mid + patern/offset non-last location generation.
+-x	Modify "Rigid" name by "Resin".
+-x	Implement 3-Form Wellbore + SO colors chart.
+-x	Implement Hook Load chart.
+-x	Implemant Mechanical state chart.
+-	Reset-plot button for charts.
+-!	Report stuffs / PDF generation (important: Reportlab)
+-!	Installation stuffs / DB installation (very important)
 
 
 
@@ -149,9 +156,9 @@
 <class 'PyQt4.QtGui.QPushButton'> s3ODID_pushButton
 <class 'PyQt4.QtGui.QPushButton'> s3ODWt_pushButton
 <class 'PyQt4.QtGui.QTableWidget'> s3PipeProperties_tableWidget
-<class 'PyQt4.QtGui.QRadioButton'> s3RigidCentralizer_radioButton_A
-<class 'PyQt4.QtGui.QRadioButton'> s3RigidCentralizer_radioButton_B
-<class 'PyQt4.QtGui.QRadioButton'> s3RigidCentralizer_radioButton_C
+<class 'PyQt4.QtGui.QRadioButton'> s3ResinCentralizer_radioButton_A
+<class 'PyQt4.QtGui.QRadioButton'> s3ResinCentralizer_radioButton_B
+<class 'PyQt4.QtGui.QRadioButton'> s3ResinCentralizer_radioButton_C
 <class 'PyQt4.QtGui.QLabel'> s3StageEnsemble_label
 <class 'PyQt4.QtGui.QLabel'> s3StageNumber_label1
 <class 'PyQt4.QtGui.QLabel'> s3StageNumber_label2
@@ -222,7 +229,7 @@
 <class 'numpy.ndarray'> v3WorkWellboreID
 <class 'numpy.ndarray'> v3WorkWellboreMD
 <class 'MdlUtilities.FieldList'> v4Settings_fields
-<class 'MdlUtilities.FieldList'> v4TorqueDragSideforce_fields
+<class 'MdlUtilities.FieldList'> v4TorqueDragForces_fields
 <class 'PyQt4.QtGui.QVBoxLayout'> verticalLayout
 <class 'PyQt4.QtGui.QWidget'> verticalLayoutWidget
 <class 'bool'> wellboreInnerStageDataIsEnabled

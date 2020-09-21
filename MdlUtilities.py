@@ -128,7 +128,9 @@ def render_wellbore( fields, radius, n=12 ):
 	x = np.array( fields.EW )
 	y = np.array( fields.NS )
 	z = np.array( fields.TVD )
+	c = 1.0#np.array( fields.MD )
 	
+	"""
 	max_EW = max( fields.EW )
 	min_EW = min( fields.EW )
 
@@ -146,7 +148,9 @@ def render_wellbore( fields, radius, n=12 ):
 		zfactor = ΔEW/ΔTVD
 	else:
 		zfactor = ΔNS/ΔTVD
+	zfactor=1
 	z *= zfactor
+	"""
 
 	S = np.array([x,y,z])
 	S = S.T
@@ -173,16 +177,17 @@ def render_wellbore( fields, radius, n=12 ):
 	R = R.reshape(-1,3)
 	
 	n+=1
-	nl = n*l
-	triangles = []
+	#nl = n*l
+	#triangles = []
 	
 	X,Y,Z = R.T
 
 	X = X.reshape(n,l)
 	Y = Y.reshape(n,l)
 	Z = Z.reshape(n,l)
+	C = c*np.ones((n,l))
 
-	return X,Y,Z/zfactor,triangles
+	return X,Y,Z,C#triangles #,Z/zfactor
 
 
 def make_cleanAverage( X ):

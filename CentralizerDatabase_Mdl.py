@@ -20,10 +20,10 @@ def get_BowSpringCasingODList():
 	return casingODList
 
 
-def get_RigidCasingODList():
+def get_ResinCasingODList():
 
 	query = """ select distinct valueRepresentation from centralizer_properties where fieldID=2009
-				and centralizerID in (select c.centralizerID from centralizer_properties c where c.fieldID=2049 and c.valueRepresentation='Rigid')
+				and centralizerID in (select c.centralizerID from centralizer_properties c where c.fieldID=2049 and c.valueRepresentation='Resin')
 			"""
 	items = dbUtils.execute_query(query)
 	casingODList = []
@@ -61,11 +61,11 @@ def set_CDBBowSpring_data_to_fields(OD, fields):
 	fields.OD = OD
 
 
-def set_CDBRigid_data_to_fields(OD, fields):
+def set_CDBResin_data_to_fields(OD, fields):
 	
 	query = """ select c.centralizerID, (select f.abbreviation from fields f where f.fieldID=c.fieldID), c.valueRepresentation from centralizer_properties c 
 				where c.centralizerID in (select centralizerID from centralizer_properties where fieldID=2009 and valueRepresentation='{OD}')
-				and c.centralizerID in (select centralizerID from centralizer_properties where fieldID=2049 and valueRepresentation='Rigid')
+				and c.centralizerID in (select centralizerID from centralizer_properties where fieldID=2049 and valueRepresentation='Resin')
 			""".format(OD=OD)
 	items = dbUtils.execute_query(query)
 	
@@ -150,10 +150,10 @@ def get_CDBBowSpring_fields():
 	return CDB_fields
 	
 
-def get_CDBRigid_fields():
+def get_CDBResin_fields():
 
 	query = """ select c.fieldID, u.representation from units u right join centralizer_properties c on c.nativeUnitID=u.unitID 
-				where c.centralizerID=(select distinct min(centralizerID) from centralizer_properties where fieldID=2049 and valueRepresentation='Rigid')
+				where c.centralizerID=(select distinct min(centralizerID) from centralizer_properties where fieldID=2049 and valueRepresentation='Resin')
 			"""
 	items = dbUtils.execute_query(query)
 	

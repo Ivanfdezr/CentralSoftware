@@ -44,8 +44,8 @@ class Main_CaliperImport(Ui_CaliperImport):
 		self.ciHoleIDsmoothing_graphicsView_yselection = []
 		zp = pu.ZoomPan()
 		zp.zoomYD_factory(self.ciHoleIDsmoothing_graphicsView.axes, self.ciHoleIDsmoothing_graphicsView_ylimits )
-		zp.panYD_factory( self.ciHoleIDsmoothing_graphicsView.axes, self.ciHoleIDsmoothing_graphicsView_ylimits, 
-						  ypressfunction3=self.snapshot )
+		zp.panYD_factory( self.ciHoleIDsmoothing_graphicsView.axes, self.ciHoleIDsmoothing_graphicsView_ylimits ) 
+						  #ypressfunction3=self.snapshot )
 
 		self.setup_valueDecimalPoint()
 
@@ -55,11 +55,7 @@ class Main_CaliperImport(Ui_CaliperImport):
 
 	def snapshot(self,x):
 
-		label = ''
-		for i in range(8):
-			label += str(mu.np.random.randint(10))
-		self.ciHoleIDsmoothing_graphicsView.figure.savefig( "tmp/DR-CAL_'{label}'.png"
-			.format(label=label), dpi=300 )
+		self.ciHoleIDsmoothing_graphicsView.figure.savefig( self.parent.v1WorkingDirectory+"DR-CAL.png", dpi=300 )
 		self.ciHoleIDsmoothing_graphicsView.axes.set_visible(False)
 		self.ciHoleIDsmoothing_graphicsView.draw()
 		cu.idleFunction()
@@ -356,6 +352,8 @@ class Main_CaliperImport(Ui_CaliperImport):
 		mu.create_physicalValue_and_appendTo_field( max_MD,   self.ciCaliperReport_fields.MDbot   )
 
 		##
+		self.ciHoleIDsmoothing_graphicsView.figure.savefig( self.parent.v1WorkingDirectory+"DR-CAL.png", dpi=300 )
+		
 		self.data = self.ciCaliperReport_fields.extract_data_from_row( 0 )
 		self.fields = self.ciCaliperReport_fields
 		self.dialog.done(0)
