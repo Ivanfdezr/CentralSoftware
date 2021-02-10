@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from TubularDatabase_Vst import Ui_TubularDatabase
 import TubularDatabase_Mdl as mdl
 import CtrlUtilities as cu
@@ -16,7 +18,7 @@ class Main_TubularDatabase(Ui_TubularDatabase):
 		
 		self.TDBAccept_pushButton.clicked.connect( self.export_pipe )
 
-		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+		dialog.setAttribute(Qt.WA_DeleteOnClose)
 		#
 		dialog.exec_()
 	
@@ -39,7 +41,7 @@ class Main_TubularDatabase(Ui_TubularDatabase):
 		mdl.set_TDB_data_to_fields(OD, self.TDB_fields)
 
 		for field in self.TDB_fields[:-2]:
-			item = QtGui.QTableWidgetItem()
+			item = QTableWidgetItem()
 			self.TDB_tableWidget.setHorizontalHeaderItem( field.pos, item )
 			item.setText( field.headerName )
 			
@@ -50,7 +52,7 @@ class Main_TubularDatabase(Ui_TubularDatabase):
 		self.TDB_tableWidget.cellPressed.connect(self.fetch_selectedPosition)
 		self.TDB_tableWidget.itemChanged.connect(cu.update_fieldItem)
 
-		self.TDB_tableWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+		self.TDB_tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
 		self.TDB_tableWidget.customContextMenuRequested.connect(self.open_menu)
 	
 
@@ -61,7 +63,7 @@ class Main_TubularDatabase(Ui_TubularDatabase):
 	
 	def open_menu(self, position):
 
-		menu = QtGui.QMenu()
+		menu = QMenu()
 
 		ready = True
 		try:
@@ -111,7 +113,7 @@ class Main_TubularDatabase(Ui_TubularDatabase):
 			item.alt_backgroundColor()
 			item.alt_flags()
 		else:
-			item = QtGui.QTableWidgetItem()
+			item = QTableWidgetItem()
 			self.TDB_tableWidget.setItem(self.TDB_tableWidget.selectedRow, field.pos, item)
 		self.TDB_tableWidget.editItem(item)
 
@@ -141,12 +143,12 @@ class Main_TubularDatabase(Ui_TubularDatabase):
 
 			except cu.MandatoryError:
 				msg = "'{representation}' is a mandatory property for any pipe.".format(representation=item.field.representation)
-				QtGui.QMessageBox.critical(self.TDB_tableWidget, 'Error', msg)
+				QMessageBox.critical(self.TDB_tableWidget, 'Error', msg)
 				return False
 
 			except cu.ValueWarning:
 				msg = "Incorrect value in '{representation}'. This is a non-mandatory property.".format(representation=item.field.representation)
-				QtGui.QMessageBox.information(self.TDB_tableWidget, 'Warning', msg)
+				QMessageBox.information(self.TDB_tableWidget, 'Warning', msg)
 
 			pipeItems.append( item )
 

@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from SurveyImport_Vst import Ui_SurveyImport
 import SurveyImport_Mdl as mdl
 import CtrlUtilities as cu
@@ -39,14 +41,14 @@ class Main_SurveyImport(Ui_SurveyImport):
 
 		self.setup_valueDecimalPoint()
 		
-		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+		dialog.setAttribute(Qt.WA_DeleteOnClose)
 		dialog.exec_()
 
 
 	def __init__siSurveyReport_tableWidget(self):
 		
 		self.siSurveyReport_tableWidget.parent = self
-		self.siSurveyReport_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.siSurveyReport_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 		C = cu.CopySelectedCells_action(self.siSurveyReport_tableWidget)
 		self.siSurveyReport_tableWidget.addAction(C)
@@ -82,7 +84,7 @@ class Main_SurveyImport(Ui_SurveyImport):
 	def set_numberPattern(self, state=None):
 
 		if self.siValueDecimalPoint_radioButton.isChecked():
-			if state == QtCore.Qt.Checked:
+			if state == Qt.Checked:
 				self.numberPattern = mu.get_decimalPointPattern()
 			else:
 				self.numberPattern = mu.get_decimalPointWithThousandsCommaPattern()
@@ -99,14 +101,14 @@ class Main_SurveyImport(Ui_SurveyImport):
 
 	def setup_valueDecimalComma(self):
 		self.siCommaDelimiter_checkBox.setEnabled(False)
-		self.siCommaDelimiter_checkBox.setCheckState(QtCore.Qt.Unchecked)
+		self.siCommaDelimiter_checkBox.setCheckState(Qt.Unchecked)
 		self.text2float = mu.get_decimalFloatCommaFunction()
 		self.set_numberPattern()
 
 
 	def open_file(self):
 		
-		filepath = QtGui.QFileDialog.getOpenFileName(self.dialog, 'Open file', 'c:\\',"SURVEY files (*.las *.txt)")
+		filepath = QFileDialog.getOpenFileName(self.dialog, 'Open file', 'c:\\',"SURVEY files (*.las *.txt)")
 		head,filename = os.path.split( filepath )
 		self.siFilename_label.setText( filename )
 
@@ -201,13 +203,13 @@ class Main_SurveyImport(Ui_SurveyImport):
 			maximumAzivalue = float('inf')
 		
 		delimiterPattern = ''
-		if self.siTabDelimiter_checkBox.checkState() == QtCore.Qt.Checked:
+		if self.siTabDelimiter_checkBox.checkState() == Qt.Checked:
 			delimiterPattern += '\t'
-		if self.siSemicolonDelimiter_checkBox.checkState() == QtCore.Qt.Checked:
+		if self.siSemicolonDelimiter_checkBox.checkState() == Qt.Checked:
 			delimiterPattern += ';'
-		if self.siSpacesDelimiter_checkBox.checkState() == QtCore.Qt.Checked:
+		if self.siSpacesDelimiter_checkBox.checkState() == Qt.Checked:
 			delimiterPattern += ' '
-		if self.siCommaDelimiter_checkBox.checkState() == QtCore.Qt.Checked:
+		if self.siCommaDelimiter_checkBox.checkState() == Qt.Checked:
 			delimiterPattern += ','
 		columnPattern = '((?<=['+delimiterPattern+'])'+self.numberPattern+')|('+self.numberPattern+'(?=['+delimiterPattern+']))'
 

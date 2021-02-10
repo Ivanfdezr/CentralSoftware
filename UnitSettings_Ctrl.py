@@ -1,10 +1,12 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from UnitSettings_Vst import Ui_UnitSettings
 import UnitSettings_Mdl as mdl
 import CtrlUtilities as cu
 
 
-class OwnQComboBox(QtGui.QComboBox):
+class OwnQComboBox(QComboBox):
     def __init__(self, scrollWidget=None, *args, **kwargs):
         super().__init__(*args, **kwargs) #OwnQComboBox, self
 
@@ -32,7 +34,7 @@ class Main_UnitSettings(Ui_UnitSettings):
 		close_dialog = lambda: self.dialog.done(0)
 		self.us_buttonBox.rejected.connect( close_dialog )
 		
-		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+		dialog.setAttribute(Qt.WA_DeleteOnClose)
 		dialog.exec_()
 	
 	
@@ -41,18 +43,18 @@ class Main_UnitSettings(Ui_UnitSettings):
 		parameters, Units = mdl.get_parametersAndUnits(unitSystem)
 		self.usParameterUnits_tableWidget.setRowCount(len(parameters))
 
-		item = QtGui.QTableWidgetItem()
+		item = QTableWidgetItem()
 		self.usParameterUnits_tableWidget.setHorizontalHeaderItem(0, item)
 		item.setText( 'Parameter' )
-		item = QtGui.QTableWidgetItem()
+		item = QTableWidgetItem()
 		self.usParameterUnits_tableWidget.setHorizontalHeaderItem(1, item)
 		item.setText( 'Unit' )
 		
 		for row, (parameter, units) in enumerate( zip(parameters, Units) ):
-			item = QtGui.QTableWidgetItem()
+			item = QTableWidgetItem()
 			self.usParameterUnits_tableWidget.setItem(row, 0, item)
 			item.setText( parameter )
-			combo = OwnQComboBox() # QtGui.QComboBox()
+			combo = OwnQComboBox() # QComboBox()
 			self.usParameterUnits_tableWidget.setCellWidget(row, 1, combo)
 			combo.addItems( units )
 
@@ -83,7 +85,7 @@ class Main_UnitSettings(Ui_UnitSettings):
 		mdl.update_customizedUnits( parameters, units )
 
 		msg = "Current unit profile were successfully updated as Customized profile unit."
-		QtGui.QMessageBox.information(self.usParameterUnits_tableWidget, 'Warning', msg)
+		QMessageBox.information(self.usParameterUnits_tableWidget, 'Warning', msg)
 		cu.sleep(0.25)
 		self.dialog.done(0)
 

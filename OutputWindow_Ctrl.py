@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from OutputWindow_Vst import Ui_OutputWindow
 from UnitSettings_Ctrl import Main_UnitSettings
 from OneSpanAnalysis_Ctrl import Main_OneSpanAnalysis

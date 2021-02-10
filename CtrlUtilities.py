@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 import MdlUtilities as mdl
 import re, time, sys
 from functools import wraps
@@ -65,20 +67,20 @@ def savetable(table, fields, filename, orientation='h'):
 def waiting_effects(function):
 	@wraps(function)
 	def wrap_function(*args, **kwargs):
-		QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+		QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 		try:
 			function(*args, **kwargs)
 		except Exception as e:
 			raise e
 			print("Error {}".format(e.args[0]))
 		finally:
-			QtGui.QApplication.restoreOverrideCursor()
+			QApplication.restoreOverrideCursor()
 	return wrap_function
 
 
 def sleep(seconds):
-	QtCore.QCoreApplication.processEvents()
-	QtCore.QCoreApplication.flush()
+	QCoreApplication.processEvents()
+	QCoreApplication.flush()
 	time.sleep(seconds)
 
 
@@ -267,7 +269,7 @@ class MandatoryError( Exception ): pass
 class ValueWarning( Exception ): pass
 
 
-class TableWidgetFieldItem( QtGui.QTableWidgetItem ):
+class TableWidgetFieldItem( QTableWidgetItem ):
 	
 	def __init__( self, field, isPar ):
 		
@@ -278,9 +280,9 @@ class TableWidgetFieldItem( QtGui.QTableWidgetItem ):
 		self.altFg = False
 		super().__init__('')
 		
-		self.setFlags(QtCore.Qt.ItemFlags(field.flag))
-		self.setTextColor(QtGui.QColor(*field.textColor))
-		self.setBackgroundColor(QtGui.QColor(*field.backgroundColor-isPar*10))
+		self.setFlags(Qt.ItemFlags(field.flag))
+		self.setForeground(QColor(*field.textColor))
+		self.setBackground(QColor(*field.backgroundColor-isPar*10))
 		self.realValue = mdl.physicalValue(None, field.unit)
 
 		self.currentChangebyVst = True
@@ -337,55 +339,55 @@ class TableWidgetFieldItem( QtGui.QTableWidgetItem ):
 	
 	def flip_backgroundColor(self):
 		if self.altBg:	
-			self.setBackgroundColor(QtGui.QColor(*self.field.backgroundColor-self.isPar*10))
+			self.setBackground(QColor(*self.field.backgroundColor-self.isPar*10))
 			self.altBg = False
 		else:	
-			self.setBackgroundColor(QtGui.QColor(*self.field.altBackgroundColor-self.isPar*10))
+			self.setBackground(QColor(*self.field.altBackgroundColor-self.isPar*10))
 			self.altBg = True
 			
 	
 	def flip_textColor(self):
 		if self.altTx:	
-			self.setTextColor(QtGui.QColor(*self.field.textColor))
+			self.setForeground(QColor(*self.field.textColor))
 			self.altTx = False
 		else:	
-			self.setTextColor(QtGui.QColor(*self.field.altTextColor))
+			self.setForeground(QColor(*self.field.altTextColor))
 			self.altTx = True
 			
 	
 	def flip_flags(self):
 		if self.altFg:	
-			self.setFlags(QtCore.Qt.ItemFlags(self.field.flag))
+			self.setFlags(Qt.ItemFlags(self.field.flag))
 			self.altFg = False
 		else:	
-			self.setFlags(QtCore.Qt.ItemFlags(self.field.altFlag))
+			self.setFlags(Qt.ItemFlags(self.field.altFlag))
 			self.altFg = True
 
 
 	def alt_backgroundColor(self, alt=True):
 		if alt and not self.altBg:
-			self.setBackgroundColor(QtGui.QColor(*self.field.altBackgroundColor-self.isPar*10))
+			self.setBackground(QColor(*self.field.altBackgroundColor-self.isPar*10))
 			self.altBg = True
 		elif not alt and self.altBg:
-			self.setBackgroundColor(QtGui.QColor(*self.field.backgroundColor-self.isPar*10))
+			self.setBackground(QColor(*self.field.backgroundColor-self.isPar*10))
 			self.altBg = False
 			
 	
 	def alt_textColor(self, alt=True):
 		if alt and not self.altTx:
-			self.setTextColor(QtGui.QColor(*self.field.altTextColor))
+			self.setForeground(QColor(*self.field.altTextColor))
 			self.altTx = True
 		elif not alt and self.altTx:
-			self.setTextColor(QtGui.QColor(*self.field.textColor))
+			self.setForeground(QColor(*self.field.textColor))
 			self.altTx = False
 			
 	
 	def alt_flags(self, alt=True):
 		if alt and not self.altFg:
-			self.setFlags(QtCore.Qt.ItemFlags(self.field.altFlag))
+			self.setFlags(Qt.ItemFlags(self.field.altFlag))
 			self.altFg = True
 		elif not alt and self.altFg:
-			self.setFlags(QtCore.Qt.ItemFlags(self.field.flag))
+			self.setFlags(Qt.ItemFlags(self.field.flag))
 			self.altFg = False
 			
 
@@ -396,7 +398,7 @@ class TableClipboard():
 		self.tableWidget = tableWidget
 		self.selection = tableWidget.selectionModel().selectedIndexes()
 		self.selectionDict = {}
-		self.sys_clip = QtGui.QApplication.clipboard()
+		self.sys_clip = QApplication.clipboard()
 		self.text = None
 		
 	def selection_to_clipboard(self):
@@ -438,19 +440,19 @@ class TableClipboard():
 							except AttributeError:
 								item.setText(str(value))
 						else:
-							item = QtGui.QTableWidgetItem(str(value))
+							item = QTableWidgetItem(str(value))
 							self.tableWidget.setItem(therow+i,thecolumn+j, item)
 						self.tableWidget.setItemSelected(item, True)
 
 
-class CopySelectedCells_action(QtGui.QAction):
+class CopySelectedCells_action(QAction):
 	
 	def __init__(self, tableWidget):
-		if not isinstance(tableWidget, QtGui.QTableWidget):
+		if not isinstance(tableWidget, QTableWidget):
 			raise ValueError(str('This action must be initialised with a QTableWidget. A %s was given.' % type(tableWidget)))
 		super().__init__("Copy", tableWidget)
 		self.setShortcut('Ctrl+C')
-		self.setShortcutContext(QtCore.Qt.WidgetShortcut)
+		self.setShortcutContext(Qt.WidgetShortcut)
 		self.triggered.connect(self.copy_cells_to_clipboard)
 		self.tableWidget = tableWidget
 
@@ -460,14 +462,14 @@ class CopySelectedCells_action(QtGui.QAction):
 		tc.selection_to_clipboard()
 
 
-class PasteToCells_action(QtGui.QAction):
+class PasteToCells_action(QAction):
 	
 	def __init__(self, tableWidget):
-		if not isinstance(tableWidget, QtGui.QTableWidget):
+		if not isinstance(tableWidget, QTableWidget):
 			raise ValueError(str('This action must be initialised with a QTableWidget. A %s was given.' % type(tableWidget)))
 		super().__init__("Paste", tableWidget)
 		self.setShortcut('Ctrl+V')
-		self.setShortcutContext(QtCore.Qt.WidgetShortcut)
+		self.setShortcutContext(Qt.WidgetShortcut)
 		self.triggered.connect(self.paste_clipboard_to_cells)
 		self.tableWidget = tableWidget
 
@@ -477,13 +479,13 @@ class PasteToCells_action(QtGui.QAction):
 		tc.clipboard_to_selection()
 
 
-class FunctionToWidget_action(QtGui.QAction):
+class FunctionToWidget_action(QAction):
 	
 	def __init__(self, widget, function, menuDescription, shortcut=None):
 		super().__init__(menuDescription, widget)
 		if shortcut:
 			self.setShortcut(shortcut)
-			self.setShortcutContext(QtCore.Qt.WidgetShortcut)
+			self.setShortcutContext(Qt.WidgetShortcut)
 		self.triggered.connect(function)
 
 

@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from OneSpanAnalysis_Vst import Ui_OneSpanAnalysis
 from TubularDatabase_Ctrl import Main_TubularDatabase
 from CentralizerDatabase_Ctrl import Main_CentralizerDatabase
@@ -36,6 +38,7 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 		self.osaInclination_slider.valueChanged.connect( self.update_analysisWithInclination )
 		self.osaInclination_slider.actionTriggered.connect( self.update_inclinationSliderValue )
 
+		self.osaSpacing_slider.setValue( 50 )
 		self.osaSpacing_slider.valueChanged.connect( self.update_analysisWithSpacing )
 		self.osaSpacing_slider.actionTriggered.connect( self.update_spacingSliderValue )
 
@@ -43,7 +46,7 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 		self.osaSpacingSentivity_graphicsView.axes.set_xticks([])
 		self.osaSpacingSentivity_graphicsView.axes.set_yticks([])
 		
-		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+		dialog.setAttribute(Qt.WA_DeleteOnClose)
 		dialog.exec_()
 
 		#self.dialog.done(0)
@@ -52,7 +55,7 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 	def __init__osaCasing_tableWidget(self):
 		
 		self.osaCasing_tableWidget.parent = self
-		self.osaCasing_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.osaCasing_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 
 		self.osaCasing_fields = mdl.get_osaCasing_fields()
 		for field in self.osaCasing_fields:
@@ -67,7 +70,7 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 	def __init__osaCentA_tableWidget(self):
 		
 		self.osaCentA_tableWidget.parent = self
-		self.osaCentA_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.osaCentA_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 
 		self.osaCentA_fields = mdl.get_osaCent_fields()
 		for field in self.osaCentA_fields:
@@ -82,7 +85,7 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 	def __init__osaCentB_tableWidget(self):
 		
 		self.osaCentB_tableWidget.parent = self
-		self.osaCentB_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.osaCentB_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 
 		self.osaCentB_fields = mdl.get_osaCent_fields()
 		for field in self.osaCentB_fields:
@@ -97,7 +100,7 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 	def __init__osaWellbore_tableWidget(self):
 		
 		self.osaWellbore_tableWidget.parent = self
-		self.osaWellbore_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.osaWellbore_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 
 		self.osaWellbore_fields = mdl.get_osaWellbore_fields()
 		for field in self.osaWellbore_fields:
@@ -112,7 +115,7 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 	def __init__osaOutputdata1_tableWidget(self):
 		
 		self.osaOutputdata1_tableWidget.parent = self
-		self.osaOutputdata1_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.osaOutputdata1_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 
 		self.osaOutputdata1_fields = mdl.get_osaOutputdata1_fields()
 		for field in self.osaOutputdata1_fields:
@@ -125,7 +128,7 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 	def __init__osaOutputdata2_tableWidget(self):
 		
 		self.osaOutputdata2_tableWidget.parent = self
-		self.osaOutputdata2_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.osaOutputdata2_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 
 		self.osaOutputdata2_fields = mdl.get_osaOutputdata2_fields()
 		for field in self.osaOutputdata2_fields:
@@ -137,7 +140,7 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 
 	def open_TDB_dialog(self):
 
-		dialog = QtGui.QDialog(self.osaCasing_tableWidget)
+		dialog = QDialog(self.osaCasing_tableWidget)
 		self.TDB = Main_TubularDatabase(dialog)
 
 		for field in self.osaCasing_fields:
@@ -156,7 +159,7 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 
 	def open_CDB_dialog_forA(self):
 
-		dialog = QtGui.QDialog(self.osaCentA_tableWidget)
+		dialog = QDialog(self.osaCentA_tableWidget)
 		self.CDB_A = Main_CentralizerDatabase(dialog)
 
 		for field in self.osaCentA_fields:
@@ -175,7 +178,7 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 
 	def open_CDB_dialog_forB(self):
 
-		dialog = QtGui.QDialog(self.osaCentB_tableWidget)
+		dialog = QDialog(self.osaCentB_tableWidget)
 		self.CDB_B = Main_CentralizerDatabase(dialog)
 
 		for field in self.osaCentB_fields:
@@ -379,7 +382,7 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 			self.osaClearanceAnalysisM_graphicsView.draw()
 
 
-		except NameError:
+		except (NameError, TypeError):
 
 			self.osaCasing_fields.inverseReferenceUnitConvert_fields()
 			self.osaCentA_fields.inverseReferenceUnitConvert_fields()

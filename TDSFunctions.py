@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 import InputWindow_Mdl as mdl
 import CtrlUtilities as cu
 import PlotUtilities as pu
@@ -163,7 +165,7 @@ def calculate_TorqueAndDrag( self ):
 
 	#if len(self.v3WellboreInnerStageData):
 	#	msg = "Any inner wellbore stage completed. Can not proceed."
-	#	QtGui.QMessageBox.critical(self.s4TorqueDragSideforce_tableWidget, 'Error', msg)
+	#	QMessageBox.critical(self.s4TorqueDragSideforce_tableWidget, 'Error', msg)
 	#	return
 	
 	K = list( mdl.get_sortedIndexes_of_wellboreInnerStageData(self) )

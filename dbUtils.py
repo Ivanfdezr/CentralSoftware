@@ -10,7 +10,7 @@ class ConnectionController(object):
 
 	def start_connection(self):
 		try:
-			self.conexion = mysql.connector.connect( user='root', password='mitz43', database='centraldb')
+			self.conexion = mysql.connector.connect( user='admin', password='password', database='centraldb')
 			self.cursor = self.conexion.cursor()
 	
 		except Exception as e:

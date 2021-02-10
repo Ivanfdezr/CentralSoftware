@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from CaliperInsertion_Vst import Ui_CaliperInsertion
 import CaliperInsertion_Mdl as mdl
 import CtrlUtilities as cu
@@ -18,14 +20,14 @@ class Main_CaliperInsertion(Ui_CaliperInsertion):
 		self.csvAccept_pushButton.clicked.connect( self.makeResults_and_done )
 		self.csvClearAll_pushButton.clicked.connect( self.clear_all )
 
-		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+		dialog.setAttribute(Qt.WA_DeleteOnClose)
 		dialog.exec_()
 
 
 	def __init__csvCal_tableWidget(self):
 		
 		self.csvCal_tableWidget.parent = self
-		self.csvCal_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.csvCal_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 		C = cu.CopySelectedCells_action(self.csvCal_tableWidget)
 		self.csvCal_tableWidget.addAction(C)

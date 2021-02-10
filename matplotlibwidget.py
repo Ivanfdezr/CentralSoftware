@@ -6,17 +6,17 @@
 """
 MatplotlibWidget
 ================
-Example of matplotlib widget for PyQt4
+Example of matplotlib widget for PyQt5
 Copyright © 2009 Pierre Raybaut
 This software is licensed under the terms of the MIT License
-Derived from 'embedding_in_pyqt4.py':
+Derived from 'embedding_in_PyQt5.py':
 Copyright © 2005 Florent Rougon, 2006 Darren Dale
 """
 
 __version__ = "1.0.0"
 
-from PyQt4.QtGui import QSizePolicy
-from PyQt4.QtCore import QSize
+from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtCore import QSize
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as Canvas
 from matplotlib.figure import Figure
@@ -28,7 +28,7 @@ rcParams['font.size'] = 9
 
 class MatplotlibWidget(Canvas):
     """
-    MatplotlibWidget inherits PyQt4.QtGui.QWidget
+    MatplotlibWidget inherits PyQt5.QtGui.QWidget
     and matplotlib.backend_bases.FigureCanvasBase
     
     Options: option_name (default_value)
@@ -93,7 +93,7 @@ class MatplotlibWidget(Canvas):
 
 class Matplotlib3DWidget(Canvas):
     """
-    MatplotlibWidget inherits PyQt4.QtGui.QWidget
+    MatplotlibWidget inherits PyQt5.QtGui.QWidget
     and matplotlib.backend_bases.FigureCanvasBase
     
     Options: option_name (default_value)
@@ -166,7 +166,7 @@ class Matplotlib3DWidget(Canvas):
 #===============================================================================
 if __name__ == '__main__':
     import sys
-    from PyQt4.QtGui import QMainWindow, QApplication
+    from PyQt5.QtGui import QMainWindow, QApplication
     from numpy import linspace
     
     class ApplicationWindow(QMainWindow):

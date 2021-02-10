@@ -3,18 +3,18 @@
     3  pip3
     4  sudo apt install python3-pip
     5  apt-cache search pyqt
-    6  sudo apt install python3-pyqt4
+    6  sudo apt install python3-PyQt5
     7  python3
     8  sudo apt install qt4-designer
     9  sudo pip3 install pyqtgraph
    10  python3
    11  sudo apt install libcanberra-gtk-module libcanberra-gtk3-module
    12  python3
-   13  sudo apt install python3-pyqt4.qtopengl
+   13  sudo apt install python3-PyQt5.qtopengl
    14  sudo pip3 install pyopengl
    15  sudo pip3 install h5py
    16  python3
    17  pip3 list
    18  python3
    19  history
-   20  history >pasos_instalar_PyQt4_y_complementos.txt
+   20  history >pasos_instalar_PyQt5_y_complementos.txt

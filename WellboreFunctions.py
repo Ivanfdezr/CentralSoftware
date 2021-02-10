@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 #from TubularDatabase_Ctrl import Main_TubularDatabase
 #from CentralizerDatabase_Ctrl import Main_CentralizerDatabase
 #from CaliperImport_Ctrl import Main_CaliperImport
@@ -23,7 +25,7 @@ import importlib
 def init_s3CentralizerProperties_tableWidget(self, tab):
 
 	s3CentralizerProperties_tableWidget = eval( 'self.s3CentralizerProperties_tableWidget_{tab}'.format(tab=tab) )
-	s3CentralizerProperties_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+	s3CentralizerProperties_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 	C = cu.CopySelectedCells_action(s3CentralizerProperties_tableWidget)
 	s3CentralizerProperties_tableWidget.addAction(C)
@@ -44,7 +46,7 @@ def setup_s3CentralizerProperties_tableWidget(self, tab):
 
 	for field in s3CentralizerProperties_fields:
 		
-		item = QtGui.QTableWidgetItem()
+		item = QTableWidgetItem()
 		s3CentralizerProperties_tableWidget.setVerticalHeaderItem(field.pos, item)
 		item.setText( cu.extend_text( field.headerName, 25 ) )
 		item = cu.TableWidgetFieldItem( field, False )
@@ -54,7 +56,7 @@ def setup_s3CentralizerProperties_tableWidget(self, tab):
 def init_s3CentralizerRunningForce_tableWidget(self, tab):
 
 	s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )
-	s3CentralizerRunningForce_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+	s3CentralizerRunningForce_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 	C = cu.CopySelectedCells_action(s3CentralizerRunningForce_tableWidget)
 	s3CentralizerRunningForce_tableWidget.addAction(C)
@@ -92,7 +94,7 @@ def setup_s3CentralizerRunningForce_tableWidget(self, tab):
 def init_s3CentralizerLocation_tableWidget(self, tab):
 
 	s3CentralizerLocation_tableWidget = eval( 'self.s3CentralizerLocation_tableWidget_{tab}'.format(tab=tab) )
-	s3CentralizerLocation_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+	s3CentralizerLocation_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 	C = cu.CopySelectedCells_action(s3CentralizerLocation_tableWidget)
 	s3CentralizerLocation_tableWidget.addAction(C)
@@ -602,7 +604,7 @@ def open_TDB_dialog_for_innerStages(self):
 	
 	importlib.reload(tdb)
 
-	dialog = QtGui.QDialog(self.s3PipeProperties_tableWidget)
+	dialog = QDialog(self.s3PipeProperties_tableWidget)
 	TDB = tdb.Main_TubularDatabase(dialog)
 	if 'fields' not in dir(TDB): return
 	self.currentWellboreInnerStageDataItem['PipeBase'] = TDB.fields
@@ -631,7 +633,7 @@ def open_CDB_dialog(self, tab):
 	#s3CentralizerRunningForce_tableWidget = eval( 'self.s3CentralizerRunningForce_tableWidget_{tab}'.format(tab=tab) )	
 	#s3CentralizerRunningForce_fields      = eval( 'self.v3CentralizerRunningForce_fields_{tab}'.format(tab=tab) )
 
-	dialog = QtGui.QDialog(self.ABC_tabWidget)
+	dialog = QDialog(self.ABC_tabWidget)
 	
 	if s3BowSpringCentralizer_radioButton.isChecked():
 		CDB = cdb.Main_CentralizerDatabase(dialog, 'Bow Spring' )
@@ -669,7 +671,7 @@ def open_specifyCentralization_dialog(self):
 	open_LS_dialog(self)
 	#except (AssertionError, IndexError):
 	#	msg = 'Some Pattern and Offset combinations are not suitable\nfor the number of joins in the stages.'
-	#	QtGui.QMessageBox.critical(self.s3WellboreInnerStages_tableWidget, 'Error', msg)
+	#	QMessageBox.critical(self.s3WellboreInnerStages_tableWidget, 'Error', msg)
 	
 
 @updateByBlock_currentWellboreInnerStageDataItem
@@ -680,7 +682,7 @@ def open_LS_dialog(self):
 	mdl.get_centralizationLocations( self )
 	print_wellboreInnerStageData(self)
 
-	dialog = QtGui.QDialog(self.s3ManageLocations_pushButton)
+	dialog = QDialog(self.s3ManageLocations_pushButton)
 	LS = ls.Main_LocationSetup(dialog, self)
 	del dialog 
 
@@ -773,7 +775,7 @@ def open_SS_dialog(self):
 
 	importlib.reload(ss)
 	
-	dialog = QtGui.QDialog(self.s3ManageLocations_pushButton)
+	dialog = QDialog(self.s3ManageLocations_pushButton)
 	SS = ss.Main_SpacingSetup(dialog, self)
 	self.currentWellboreInnerStageDataItem['Centralization']['Fields'] = SS.fields
 
@@ -803,7 +805,7 @@ def open_caliper_dialog(self):
 
 	importlib.reload(cim)
 
-	dialog = QtGui.QDialog(self.s3WellboreOuterStages_tableWidget)
+	dialog = QDialog(self.s3WellboreOuterStages_tableWidget)
 	CI = cim.Main_CaliperImport(dialog, self)
 	if 'data' not in dir(CI): return
 
@@ -834,7 +836,7 @@ def open_csv_dialog(self):
 
 	importlib.reload(cin)
 
-	dialog = QtGui.QDialog(self.s3WellboreOuterStages_tableWidget)
+	dialog = QDialog(self.s3WellboreOuterStages_tableWidget)
 	CI = cin.Main_CaliperInsertion(dialog)
 	if 'data' not in dir(CI): return
 
@@ -865,7 +867,7 @@ def open_TDB_dialog_for_outerStages(self):
 	
 	importlib.reload(tdb)
 
-	dialog = QtGui.QDialog(self.s3WellboreOuterStages_tableWidget)
+	dialog = QDialog(self.s3WellboreOuterStages_tableWidget)
 	TDB = tdb.Main_TubularDatabase(dialog)
 	row = self.s3WellboreOuterStages_tableWidget.selectedRow
 	self.currentWellboreOuterStageDataItem['PipeBase'] = TDB.fields
@@ -926,7 +928,7 @@ def adjust_MD_to_wellboreDeep(self):
 		deepestMD = max(self.v3WorkWellboreMD)
 	except ValueError:
 		msg = "Any bottom MD has been assigned yet in Wellbore intervals. Can not proceed."
-		QtGui.QMessageBox.critical(self.s3WellboreInnerStages_tableWidget, 'Error', msg)
+		QMessageBox.critical(self.s3WellboreInnerStages_tableWidget, 'Error', msg)
 		self._PipeCentralizationStageAdjusting_isEnabled = True
 		return
 

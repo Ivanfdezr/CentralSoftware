@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from LocationSetup_Vst import Ui_LocationSetup
 import LocationSetup_Vst as vst
 import LocationSetup_Mdl as mdl
@@ -236,14 +238,14 @@ class Main_LocationSetup(Ui_LocationSetup):
 		self.draw_MDlocations( initial=True )
 		self.parent.v3CentralizationProcessed_flag = True
 		
-		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+		dialog.setAttribute(Qt.WA_DeleteOnClose)
 		dialog.exec_()
 
 
 	def __init__lsCentralizerLocations_tableWidget(self):
 
 		self.lsCentralizerLocations_tableWidget.parent = self
-		self.lsCentralizerLocations_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.lsCentralizerLocations_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 		#C = cu.CopySelectedCells_action(self.lsCentralizerLocations_tableWidget)
 		#self.lsCentralizerLocations_tableWidget.addAction(C)
@@ -406,12 +408,12 @@ class Main_LocationSetup(Ui_LocationSetup):
 
 			else:
 				msg = "There are not centralizers defined in this region. \nThis action is going to be ignored."
-				QtGui.QMessageBox.critical(self.lsCentralizerLocations_tableWidget, 'Error', msg)
+				QMessageBox.critical(self.lsCentralizerLocations_tableWidget, 'Error', msg)
 				return
 
 		except mu.LogicalError:
 			msg = "There is a logical error between centralizer locations and length.\nThe last entered location will be removed."
-			QtGui.QMessageBox.critical(self.lsCentralizerLocations_tableWidget, 'Error', msg)
+			QMessageBox.critical(self.lsCentralizerLocations_tableWidget, 'Error', msg)
 			self.lsCentralization_fields.MD.pop(r)
 			self.lsCentralization_fields.Inc.pop(r)
 			self.lsCentralization_fields.SOatC.pop(r)

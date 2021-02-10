@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from CentralizerDatabase_Vst import Ui_CentralizerDatabase
 import CentralizerDatabase_Mdl as mdl
 import CtrlUtilities as cu
@@ -28,7 +30,7 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 				self.export_centralizer(self.CDBResin_tableWidget, self.CDBResin_fields)
 		self.CDBAccept_pushButton.clicked.connect(export_centralizer)
 		
-		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+		dialog.setAttribute(Qt.WA_DeleteOnClose)
 		dialog.exec_()
 	
 	
@@ -71,7 +73,7 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 		mdl.set_CDBBowSpring_data_to_fields(OD, self.CDBBowSpring_fields)
 
 		for field in self.CDBBowSpring_fields[:-2]:
-			item = QtGui.QTableWidgetItem()
+			item = QTableWidgetItem()
 			self.CDBBowSpring_tableWidget.setHorizontalHeaderItem(field.pos, item)
 			item.setText( field.headerName )
 
@@ -87,7 +89,7 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 		self.CDBBowSpring_tableWidget.itemChanged.connect(cu.update_fieldItem)
 		
 		__open_menu = lambda pos: self.open_menu(self.CDBBowSpring_tableWidget, self.CDBBowSpring_fields, pos)
-		self.CDBBowSpring_tableWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+		self.CDBBowSpring_tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
 		self.CDBBowSpring_tableWidget.customContextMenuRequested.connect(__open_menu)	
 
 
@@ -98,7 +100,7 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 		mdl.set_CDBResin_data_to_fields(OD, self.CDBResin_fields)
 		
 		for field in self.CDBResin_fields[:-2]:
-			item = QtGui.QTableWidgetItem()
+			item = QTableWidgetItem()
 			self.CDBResin_tableWidget.setHorizontalHeaderItem(field.pos, item)
 			item.setText( field.headerName )
 
@@ -114,7 +116,7 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 		self.CDBResin_tableWidget.itemChanged.connect(cu.update_fieldItem)
 		
 		__open_menu = lambda pos: self.open_menu(self.CDBResin_tableWidget, self.CDBResin_fields, pos)
-		self.CDBResin_tableWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+		self.CDBResin_tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
 		self.CDBResin_tableWidget.customContextMenuRequested.connect(__open_menu)
 
 
@@ -125,7 +127,7 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 	
 	def open_menu(self, CDB_tableWidget, CDB_fields, position):
 
-		menu = QtGui.QMenu()
+		menu = QMenu()
 
 		ready = True
 		try:
@@ -178,7 +180,7 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 			item.alt_backgroundColor()
 			item.alt_flags()
 		else:
-			item = QtGui.QTableWidgetItem()
+			item = QTableWidgetItem()
 			CDB_tableWidget.setItem(CDB_tableWidget.selectedRow, field.pos, item)
 		CDB_tableWidget.editItem(item)
 
@@ -208,12 +210,12 @@ class Main_CentralizerDatabase(Ui_CentralizerDatabase):
 
 			except cu.MandatoryError:
 				msg = "'{representation}' is a mandatory property for any centralizer.".format(representation=item.field.representation)
-				QtGui.QMessageBox.critical(CDB_tableWidget, 'Error', msg)
+				QMessageBox.critical(CDB_tableWidget, 'Error', msg)
 				return False
 
 			except cu.ValueWarning:
 				msg = "Incorrect value in '{representation}'. This is a non-mandatory property.".format(representation=item.field.representation)
-				QtGui.QMessageBox.information(CDB_tableWidget, 'Warning', msg)
+				QMessageBox.information(CDB_tableWidget, 'Warning', msg)
 
 			centralizerItems.append( item )
 

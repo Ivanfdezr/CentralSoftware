@@ -1,4 +1,4 @@
-from PyQt4 import QtGui
+from PyQt5 import QtGui
 import InputWindow_Mdl as mdl
 from SurveyImport_Ctrl import Main_SurveyImport
 import CtrlUtilities as cu

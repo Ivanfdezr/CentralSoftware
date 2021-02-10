@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from DiagramWindow_Vst import Ui_DiagramWindow
 import InputWindow_Mdl as mdl
 import CtrlUtilities as cu
@@ -123,5 +125,5 @@ class Main_DiagramWindow(Ui_DiagramWindow):
 			self.dwWellboreSchematic_graphicsView.axes.arrow(HD, VD, nd[0][0], nd[0][1], head_width=0, head_length=0, fc='k', ec='k', lw=0.5, alpha=0.5)
 			
 
-		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+		dialog.setAttribute(Qt.WA_DeleteOnClose)
 		dialog.exec_()

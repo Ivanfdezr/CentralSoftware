@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from CaliperImport_Vst import Ui_CaliperImport
 import CaliperImport_Mdl as mdl
 import CtrlUtilities as cu
@@ -49,7 +51,7 @@ class Main_CaliperImport(Ui_CaliperImport):
 
 		self.setup_valueDecimalPoint()
 
-		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+		dialog.setAttribute(Qt.WA_DeleteOnClose)
 		dialog.exec_()
 
 
@@ -83,7 +85,7 @@ class Main_CaliperImport(Ui_CaliperImport):
 	def setNumberPattern(self, state=None):
 
 		if self.ciValueDecimalPoint_radioButton.isChecked():
-			if state == QtCore.Qt.Checked:
+			if state == Qt.Checked:
 				self.numberPattern = mu.get_decimalPointPattern()
 			else:
 				self.numberPattern = mu.get_decimalPointWithThousandsCommaPattern()
@@ -100,14 +102,14 @@ class Main_CaliperImport(Ui_CaliperImport):
 
 	def setup_valueDecimalComma(self):
 		self.ciCommaDelimiter_checkBox.setEnabled(False)
-		self.ciCommaDelimiter_checkBox.setCheckState(QtCore.Qt.Unchecked)
+		self.ciCommaDelimiter_checkBox.setCheckState(Qt.Unchecked)
 		self.text2float = mu.get_decimalFloatCommaFunction()
 		self.setNumberPattern()
 
 
 	def open_file(self):
 		
-		filepath = QtGui.QFileDialog.getOpenFileName(self.dialog, 'Open file', 'c:\\',"DR-CAL files (*.las *.txt)")
+		filepath = QFileDialog.getOpenFileName(self.dialog, 'Open file', 'c:\\',"DR-CAL files (*.las *.txt)")
 		head,filename = os.path.split( filepath )
 		self.ciFilename_label.setText( filename )
 		with open(filepath,'r') as file:
@@ -192,13 +194,13 @@ class Main_CaliperImport(Ui_CaliperImport):
 			maximumMDvalue = float('inf')
 		
 		delimiterPattern = ''
-		if self.ciTabDelimiter_checkBox.checkState() == QtCore.Qt.Checked:
+		if self.ciTabDelimiter_checkBox.checkState() == Qt.Checked:
 			delimiterPattern += '\t'
-		if self.ciSemicolonDelimiter_checkBox.checkState() == QtCore.Qt.Checked:
+		if self.ciSemicolonDelimiter_checkBox.checkState() == Qt.Checked:
 			delimiterPattern += ';'
-		if self.ciSpacesDelimiter_checkBox.checkState() == QtCore.Qt.Checked:
+		if self.ciSpacesDelimiter_checkBox.checkState() == Qt.Checked:
 			delimiterPattern += ' '
-		if self.ciCommaDelimiter_checkBox.checkState() == QtCore.Qt.Checked:
+		if self.ciCommaDelimiter_checkBox.checkState() == Qt.Checked:
 			delimiterPattern += ','
 		columnPattern = '((?<=['+delimiterPattern+'])'+self.numberPattern+')|('+self.numberPattern+'(?=['+delimiterPattern+']))'
 

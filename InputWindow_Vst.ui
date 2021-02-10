@@ -269,7 +269,7 @@ p, li { white-space: pre-wrap; }
       <property name="movable">
        <bool>false</bool>
       </property>
-      <property name="tabBarAutoHide" stdset="0">
+      <property name="tabBarAutoHide">
        <bool>false</bool>
       </property>
       <widget class="QWidget" name="tab_5">

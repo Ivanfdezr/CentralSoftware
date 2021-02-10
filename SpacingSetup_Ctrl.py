@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from SpacingSetup_Vst import Ui_SpacingSetup
 import SpacingSetup_Vst as vst
 import SpacingSetup_Mdl as mdl
@@ -161,7 +163,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 		zp.zoom3D_factory( self.ssWellbore3D_graphicsView.axes, curve )
 		self.ssWellbore3D_graphicsView.draw()
 
-		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+		dialog.setAttribute(Qt.WA_DeleteOnClose)
 		dialog.exec_()
 
 
@@ -183,7 +185,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 	def __init__ssCentralizerLocations_tableWidget(self):
 
 		self.ssCentralizerLocations_tableWidget.parent = self
-		self.ssCentralizerLocations_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.ssCentralizerLocations_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 		#C = cu.CopySelectedCells_action(self.ssCentralizerLocations_tableWidget)
 		#self.ssCentralizerLocations_tableWidget.addAction(C)
@@ -426,7 +428,7 @@ class Main_SpacingSetup(Ui_SpacingSetup):
 				self.update_calculations()
 			except mu.LogicalError:
 				msg = "There is a logical error between centralizer locations and length.\nPlease try with a larger spacing."
-				QtGui.QMessageBox.critical(self.ssCentralizerLocations_tableWidget, 'Error', msg)
+				QMessageBox.critical(self.ssCentralizerLocations_tableWidget, 'Error', msg)
 				self.ssCentralizerLocations_fields.MD = MD_bk
 				self.ssCentralizerLocations_fields.EW = EW_bk
 				self.ssCentralizerLocations_fields.NS = NS_bk

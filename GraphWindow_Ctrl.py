@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from GraphWindow_Vst import Ui_GraphWindow
 #import GraphWindow_Mdl as mdl
 import CtrlUtilities as cu
@@ -82,5 +84,5 @@ class Main_GraphWindow(Ui_GraphWindow):
 		zp.zoom3D_factory( self.gwColoredWellbore_graphicsView.axes, curve )
 		#self.gwColoredWellbore_graphicsView.draw()
 
-		dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+		dialog.setAttribute(Qt.WA_DeleteOnClose)
 		dialog.exec_()

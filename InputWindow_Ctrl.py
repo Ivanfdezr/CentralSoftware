@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from InputWindow_Vst import Ui_InputWindow
 from UnitSettings_Ctrl import Main_UnitSettings
 from OneSpanAnalysis_Ctrl import Main_OneSpanAnalysis
@@ -147,7 +149,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def save_file(self):
 
 		print('---------------------------------------------------------')
-		filename = QtGui.QFileDialog.getSaveFileName( self.s1Info_tableWidget, 'Save File ...', self.v1WorkingDirectory+'/untitled.csf', 'Central-Soft File (*.csf)' )
+		filename = QFileDialog.getSaveFileName( self.s1Info_tableWidget, 'Save File ...', self.v1WorkingDirectory+'/untitled.csf', 'Central-Soft File (*.csf)' )
 		
 		OBJ = {}
 		for attrname in dir(self):
@@ -169,7 +171,7 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def load_file(self):
 
-		filename = QtGui.QFileDialog.getOpenFileName( self.s1Info_tableWidget, 'Open File ...', self.v1WorkingDirectory, 'Central-Soft File (*.csf)' )
+		filename = QFileDialog.getOpenFileName( self.s1Info_tableWidget, 'Open File ...', self.v1WorkingDirectory, 'Central-Soft File (*.csf)' )
 		#filename = 'C:/Users/arcad/Documents/__WORKS__/AZTECATROL/CENTRAL-SOFTWARE/CentralSoftware/tmp/test1.csf'
 
 		with open(filename,'rb') as File:
@@ -362,7 +364,7 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def open_selectWorkingDirectoryDialog(self):
 		
-		self.v1WorkingDirectory = QtGui.QFileDialog.getExistingDirectory( self.s1Info_tableWidget, 'Select the working directory', 'C:\\' )
+		self.v1WorkingDirectory = QFileDialog.getExistingDirectory( self.s1Info_tableWidget, 'Select the working directory', 'C:\\' )
 		items = re.split(r'\\',self.v1WorkingDirectory)
 		self.v1WorkingDirectory = '/'.join(items)
 		print(self.v1WorkingDirectory)
@@ -371,20 +373,20 @@ class Main_InputWindow(Ui_InputWindow):
 
 
 	def open_unitSettingsDialog(self):
-		dialog = QtGui.QDialog(self.s1UnitSetting_pushButton)
+		dialog = QDialog(self.s1UnitSetting_pushButton)
 		Main_UnitSettings(dialog)
 		self.s1Customized_radioButton.click()
 		del dialog
 		
 
 	def open_oneSpanAnalysisDialog(self):
-		dialog = QtGui.QDialog(self.iw_toolBar)
+		dialog = QDialog(self.iw_toolBar)
 		Main_OneSpanAnalysis(dialog)
 		del dialog
 
 
 	def open_schematicDiagramDialog(self):
-		dialog = QtGui.QDialog(self.iw_toolBar)
+		dialog = QDialog(self.iw_toolBar)
 		DW = Main_DiagramWindow(dialog, self)
 		DW.dwWellboreSchematic_graphicsView.figure.savefig( self.parent.v1WorkingDirectory+"WellboreSchematic.png", dpi=300 )
 		del DW
@@ -392,7 +394,7 @@ class Main_InputWindow(Ui_InputWindow):
 
 
 	def open_graphWindow_dialog(self):
-		dialog = QtGui.QDialog(self.s3Plot3DSO_pushButton)
+		dialog = QDialog(self.s3Plot3DSO_pushButton)
 		GW = Main_GraphWindow(dialog, self)
 		GW.gwColoredWellbore_graphicsView.figure.savefig( self.parent.v1WorkingDirectory+"WellboreCentralization3D.png", dpi=300 )
 		del GW
@@ -445,7 +447,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def __init__s1Info_tableWidget(self):
 
 		self.s1Info_tableWidget.parent = self
-		self.s1Info_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.s1Info_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 		C = cu.CopySelectedCells_action(self.s1Info_tableWidget)
 		self.s1Info_tableWidget.addAction(C)
@@ -479,7 +481,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def __init__s2DataSurvey_tableWidget(self):
 		
 		self.s2DataSurvey_tableWidget.parent = self
-		self.s2DataSurvey_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.s2DataSurvey_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 		C = cu.CopySelectedCells_action(self.s2DataSurvey_tableWidget)
 		self.s2DataSurvey_tableWidget.addAction(C)
@@ -524,7 +526,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def __init__s2KOP_tableWidget(self):
 		
 		self.s2KOP_tableWidget.parent = self
-		self.s2KOP_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.s2KOP_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 		C = cu.CopySelectedCells_action(self.s2KOP_tableWidget)
 		self.s2KOP_tableWidget.addAction(C)
@@ -551,7 +553,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def __init__s2SurveyTortuosity_tableWidget(self):
 		
 		self.s2SurveyTortuosity_tableWidget.parent = self
-		self.s2SurveyTortuosity_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.s2SurveyTortuosity_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 		C = cu.CopySelectedCells_action(self.s2SurveyTortuosity_tableWidget)
 		self.s2SurveyTortuosity_tableWidget.addAction(C)
@@ -585,7 +587,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def __init__s2TortuosityInterval_tableWidget(self):
 		
 		self.s2TortuosityInterval_tableWidget.parent = self
-		self.s2TortuosityInterval_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.s2TortuosityInterval_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 		C = cu.CopySelectedCells_action(self.s2TortuosityInterval_tableWidget)
 		self.s2TortuosityInterval_tableWidget.addAction(C)
@@ -612,7 +614,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def __init__s3WellboreOuterStages_tableWidget(self):
 			
 		self.s3WellboreOuterStages_tableWidget.parent = self
-		self.s3WellboreOuterStages_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.s3WellboreOuterStages_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 		#C = cu.CopySelectedCells_action(self.s3WellboreOuterStages_tableWidget)
 		#self.s3WellboreOuterStages_tableWidget.addAction(C)
@@ -671,7 +673,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def __init__s3WellboreInnerStages_tableWidget(self):
 		
 		self.s3WellboreInnerStages_tableWidget.parent = self
-		self.s3WellboreInnerStages_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.s3WellboreInnerStages_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 
 		#C = cu.CopySelectedCells_action(self.s3WellboreInnerStages_tableWidget)
 		#self.s3WellboreInnerStages_tableWidget.addAction(C)
@@ -719,7 +721,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def __init__s3PipeProperties_tableWidget(self):
 
 		self.s3PipeProperties_tableWidget.parent = self
-		self.s3PipeProperties_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.s3PipeProperties_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 		C = cu.CopySelectedCells_action(self.s3PipeProperties_tableWidget)
 		self.s3PipeProperties_tableWidget.addAction(C)
@@ -738,7 +740,7 @@ class Main_InputWindow(Ui_InputWindow):
 		self.v3PipeProperties_fields = mdl.get_v3PipeProperties_fields()
 		for field in self.v3PipeProperties_fields:
 			
-			item = QtGui.QTableWidgetItem()
+			item = QTableWidgetItem()
 			self.s3PipeProperties_tableWidget.setVerticalHeaderItem(field.pos, item)
 			item.setText( cu.extend_text( field.headerName, 30 ) )
 			item = cu.TableWidgetFieldItem( field, False )
@@ -784,7 +786,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def __init__s4Settings_tableWidget(self):
 
 		self.s4Settings_tableWidget.parent = self
-		self.s4Settings_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.s4Settings_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 		C = cu.CopySelectedCells_action(self.s4Settings_tableWidget)
 		self.s4Settings_tableWidget.addAction(C)
@@ -809,7 +811,7 @@ class Main_InputWindow(Ui_InputWindow):
 
 		self.v4Settings_fields = mdl.get_v4Settings_fields()
 		for field in self.v4Settings_fields[:5]:
-			item = QtGui.QTableWidgetItem()
+			item = QTableWidgetItem()
 			self.s4Settings_tableWidget.setVerticalHeaderItem(field.pos, item)
 			item.setText( cu.extend_text( field.headerName, 40 ) )
 			item = cu.TableWidgetFieldItem( field, False )
@@ -819,7 +821,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def __init__s4TorqueDragSideforce_tableWidget(self):
 		
 		self.s4TorqueDragSideforce_tableWidget.parent = self
-		self.s4TorqueDragSideforce_tableWidget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+		self.s4TorqueDragSideforce_tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 
 		C = cu.CopySelectedCells_action(self.s4TorqueDragSideforce_tableWidget)
 		self.s4TorqueDragSideforce_tableWidget.addAction(C)

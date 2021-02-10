@@ -1,4 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from UnitConversion_Vst import Ui_Dialog
 import UnitConversion_Mdl as mdl
 
@@ -59,8 +61,8 @@ class Main_UnitConversion(Ui_Dialog):
 
 
 if __name__ == "__main__":
-	app = QtGui.QApplication([])
-	window = QtGui.QMainWindow()
+	app = QApplication([])
+	window = QMainWindow()
 	
 	main_uc = Main_UnitConversion(window)
 	#main_uc.connect_signals()
