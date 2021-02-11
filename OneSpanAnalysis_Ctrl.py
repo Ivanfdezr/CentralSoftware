@@ -169,6 +169,8 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 			if field.abbreviation in self.CDB_A.data:
 				value = self.CDB_A.data[field.abbreviation]
 				item.set_text( value, value.unit )
+				item.alt_backgroundColor(False)
+				item.alt_flags(False)
 			else:
 				item.set_text()
 				item.alt_backgroundColor()
@@ -188,6 +190,8 @@ class Main_OneSpanAnalysis(Ui_OneSpanAnalysis):
 			if field.abbreviation in self.CDB_B.data:
 				value = self.CDB_B.data[field.abbreviation]
 				item.set_text( value, value.unit )
+				item.alt_backgroundColor(False)
+				item.alt_flags(False)
 			else:
 				item.set_text()
 				item.alt_backgroundColor()
