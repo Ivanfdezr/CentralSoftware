@@ -14,7 +14,6 @@ class ConnectionController(object):
 			self.cursor = self.conexion.cursor()
 	
 		except Exception as e:
-			##
 			pass
 
 	def close_connection(self):
@@ -26,7 +25,6 @@ class ConnectionController(object):
 		regreso = self.f(*args, cursor=self.cursor)
 
 		if regreso == None:
-			##
 			self.conexion.commit()
 
 		self.close_connection()
@@ -38,21 +36,11 @@ def execute_query(query, cursor=None):
 	'''
 	Realiza la ejecucion de un query pasandole el query a ejecutar
 	'''
-	##
 	try:
-		##
-		##
-		##
-	
 		cursor.execute(query)
 		lista = cursor.fetchall()
 	except Exception as e:
-		##
 		lista = None
-
-	##
-	##
-	##
 
 	return lista
 	
