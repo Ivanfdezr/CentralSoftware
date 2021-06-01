@@ -18,7 +18,7 @@ __version__ = "1.0.0"
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtCore import QSize
 
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as Canvas
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as Canvas
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d import Axes3D
 
