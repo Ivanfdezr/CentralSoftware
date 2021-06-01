@@ -9,11 +9,11 @@ def update_customizedUnits( parameters, units ):
 		parameterID = get_parameterID(parameter)
 		unitID = get_unitID(unit)
 
-		query = """ update default_cu_units set unitID={unitID} 
-					where parameterID={parameterID} """.format(parameterID=parameterID, unitID=unitID)
+		query = f"""
+				update default_cu_units set unitID={unitID} 
+				where parameterID={parameterID}
+				"""
 		dbUtils.execute_query(query)
-
-	#
 
 
 def get_parametersAndUnits(unitSystem):

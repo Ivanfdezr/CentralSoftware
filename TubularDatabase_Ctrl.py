@@ -19,14 +19,12 @@ class Main_TubularDatabase(Ui_TubularDatabase):
 		self.TDBAccept_pushButton.clicked.connect( self.export_pipe )
 
 		dialog.setAttribute(Qt.WA_DeleteOnClose)
-		#
 		dialog.exec_()
 	
 	
 	def __init__TDBPipeOD_listWidget(self):
 		
 		ODs = mdl.get_pipeODList()
-		print(ODs)
 		for OD in ODs:
 			self.TDBPipeOD_listWidget.addItem(OD)
 		self.TDBPipeOD_listWidget.itemClicked.connect(self.update_TDB_tableWidget)

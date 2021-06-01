@@ -9,23 +9,20 @@ class ConnectionController(object):
 	def start_connection(self):
 		try:
 			#self.conexion = mysql.connector.connect( user='admin', password='password', database='centraldb')
-			self.conexion = sqlite3.connect('CentralDB.sqlite')
+			self.conexion = sqlite3.connect('centraldb.sqlite')
 			self.cursor = self.conexion.cursor()
 	
 		except Exception as e:
 			pass
 
 	def close_connection(self):
-		#self.cursor.close()
+		self.cursor.close()
 		self.conexion.close()
 
 	def __call__(self, *args):
 		self.start_connection()
 		records = self.f(*args, cursor=self.cursor)
-
-		if records == None:
-			self.conexion.commit()
-
+		self.conexion.commit()
 		self.close_connection()
 		return records
 
