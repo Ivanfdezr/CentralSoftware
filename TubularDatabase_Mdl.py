@@ -44,7 +44,7 @@ def set_TDB_data_to_fields(OD, fields):
 
 def get_TDB_fields():
 
-	query = """ select p.fieldID, u.representation from units u right join pipe_properties p on p.nativeUnitID=u.unitID 
+	query = """ select p.fieldID, u.representation from pipe_properties p left join units u on p.nativeUnitID=u.unitID 
 				where p.pipeID=(select distinct min(pipeID) from pipe_properties)
 			"""
 	items = dbUtils.execute_query(query)

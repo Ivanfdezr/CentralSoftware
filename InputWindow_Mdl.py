@@ -20,10 +20,13 @@ def load_obj(File):
 
 def set_workUnits_as(unitSystem):
 
-	defaultUnitTable = 'default_{system}_units'.format(system=unitSystem)
+	defaultUnitTable = f'default_{unitSystem}_units'
 
-	query = """ update work_units,{defaultUnitTable} set work_units.unitID={defaultUnitTable}.unitID 
-				where work_units.parameterID={defaultUnitTable}.parameterID """.format(defaultUnitTable=defaultUnitTable)
+	query = f"""
+			update work_units set unitID={defaultUnitTable}.unitID 
+			from {defaultUnitTable} 
+			where work_units.parameterID={defaultUnitTable}.parameterID
+			"""
 	dbUtils.execute_query(query)
 
 

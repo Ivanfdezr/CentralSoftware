@@ -91,7 +91,7 @@ def set_CDBResin_data_to_fields(OD, fields):
 
 def get_CDBBowSpring_fields():
 
-	query = """ select c.fieldID, u.representation from units u right join centralizer_properties c on c.nativeUnitID=u.unitID 
+	query = """ select c.fieldID, u.representation from centralizer_properties c left join units u on c.nativeUnitID=u.unitID 
 				where c.centralizerID=(select distinct min(centralizerID) from centralizer_properties where fieldID=2049 and valueRepresentation='Bow Spring')
 			"""
 	items = dbUtils.execute_query(query)
@@ -152,7 +152,7 @@ def get_CDBBowSpring_fields():
 
 def get_CDBResin_fields():
 
-	query = """ select c.fieldID, u.representation from units u right join centralizer_properties c on c.nativeUnitID=u.unitID 
+	query = """ select c.fieldID, u.representation from centralizer_properties c left join units u on c.nativeUnitID=u.unitID 
 				where c.centralizerID=(select distinct min(centralizerID) from centralizer_properties where fieldID=2049 and valueRepresentation='Resin')
 			"""
 	items = dbUtils.execute_query(query)

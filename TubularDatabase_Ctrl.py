@@ -19,7 +19,6 @@ class Main_TubularDatabase(Ui_TubularDatabase):
 		self.TDBAccept_pushButton.clicked.connect( self.export_pipe )
 
 		dialog.setAttribute(Qt.WA_DeleteOnClose)
-		#
 		dialog.exec_()
 	
 	
