@@ -1,34 +1,33 @@
-import mysql.connector
+import sqlite3
 
 
 class ConnectionController(object):
 	
 	def __init__(self,f):
 		self.f = f
-		#with open("conexion.json") as f:
-			#self.cadConexion = json.load(f)
 
 	def start_connection(self):
 		try:
-			self.conexion = mysql.connector.connect( user='admin', password='password', database='centraldb')
+			#self.conexion = mysql.connector.connect( user='admin', password='password', database='centraldb')
+			self.conexion = sqlite3.connect('CentralDB.sqlite')
 			self.cursor = self.conexion.cursor()
 	
 		except Exception as e:
 			pass
 
 	def close_connection(self):
-		self.cursor.close()
+		#self.cursor.close()
 		self.conexion.close()
 
 	def __call__(self, *args):
 		self.start_connection()
-		regreso = self.f(*args, cursor=self.cursor)
+		records = self.f(*args, cursor=self.cursor)
 
-		if regreso == None:
+		if records == None:
 			self.conexion.commit()
 
 		self.close_connection()
-		return regreso
+		return records
 
 
 @ConnectionController
@@ -38,10 +37,10 @@ def execute_query(query, cursor=None):
 	'''
 	try:
 		cursor.execute(query)
-		lista = cursor.fetchall()
+		records = cursor.fetchall()
 	except Exception as e:
-		lista = None
+		records = None
 
-	return lista
+	return records
 	
 	
