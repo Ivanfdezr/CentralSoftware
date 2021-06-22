@@ -1,4 +1,4 @@
-from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 import InputWindow_Mdl as mdl
 from SurveyImport_Ctrl import Main_SurveyImport
 import CtrlUtilities as cu
@@ -9,7 +9,7 @@ import PlotUtilities as pu
 def set_survey_to_table(self):
 		
 	#MD, Inc, Azi = mdl.get_survey([0,1,2])
-	dialog = QtGui.QDialog(self.s2DataSurvey_tableWidget)
+	dialog = QtWidgets.QDialog(self.s2DataSurvey_tableWidget)
 	SI = Main_SurveyImport(dialog)
 
 	self.v2DataSurvey_fields.clear_content()
@@ -68,7 +68,7 @@ def get_tortuosity_data(self):
 			continue
 		elif any( [mu.isNoneEntry(From), mu.isNoneEntry(To), mu.isNoneEntry(Amplitude), mu.isNoneEntry(Period)] ):
 			msg = "Incomplete tortuosity parameters. This tortuosity stage will be ignored."
-			QtGui.QMessageBox.information(self.s2SurveyTortuosity_tableWidget, 'Warning', msg)
+			QtWidgets.QMessageBox.information(self.s2SurveyTortuosity_tableWidget, 'Warning', msg)
 			continue
 		
 		self.v2SurveyTortuosity_fields.FromMD.append(  From  )
@@ -121,7 +121,7 @@ def set_survey_outcomes(self):
 			self.v2ASCComplements_fields, self.dT, self.T, self.sT = mdl.calculate_ASCComplements( self.v2DataSurvey_fields, KOP, self.tortuosity_data )
 		except cu.MandatoryError:
 			msg = "MD Interval value is non-assigned or incorrect. Can not proceed."
-			QtGui.QMessageBox.critical(self.s2TortuosityInterval_tableWidget, 'Error', msg)
+			QtWidgets.QMessageBox.critical(self.s2TortuosityInterval_tableWidget, 'Error', msg)
 			return
 
 	else:
@@ -162,7 +162,7 @@ def set_survey_outcomes(self):
 	draw_survey_plots( self )
 
 	msg = "Calculation proceeded successfully."
-	#QtGui.QMessageBox.information(self.s2SurveyTortuosity_tableWidget, 'Information', msg)
+	#QtWidgets.QMessageBox.information(self.s2SurveyTortuosity_tableWidget, 'Information', msg)
 
 
 def draw_survey_plots( self ):

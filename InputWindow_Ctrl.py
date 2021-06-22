@@ -149,7 +149,7 @@ class Main_InputWindow(Ui_InputWindow):
 	def save_file(self):
 
 		print('---------------------------------------------------------')
-		filename = QFileDialog.getSaveFileName( self.s1Info_tableWidget, 'Save File ...', self.v1WorkingDirectory+'/untitled.csf', 'Central-Soft File (*.csf)' )
+		filename = QFileDialog.getSaveFileName( self.s1Info_tableWidget, 'Save File ...', self.v1WorkingDirectory+'/untitled.csf', 'Central-Soft File (*.csf)' )[0]
 		
 		OBJ = {}
 		for attrname in dir(self):
@@ -171,7 +171,7 @@ class Main_InputWindow(Ui_InputWindow):
 
 	def load_file(self):
 
-		filename = QFileDialog.getOpenFileName( self.s1Info_tableWidget, 'Open File ...', self.v1WorkingDirectory, 'Central-Soft File (*.csf)' )
+		filename = QFileDialog.getOpenFileName( self.s1Info_tableWidget, 'Open File ...', self.v1WorkingDirectory, 'Central-Soft File (*.csf)' )[0]
 		#filename = 'C:/Users/arcad/Documents/__WORKS__/AZTECATROL/CENTRAL-SOFTWARE/CentralSoftware/tmp/test1.csf'
 
 		with open(filename,'rb') as File:
@@ -226,10 +226,14 @@ class Main_InputWindow(Ui_InputWindow):
 	def load_fields_to_hTableWidget( self, fields, tableWidget ):
 
 		for i in range(len(fields[0])):
+
+			#item = cu.TableWidgetFieldItem( self.v1Info_fields[0], False )
+			#tableWidget.setItem(0, 0, item)
 			
 			tableWidget.cellPressed.emit( i, 0 )
 			for field in fields:
-				tableWidget.item(i, field.pos).set_text( field[i] )
+				item = tableWidget.item(i, field.pos)
+				item.set_text( field[i] )
 
 
 	def load_fields_to_vTableWidget( self, fields, tableWidget ):
@@ -238,7 +242,8 @@ class Main_InputWindow(Ui_InputWindow):
 			
 			tableWidget.cellPressed.emit( 0, i )
 			for field in fields:
-				tableWidget.item(field.pos, i).set_text( field[i] )
+				item = tableWidget.item(field.pos, i)
+				item.set_text( field[i] )
 
 
 	def load_wellboreOuterStages_tableWidget( self ):

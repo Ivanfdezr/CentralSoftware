@@ -109,10 +109,10 @@ class Main_CaliperImport(Ui_CaliperImport):
 
 	def open_file(self):
 		
-		filepath = QFileDialog.getOpenFileName(self.dialog, 'Open file', 'c:\\',"DR-CAL files (*.las *.txt)")
+		filepath = QFileDialog.getOpenFileName(self.dialog, 'Open file', 'c:\\',"DR-CAL files (*.las *.txt)")[0]
 		head,filename = os.path.split( filepath )
 		self.ciFilename_label.setText( filename )
-		with open(filepath,'r') as file:
+		with open(filepath, 'r', encoding='windows-1252') as file:
 			self.lines = file.readlines()
 
 		self.numofRows = len(self.lines)

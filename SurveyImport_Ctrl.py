@@ -108,13 +108,13 @@ class Main_SurveyImport(Ui_SurveyImport):
 
 	def open_file(self):
 		
-		filepath = QFileDialog.getOpenFileName(self.dialog, 'Open file', 'c:\\',"SURVEY files (*.las *.txt)")
+		filepath = QFileDialog.getOpenFileName(self.dialog, 'Open file', 'c:\\',"SURVEY files (*.las *.txt)")[0]
 		head,filename = os.path.split( filepath )
 		self.siFilename_label.setText( filename )
 
 		tic = time.time()
 
-		with open(filepath,'r') as file:
+		with open(filepath,'r',encoding='windows-1252') as file:
 			self.lines = file.readlines()
 		
 		toc = time.time(); print('ET: ',toc-tic); tic = time.time()

@@ -406,7 +406,6 @@ class Field( list ):
 					f.backgroundColor, f.altBackgroundColor, f.textColor, f.altTextColor, f.flag, f.altFlag, f.abbreviation
 					from fields f where f.fieldID = '{fieldID}' """.format(fieldID=fieldID)			
 		items = dbUtils.execute_query(query)[0]
-		#print('!!!!!!!!!!!!!!',items)
 		
 		nom_i,alt_i = (5,4) if altBg else (4,5)
 		nom_j,alt_j = (7,6) if altTx else (6,7)
